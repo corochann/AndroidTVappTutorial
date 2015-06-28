@@ -14,5 +14,21 @@ public class MainFragment extends BrowseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         Log.i(TAG, "onActivityCreated");
         super.onActivityCreated(savedInstanceState);
+
+        setupUIElements();
     }
+
+    private void setupUIElements() {
+        // setBadgeDrawable(getActivity().getResources().getDrawable(R.drawable.videos_by_google_banner));
+        setTitle("Hello Android TV!"); // Badge, when set, takes precedent
+        // over title
+        setHeadersState(HEADERS_ENABLED);
+        setHeadersTransitionOnBackEnabled(true);
+
+        // set fastLane (or headers) background color
+        setBrandColor(getResources().getColor(R.color.fastlane_background));
+        // set search icon color
+        setSearchAffordanceColor(getResources().getColor(R.color.search_opaque));
+    }
+
 }
