@@ -2,6 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.corochann.androidtvapptutorial" >
 
+
+    <!-- TV app need to declare touchscreen not required -->
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <!--
+     true:  your app runs on only TV
+     false: your app runs on phone and TV -->
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="true" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,11 +23,13 @@
         android:theme="@style/Theme.Leanback" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main" >
+            android:icon="@drawable/app_icon_your_company"
+            android:label="@string/app_name"
+            android:logo="@drawable/app_icon_your_company" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
