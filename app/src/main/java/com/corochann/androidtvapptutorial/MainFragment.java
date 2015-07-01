@@ -52,6 +52,7 @@ public class MainFragment extends BrowseFragment {
         /* GridItemPresenter */
         HeaderItem gridItemPresenterHeader = new HeaderItem(0, "GridItemPresenter");
 
+        
         GridItemPresenter mGridPresenter = new GridItemPresenter();
         ArrayObjectAdapter gridRowAdapter = new ArrayObjectAdapter(mGridPresenter);
         gridRowAdapter.add("ITEM 1");
