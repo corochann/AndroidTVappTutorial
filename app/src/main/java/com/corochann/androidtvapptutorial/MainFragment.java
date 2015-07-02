@@ -59,10 +59,28 @@ public class MainFragment extends BrowseFragment {
         gridRowAdapter.add("ITEM 3");
         mRowsAdapter.add(new ListRow(gridItemPresenterHeader, gridRowAdapter));
 
-        /* set */
+        /* CardPresenter */
+        HeaderItem cardPresenterHeader = new HeaderItem(1, "CardPresenter");
+        CardPresenter cardPresenter = new CardPresenter();
+        ArrayObjectAdapter cardRowAdapter = new ArrayObjectAdapter(cardPresenter);
+
+        for(int i=0; i<10; i++) {
+            Movie movie = new Movie();
+            movie.setTitle("title" + i);
+            movie.setStudio("studio" + i);
+            cardRowAdapter.add(movie);
+        }
+
+        mRowsAdapter.add(new ListRow(cardPresenterHeader, cardRowAdapter));
+
+        /* Set */
         setAdapter(mRowsAdapter);
     }
 
+    /**
+     * from AOSP sample source code
+     * GridItemPresenter class. Show TextView with item type String.
+     */
     private class GridItemPresenter extends Presenter {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent) {
