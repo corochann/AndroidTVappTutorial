@@ -19,6 +19,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v17.leanback.widget.BaseCardView;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
 import android.util.Log;
@@ -87,6 +88,8 @@ public class CardPresenter extends Presenter {
         mContext = parent.getContext();
 
         ImageCardView cardView = new ImageCardView(mContext);
+        cardView.setCardType(BaseCardView.CARD_TYPE_INFO_UNDER);
+        cardView.setInfoVisibility(BaseCardView.CARD_REGION_VISIBLE_ALWAYS);
         cardView.setFocusable(true);
         cardView.setFocusableInTouchMode(true);
         cardView.setBackgroundColor(mContext.getResources().getColor(R.color.fastlane_background));
