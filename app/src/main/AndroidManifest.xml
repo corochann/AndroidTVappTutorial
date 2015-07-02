@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.corochann.androidtvapptutorial" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
 
     <!-- TV app need to declare touchscreen not required -->
     <uses-feature

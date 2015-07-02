@@ -66,6 +66,7 @@ public class MainFragment extends BrowseFragment {
 
         for(int i=0; i<10; i++) {
             Movie movie = new Movie();
+            movie.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02580.jpg");
             movie.setTitle("title" + i);
             movie.setStudio("studio" + i);
             cardRowAdapter.add(movie);

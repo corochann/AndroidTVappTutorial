@@ -31,9 +31,7 @@ public class Movie {
     private long id;
     private String title;
     private String studio;
-
-    public Movie() {
-    }
+    private String cardImageUrl;
 
     public long getId() {
         return id;
@@ -59,11 +57,31 @@ public class Movie {
         this.studio = studio;
     }
 
+    public String getCardImageUrl() {
+        return cardImageUrl;
+    }
+
+    public void setCardImageUrl(String cardImageUrl) {
+        this.cardImageUrl = cardImageUrl;
+    }
+
+    public Movie() {
+    }
+
+    public URI getCardImageURI() {
+        try {
+            return new URI(getCardImageUrl());
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", cardImageUrl='" + cardImageUrl + '\'' +
                 '}';
     }
 }
