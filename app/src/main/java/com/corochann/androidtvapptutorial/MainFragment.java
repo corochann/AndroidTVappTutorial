@@ -42,7 +42,7 @@ public class MainFragment extends BrowseFragment {
 
         setupEventListeners();
 
-        simpleBackgroundManager = SimpleBackgroundManager.getInstance(getActivity());
+        simpleBackgroundManager = new SimpleBackgroundManager(getActivity());
     }
 
     private void setupEventListeners() {
@@ -53,10 +53,9 @@ public class MainFragment extends BrowseFragment {
         @Override
         public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item,
                                    RowPresenter.ViewHolder rowViewHolder, Row row) {
-            // each time the item is selected, code inside here will be executed.
-            if (item instanceof String) {
+            if (item instanceof String) {                    // GridItemPresenter
                 simpleBackgroundManager.clearBackground();
-            } else if (item instanceof Movie) {
+            } else if (item instanceof Movie) {              // CardPresenter
                 simpleBackgroundManager.updateBackground(getActivity().getDrawable(R.drawable.movie));
             }
         }

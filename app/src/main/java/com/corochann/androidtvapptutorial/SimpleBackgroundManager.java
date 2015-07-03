@@ -23,12 +23,10 @@ public class SimpleBackgroundManager {
     private final int DEFAULT_BACKGROUND_RES_ID = R.drawable.default_background;
     private static Drawable mDefaultBackground;
 
-    private static SimpleBackgroundManager mSimpleBackgroundManager;
-    private static BackgroundManager mBackgroundManager;
+    private Activity mActivity;
+    private BackgroundManager mBackgroundManager;
 
-    private static Activity mActivity;
-
-    private SimpleBackgroundManager(Activity activity) {
+    public SimpleBackgroundManager(Activity activity) {
         mActivity = activity;
         mDefaultBackground = activity.getDrawable(DEFAULT_BACKGROUND_RES_ID);
         mBackgroundManager = BackgroundManager.getInstance(activity);
@@ -36,18 +34,11 @@ public class SimpleBackgroundManager {
         activity.getWindowManager().getDefaultDisplay().getMetrics(new DisplayMetrics());
     }
 
-    public static synchronized SimpleBackgroundManager getInstance(Activity activity) {
-        if(mSimpleBackgroundManager == null) {
-            mSimpleBackgroundManager = new SimpleBackgroundManager(activity);
-        }
-        return mSimpleBackgroundManager;
-    }
-
-    protected void updateBackground(Drawable drawable) {
+    public void updateBackground(Drawable drawable) {
         mBackgroundManager.setDrawable(drawable);
     }
 
-    protected void clearBackground() {
+    public void clearBackground() {
         mBackgroundManager.setDrawable(mDefaultBackground);
     }
 
