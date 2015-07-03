@@ -1,6 +1,7 @@
 package com.corochann.androidtvapptutorial;
 
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
@@ -16,6 +17,8 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.net.URI;
+
 /**
  * Created by corochann on 2015/06/28.
  */
@@ -25,6 +28,8 @@ public class MainFragment extends BrowseFragment {
     private ArrayObjectAdapter mRowsAdapter;
     private static final int GRID_ITEM_WIDTH = 300;
     private static final int GRID_ITEM_HEIGHT = 200;
+
+    private static SimpleBackgroundManager simpleBackgroundManager = null;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -36,6 +41,8 @@ public class MainFragment extends BrowseFragment {
         loadRows();
 
         setupEventListeners();
+
+        simpleBackgroundManager = SimpleBackgroundManager.getInstance(getActivity());
     }
 
     private void setupEventListeners() {
@@ -47,6 +54,11 @@ public class MainFragment extends BrowseFragment {
         public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item,
                                    RowPresenter.ViewHolder rowViewHolder, Row row) {
             // each time the item is selected, code inside here will be executed.
+            if (item instanceof String) {
+                simpleBackgroundManager.clearBackground();
+            } else if (item instanceof Movie) {
+                simpleBackgroundManager.updateBackground(getActivity().getDrawable(R.drawable.movie));
+            }
         }
     }
 
