@@ -17,6 +17,8 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.net.URI;
 
 /**
@@ -29,7 +31,7 @@ public class MainFragment extends BrowseFragment {
     private static final int GRID_ITEM_WIDTH = 300;
     private static final int GRID_ITEM_HEIGHT = 200;
 
-    private static SimpleBackgroundManager simpleBackgroundManager = null;
+    private static PicassoBackgroundManager picassoBackgroundManager = null;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -42,7 +44,7 @@ public class MainFragment extends BrowseFragment {
 
         setupEventListeners();
 
-        simpleBackgroundManager = new SimpleBackgroundManager(getActivity());
+        picassoBackgroundManager = new PicassoBackgroundManager(getActivity());
     }
 
     private void setupEventListeners() {
@@ -54,9 +56,9 @@ public class MainFragment extends BrowseFragment {
         public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item,
                                    RowPresenter.ViewHolder rowViewHolder, Row row) {
             if (item instanceof String) {                    // GridItemPresenter
-                simpleBackgroundManager.clearBackground();
+                picassoBackgroundManager.updateBackgroundWithDelay("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/10/RIMG0656.jpg");
             } else if (item instanceof Movie) {              // CardPresenter
-                simpleBackgroundManager.updateBackground(getActivity().getDrawable(R.drawable.movie));
+                picassoBackgroundManager.updateBackgroundWithDelay(((Movie) item).getCardImageUrl());
             }
         }
     }
@@ -94,7 +96,13 @@ public class MainFragment extends BrowseFragment {
 
         for(int i=0; i<10; i++) {
             Movie movie = new Movie();
-            movie.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02580.jpg");
+            if(i%3 == 0) {
+                movie.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02580.jpg");
+            } else if (i%3 == 1) {
+                movie.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02630.jpg");
+            } else {
+                movie.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02529.jpg");
+            }
             movie.setTitle("title" + i);
             movie.setStudio("studio" + i);
             cardRowAdapter.add(movie);
