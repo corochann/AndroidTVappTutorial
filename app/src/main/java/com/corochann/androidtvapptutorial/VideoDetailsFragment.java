@@ -50,7 +50,7 @@ public class VideoDetailsFragment extends DetailsFragment {
         mSelectedMovie = (Movie)getActivity().getIntent().getSerializableExtra(MOVIE);
 
         mDetailsRowBuilderTask = (DetailsRowBuilderTask) new DetailsRowBuilderTask().execute(mSelectedMovie);
-        mPicassoBackgroundManager.updateBackgroundWithDelay(mSelectedMovie.getCardImageUrl());;
+        mPicassoBackgroundManager.updateBackgroundWithDelay(mSelectedMovie.getCardImageUrl());
     }
 
     @Override

@@ -37,6 +37,7 @@
             android:name=".DetailsActivity"
             android:label="@string/title_activity_details" >
         </activity>
+        <activity android:name=".ErrorActivity" />
     </application>
 
 </manifest>
