@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-
     <!-- TV app need to declare touchscreen not required -->
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -12,11 +11,11 @@
 
     <!--
      true:  your app runs on only TV
-     false: your app runs on phone and TV -->
+     false: your app runs on phone and TV
+    -->
     <uses-feature
         android:name="android.software.leanback"
         android:required="true" />
-
 
     <application
         android:allowBackup="true"
@@ -33,6 +32,10 @@
 
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".DetailsActivity"
+            android:label="@string/title_activity_details" >
         </activity>
     </application>
 
