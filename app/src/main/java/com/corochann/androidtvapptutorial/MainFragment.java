@@ -47,6 +47,7 @@ public class MainFragment extends BrowseFragment {
         setupEventListeners();
 
         picassoBackgroundManager = new PicassoBackgroundManager(getActivity());
+        picassoBackgroundManager.updateBackgroundWithDelay("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/10/RIMG0656.jpg");
     }
 
     private void setupEventListeners() {

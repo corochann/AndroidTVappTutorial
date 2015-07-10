@@ -38,6 +38,10 @@
             android:label="@string/title_activity_details" >
         </activity>
         <activity android:name=".ErrorActivity" />
+        <activity
+            android:name=".PlaybackOverlayActivity"
+            android:label="@string/title_activity_playback_overlay" >
+        </activity>
     </application>
 
 </manifest>
