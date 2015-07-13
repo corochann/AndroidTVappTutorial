@@ -1,17 +1,38 @@
 package com.corochann.androidtvapptutorial;
 
 import android.app.Activity;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.VideoView;
 
 
 public class PlaybackOverlayActivity extends Activity {
+
+    private VideoView mVideoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playback_overlay);
+
+        loadViews();
+        mVideoView.setVideoPath("http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Zeitgeist/Zeitgeist%202010_%20Year%20in%20Review.mp4");
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                //mVideoView.start();
+            }
+        });
+    }
+
+    private void loadViews() {
+        mVideoView = (VideoView) findViewById(R.id.videoView);
+    }
+
+    public void onFragmentPlayPause(Movie movie, int position, Boolean playPause) {
+
     }
 
     @Override

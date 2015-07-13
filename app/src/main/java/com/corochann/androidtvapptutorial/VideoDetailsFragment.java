@@ -98,8 +98,8 @@ public class VideoDetailsFragment extends DetailsFragment {
                 public void onActionClicked(Action action) {
                     if (action.getId() == ACTION_PLAY_VIDEO) {
                         Intent intent = new Intent(getActivity(), PlaybackOverlayActivity.class);
-                        intent.putExtra("movie", mSelectedMovie);
-                        intent.putExtra("shouldStart", true);
+                        intent.putExtra(getResources().getString(R.string.movie), mSelectedMovie);
+                        intent.putExtra(getResources().getString(R.string.should_start), true);
                         startActivity(intent);
                     }
                 }
