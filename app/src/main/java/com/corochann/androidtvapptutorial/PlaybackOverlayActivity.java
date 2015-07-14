@@ -19,10 +19,21 @@ public class PlaybackOverlayActivity extends Activity {
 
         loadViews();
         mVideoView.setVideoPath("http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Zeitgeist/Zeitgeist%202010_%20Year%20in%20Review.mp4");
+
         mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                //mVideoView.start();
+                mVideoView.start();
+                mVideoView.seekTo(5000);
+                //mVideoView.pause();
+
+                mp.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+                    @Override
+                    public void onSeekComplete(MediaPlayer mp) {
+                        mVideoView.pause();
+                    }
+                });
+
             }
         });
     }

@@ -67,9 +67,9 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     private void addOtherRows() {
         ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
         Movie movie = new Movie();
-        movie.setTitle("aaa");
-        movie.setStudio("studiiio");
-        movie.setDescription("descriptiiiooon");
+        movie.setTitle("Title");
+        movie.setStudio("studio");
+        movie.setDescription("description");
         movie.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02580.jpg");
         listRowAdapter.add(movie);
         listRowAdapter.add(movie);
@@ -89,20 +89,20 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         mPlaybackControlsRow.setSecondaryActionsAdapter(mSecondaryActionAdapter);
 
 
-        mPrimaryActionAdapter.add(new PlaybackControlsRow.PlayPauseAction(sContext));
-        mPrimaryActionAdapter.add(new PlaybackControlsRow.RepeatAction(sContext));
-        mPrimaryActionAdapter.add(new PlaybackControlsRow.ThumbsUpAction(sContext));
-        mPrimaryActionAdapter.add(new PlaybackControlsRow.ThumbsDownAction(sContext));
-        mPrimaryActionAdapter.add(new PlaybackControlsRow.ShuffleAction(sContext));
-        mPrimaryActionAdapter.add(new PlaybackControlsRow.SkipNextAction(sContext));
+        /* PrimaryAction setting */
         mPrimaryActionAdapter.add(new PlaybackControlsRow.SkipPreviousAction(sContext));
-        mPrimaryActionAdapter.add(new PlaybackControlsRow.FastForwardAction(sContext));
         mPrimaryActionAdapter.add(new PlaybackControlsRow.RewindAction(sContext));
+        mPrimaryActionAdapter.add(new PlaybackControlsRow.PlayPauseAction(sContext));
+        mPrimaryActionAdapter.add(new PlaybackControlsRow.FastForwardAction(sContext));
+        mPrimaryActionAdapter.add(new PlaybackControlsRow.SkipNextAction(sContext));
 
+        /* SecondaryAction setting */
+        mSecondaryActionAdapter.add(new PlaybackControlsRow.ThumbsUpAction(sContext));
+        mSecondaryActionAdapter.add(new PlaybackControlsRow.ThumbsDownAction(sContext));
+        mSecondaryActionAdapter.add(new PlaybackControlsRow.RepeatAction(sContext));
+        mSecondaryActionAdapter.add(new PlaybackControlsRow.ShuffleAction(sContext));
         mSecondaryActionAdapter.add(new PlaybackControlsRow.HighQualityAction(sContext));
         mSecondaryActionAdapter.add(new PlaybackControlsRow.ClosedCaptioningAction(sContext));
-
-
     }
 
 }
