@@ -45,37 +45,22 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         ClassPresenterSelector ps = new ClassPresenterSelector();
 
         PlaybackControlsRowPresenter playbackControlsRowPresenter;
-//        if (SHOW_DETAIL) {
-            playbackControlsRowPresenter = new PlaybackControlsRowPresenter(new DetailsDescriptionPresenter());
-/*
-        } else {
-            playbackControlsRowPresenter = new PlaybackControlsRowPresenter();
-        }
-*/
+        playbackControlsRowPresenter = new PlaybackControlsRowPresenter(new DetailsDescriptionPresenter());
 
         ps.addClassPresenter(PlaybackControlsRow.class, playbackControlsRowPresenter);
         ps.addClassPresenter(ListRow.class, new ListRowPresenter());
         mRowsAdapter = new ArrayObjectAdapter(ps);
 
+        /*
+         * Add PlaybackControlsRow to mRowsAdapter, which makes video control UI.
+         * PlaybackControlsRow is supposed to be first Row of mRowsAdapter.
+         */
         addPlaybackControlsRow();
+        /* add ListRow to second row of mRowsAdapter */
         addOtherRows();
 
         setAdapter(mRowsAdapter);
 
-    }
-
-    private void addOtherRows() {
-        ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
-        Movie movie = new Movie();
-        movie.setTitle("Title");
-        movie.setStudio("studio");
-        movie.setDescription("description");
-        movie.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02580.jpg");
-        listRowAdapter.add(movie);
-        listRowAdapter.add(movie);
-
-        HeaderItem header = new HeaderItem(0, "OtherRows");
-        mRowsAdapter.add(new ListRow(header, listRowAdapter));
     }
 
     private void addPlaybackControlsRow() {
@@ -103,6 +88,20 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         mSecondaryActionAdapter.add(new PlaybackControlsRow.ShuffleAction(sContext));
         mSecondaryActionAdapter.add(new PlaybackControlsRow.HighQualityAction(sContext));
         mSecondaryActionAdapter.add(new PlaybackControlsRow.ClosedCaptioningAction(sContext));
+    }
+
+    private void addOtherRows() {
+        ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
+        Movie movie = new Movie();
+        movie.setTitle("Title");
+        movie.setStudio("studio");
+        movie.setDescription("description");
+        movie.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02580.jpg");
+        listRowAdapter.add(movie);
+        listRowAdapter.add(movie);
+
+        HeaderItem header = new HeaderItem(0, "OtherRows");
+        mRowsAdapter.add(new ListRow(header, listRowAdapter));
     }
 
 }

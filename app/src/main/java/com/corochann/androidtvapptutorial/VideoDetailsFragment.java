@@ -66,6 +66,7 @@ public class VideoDetailsFragment extends DetailsFragment {
         protected DetailsOverviewRow doInBackground(Movie... params) {
             DetailsOverviewRow row = new DetailsOverviewRow(mSelectedMovie);
             try {
+                // Bitmap loading must be done in background thread in Android.
                 Bitmap poster = Picasso.with(getActivity())
                         .load(mSelectedMovie.getCardImageUrl())
                         .resize(Utils.convertDpToPixel(getActivity().getApplicationContext(), DETAIL_THUMB_WIDTH),
@@ -88,7 +89,7 @@ public class VideoDetailsFragment extends DetailsFragment {
               /* action setting*/
             SparseArrayObjectAdapter sparseArrayObjectAdapter = new SparseArrayObjectAdapter();
             sparseArrayObjectAdapter.set(0, new Action(ACTION_PLAY_VIDEO, "Play Video"));
-            sparseArrayObjectAdapter.set(1, new Action(1, "Action 2"));
+            sparseArrayObjectAdapter.set(1, new Action(1, "Action 2", "label"));
             sparseArrayObjectAdapter.set(2, new Action(2, "Action 3", "label"));
 
             row.setActionsAdapter(sparseArrayObjectAdapter);
