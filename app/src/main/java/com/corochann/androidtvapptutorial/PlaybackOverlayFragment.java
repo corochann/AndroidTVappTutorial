@@ -2,13 +2,16 @@ package com.corochann.androidtvapptutorial;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.session.PlaybackState;
 import android.os.Bundle;
+import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
 import android.support.v17.leanback.widget.ControlButtonPresenterSelector;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
+import android.support.v17.leanback.widget.OnActionClickedListener;
 import android.support.v17.leanback.widget.PlaybackControlsRow;
 import android.support.v17.leanback.widget.PlaybackControlsRowPresenter;
 import android.util.Log;
@@ -70,6 +73,41 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         addPlaybackControlsRow();
         /* add ListRow to second row of mRowsAdapter */
         addOtherRows();
+
+        /* onClick */
+        playbackControlsRowPresenter.setOnActionClickedListener(new OnActionClickedListener() {
+            public void onActionClicked(Action action) {
+                if (action.getId() == mPlayPauseAction.getId()) {
+                    /* PlayPause action */
+
+                } else if (action.getId() == mSkipNextAction.getId()) {
+                    /* SkipNext action */
+
+                } else if (action.getId() == mSkipPreviousAction.getId()) {
+                    /* SkipPrevious action */
+
+                } else if (action.getId() == mFastForwardAction.getId()) {
+                    /* FastForward action  */
+
+                } else if (action.getId() == mRewindAction.getId()) {
+                    /* Rewind action */
+
+                }
+                if (action instanceof PlaybackControlsRow.MultiAction) {
+                    /* Following action is subclass of MultiAction
+                     * - PlayPauseAction
+                     * - FastForwardAction
+                     * - RewindAction
+                     * - ThumbsAction
+                     * - RepeatAction
+                     * - ShuffleAction
+                     * - HighQualityAction
+                     * - ClosedCaptioningAction
+                     */
+
+                }
+            }
+        });
 
         setAdapter(mRowsAdapter);
 
