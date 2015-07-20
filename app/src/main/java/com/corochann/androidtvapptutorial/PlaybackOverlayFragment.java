@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
@@ -22,11 +23,17 @@ import android.util.Log;
 public class PlaybackOverlayFragment extends android.support.v17.leanback.app.PlaybackOverlayFragment {
 
     private static final String TAG = PlaybackOverlayFragment.class.getSimpleName();
+    private static final int SIMULATED_BUFFERED_TIME = 10000;
+    private static final int DEFAULT_UPDATE_PERIOD = 1000;
+    private static final int UPDATE_PERIOD = 16;
 
     private Movie mSelectedMovie;
     private PlaybackControlsRow mPlaybackControlsRow;
     private ArrayObjectAdapter mPrimaryActionsAdapter;
     private ArrayObjectAdapter mSecondaryActionsAdapter;
+    private int mCurrentPlaybackState;
+    private Handler mHandler;
+    private Runnable mRunnable;
 
     private PlaybackControlsRow.PlayPauseAction mPlayPauseAction;
     private PlaybackControlsRow.RepeatAction mRepeatAction;
@@ -47,6 +54,8 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         super.onCreate(savedInstanceState);
 
         mSelectedMovie = (Movie) getActivity().getIntent().getSerializableExtra(DetailsActivity.MOVIE);
+
+        mHandler = new Handler();
 
         setBackgroundType(PlaybackOverlayFragment.BG_LIGHT);
         setFadingEnabled(true);
@@ -79,7 +88,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
             public void onActionClicked(Action action) {
                 if (action.getId() == mPlayPauseAction.getId()) {
                     /* PlayPause action */
-
+                    togglePlayback(mPlayPauseAction.getIndex() == PlaybackControlsRow.PlayPauseAction.PLAY);
                 } else if (action.getId() == mSkipNextAction.getId()) {
                     /* SkipNext action */
 
@@ -104,13 +113,92 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                      * - HighQualityAction
                      * - ClosedCaptioningAction
                      */
-
+                    notifyChanged(action);
                 }
             }
         });
 
         setAdapter(mRowsAdapter);
 
+    }
+
+    private void notifyChanged(Action action) {
+        ArrayObjectAdapter adapter = mPrimaryActionsAdapter;
+        if (adapter.indexOf(action) >= 0) {
+            adapter.notifyArrayItemRangeChanged(adapter.indexOf(action), 1);
+            return;
+        }
+        adapter = mSecondaryActionsAdapter;
+        if (adapter.indexOf(action) >= 0) {
+            adapter.notifyArrayItemRangeChanged(adapter.indexOf(action), 1);
+            return;
+        }
+    }
+
+    private void togglePlayback(boolean playPause) {
+        /* Video control part */
+        ((PlaybackOverlayActivity) getActivity()).playPause(playPause);
+
+        /* UI control part */
+        //if (state.getState() == PlaybackState.STATE_PLAYING && mCurrentPlaybackState != PlaybackState.STATE_PLAYING) {
+        if (mCurrentPlaybackState != PlaybackState.STATE_PLAYING) {
+            mCurrentPlaybackState = PlaybackState.STATE_PLAYING;
+            startProgressAutomation();
+            setFadingEnabled(true);
+            mPlayPauseAction.setIndex(PlaybackControlsRow.PlayPauseAction.PAUSE);
+            mPlayPauseAction.setIcon(mPlayPauseAction.getDrawable(PlaybackControlsRow.PlayPauseAction.PAUSE));
+            notifyChanged(mPlayPauseAction);
+        //} else if (state.getState() == PlaybackState.STATE_PAUSED && mCurrentPlaybackState != PlaybackState.STATE_PAUSED) {
+        } else if (mCurrentPlaybackState != PlaybackState.STATE_PAUSED) {
+            mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
+            stopProgressAutomation();
+            //setFadingEnabled(false); // if set to false, PlaybackcontrolsRow will always be on the screen
+            mPlayPauseAction.setIndex(PlaybackControlsRow.PlayPauseAction.PLAY);
+            mPlayPauseAction.setIcon(mPlayPauseAction.getDrawable(PlaybackControlsRow.PlayPauseAction.PLAY));
+            notifyChanged(mPlayPauseAction);
+        }
+
+        //int currentTime = (int) state.getPosition();
+        int currentTime = mPlaybackControlsRow.getCurrentTime();
+        mPlaybackControlsRow.setCurrentTime(currentTime);
+        mPlaybackControlsRow.setBufferedProgress(currentTime + SIMULATED_BUFFERED_TIME);
+    }
+
+    private int getUpdatePeriod() {
+        if (getView() == null || mPlaybackControlsRow.getTotalTime() <= 0) {
+            return DEFAULT_UPDATE_PERIOD;
+        }
+        return Math.max(UPDATE_PERIOD, mPlaybackControlsRow.getTotalTime() / getView().getWidth());
+    }
+
+    private void startProgressAutomation() {
+        if (mRunnable == null) {
+            mRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    int updatePeriod = getUpdatePeriod();
+                    int currentTime = mPlaybackControlsRow.getCurrentTime() + updatePeriod;
+                    int totalTime = mPlaybackControlsRow.getTotalTime();
+                    mPlaybackControlsRow.setCurrentTime(currentTime);
+                    mPlaybackControlsRow.setBufferedProgress(currentTime + SIMULATED_BUFFERED_TIME);
+
+                    if (totalTime > 0 && totalTime <= currentTime) {
+                        stopProgressAutomation();
+                        //next(true);
+                    } else {
+                        mHandler.postDelayed(this, updatePeriod);
+                    }
+                }
+            };
+            mHandler.postDelayed(mRunnable, getUpdatePeriod());
+        }
+    }
+
+    private void stopProgressAutomation() {
+        if (mHandler != null && mRunnable != null) {
+            mHandler.removeCallbacks(mRunnable);
+            mRunnable = null;
+        }
     }
 
     private void addPlaybackControlsRow() {
