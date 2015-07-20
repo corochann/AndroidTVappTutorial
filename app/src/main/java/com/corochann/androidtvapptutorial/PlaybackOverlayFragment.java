@@ -17,6 +17,8 @@ import android.support.v17.leanback.widget.PlaybackControlsRow;
 import android.support.v17.leanback.widget.PlaybackControlsRowPresenter;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 /**
  * Created by corochann on 7/7/2015.
  */
@@ -32,8 +34,10 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     private ArrayObjectAdapter mPrimaryActionsAdapter;
     private ArrayObjectAdapter mSecondaryActionsAdapter;
     private int mCurrentPlaybackState;
+    private PlaybackOverlayActivity.LeanbackPlaybackState mPlaybackState;
     private Handler mHandler;
     private Runnable mRunnable;
+    private ArrayList<Movie> mItems = new ArrayList<Movie>();
 
     private PlaybackControlsRow.PlayPauseAction mPlayPauseAction;
     private PlaybackControlsRow.RepeatAction mRepeatAction;
@@ -47,6 +51,8 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     private PlaybackControlsRow.HighQualityAction mHighQualityAction;
     private PlaybackControlsRow.ClosedCaptioningAction mClosedCaptioningAction;
     private PlaybackControlsRow.MoreActions mMoreActions;
+    private int mCurrentItem;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +65,33 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
         setBackgroundType(PlaybackOverlayFragment.BG_LIGHT);
         setFadingEnabled(true);
+
+        /* generate Movielist mItems */
+        Movie movie1 = new Movie();
+        movie1.setId(1);
+        movie1.setTitle("Title1");
+        movie1.setStudio("studio1");
+        movie1.setDescription("description1");
+        movie1.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02580.jpg");
+        movie1.setVideoUrl("http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Zeitgeist/Zeitgeist%202010_%20Year%20in%20Review.mp4");
+        mItems.add(movie1);
+
+        Movie movie2 = new Movie();
+        movie1.setId(2);
+        movie2.setTitle("Title2");
+        movie2.setStudio("studio2");
+        movie2.setDescription("description2");
+        movie2.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02630.jpg");
+        movie2.setVideoUrl("http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Demo%20Slam/Google%20Demo%20Slam_%2020ft%20Search.mp4");
+        mItems.add(movie2);
+
+        Movie movie3 = new Movie();
+        movie3.setId(3);
+        movie3.setStudio("studio3");
+        movie3.setDescription("description3");
+        movie3.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC026529.jpg");
+        movie3.setVideoUrl("http://commondatastorage.googleapis.com/android-tv/Sample%20videos/April%20Fool's%202013/Introducing%20Gmail%20Blue.mp4");
+        mItems.add(movie3);
 
         setUpRows();
     }
@@ -91,7 +124,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                     togglePlayback(mPlayPauseAction.getIndex() == PlaybackControlsRow.PlayPauseAction.PLAY);
                 } else if (action.getId() == mSkipNextAction.getId()) {
                     /* SkipNext action */
-
+                    next(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
                 } else if (action.getId() == mSkipPreviousAction.getId()) {
                     /* SkipPrevious action */
 
@@ -120,6 +153,28 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
         setAdapter(mRowsAdapter);
 
+    }
+
+    private void next(boolean autoPlay) {
+        if (++mCurrentItem >= mItems.size()) {
+            mCurrentItem = 0;
+        }
+        //Bundle bundle = new Bundle();
+        //bundle.putBoolean(PlaybackOverlayActivity.AUTO_PLAY, autoPlay);
+        if (autoPlay) {
+            mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
+        }
+        //mMediaController.getTransportControls().playFromMediaId(mItems.get(mCurrentItem).getId(), bundle);
+
+        //Movie movie = VideoProvider.getMovieById(mediaId);
+        Movie movie = mItems.get(mCurrentItem);
+        if (movie != null) {
+            ((PlaybackOverlayActivity) getActivity()).setVideoPath(movie.getVideoUrl());
+            mPlaybackState = PlaybackOverlayActivity.LeanbackPlaybackState.PAUSED;
+            //updateMetadata(movie);
+            ((PlaybackOverlayActivity) getActivity()).playPause(autoPlay); // extras.getBoolean(AUTO_PLAY));
+        }
+        //mFfwRwdSpeed = INITIAL_SPEED;
     }
 
     private void notifyChanged(Action action) {
@@ -244,16 +299,13 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
     private void addOtherRows() {
         ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
-        Movie movie = new Movie();
-        movie.setTitle("Title");
-        movie.setStudio("studio");
-        movie.setDescription("description");
-        movie.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02580.jpg");
-        listRowAdapter.add(movie);
-        listRowAdapter.add(movie);
+        for(Movie movie : mItems) {
+            listRowAdapter.add(movie);
+        }
 
-        HeaderItem header = new HeaderItem(0, "OtherRows");
+        HeaderItem header = new HeaderItem(0, "Other Movies");
         mRowsAdapter.add(new ListRow(header, listRowAdapter));
     }
 
 }
+

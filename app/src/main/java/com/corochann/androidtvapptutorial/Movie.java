@@ -34,6 +34,7 @@ public class Movie implements Serializable {
     private String studio;
     private String description;
     private String cardImageUrl;
+    private String videoUrl;
 
     public long getId() {
         return id;
@@ -85,6 +86,14 @@ public class Movie implements Serializable {
         } catch (URISyntaxException e) {
             return null;
         }
+    }
+
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
     }
 
     @Override

@@ -13,6 +13,7 @@ import android.widget.VideoView;
 public class PlaybackOverlayActivity extends Activity {
 
     private static final String TAG = PlaybackOverlayActivity.class.getSimpleName();
+    public static final String AUTO_PLAY = "auto_play";
     private VideoView mVideoView;
     private LeanbackPlaybackState mPlaybackState = LeanbackPlaybackState.IDLE;
 
@@ -45,7 +46,7 @@ public class PlaybackOverlayActivity extends Activity {
         // updateMetadata(movie);
     }
 
-    private void setVideoPath(String videoUrl) {
+    public void setVideoPath(String videoUrl) {
         setPosition(0);
         mVideoView.setVideoPath(videoUrl);
         mStartTimeMillis = 0;
