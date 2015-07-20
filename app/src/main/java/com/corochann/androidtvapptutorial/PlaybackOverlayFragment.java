@@ -1,5 +1,6 @@
 package com.corochann.androidtvapptutorial;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
@@ -21,9 +22,21 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
     private Movie mSelectedMovie;
     private PlaybackControlsRow mPlaybackControlsRow;
-    private ArrayObjectAdapter mPrimaryActionAdapter;
-    private ArrayObjectAdapter mSecondaryActionAdapter;
+    private ArrayObjectAdapter mPrimaryActionsAdapter;
+    private ArrayObjectAdapter mSecondaryActionsAdapter;
     private Context sContext;
+    private PlaybackControlsRow.PlayPauseAction mPlayPauseAction;
+    private PlaybackControlsRow.RepeatAction mRepeatAction;
+    private PlaybackControlsRow.ThumbsUpAction mThumbsUpAction;
+    private PlaybackControlsRow.ThumbsDownAction mThumbsDownAction;
+    private PlaybackControlsRow.ShuffleAction mShuffleAction;
+    private PlaybackControlsRow.SkipNextAction mSkipNextAction;
+    private PlaybackControlsRow.SkipPreviousAction mSkipPreviousAction;
+    private PlaybackControlsRow.FastForwardAction mFastForwardAction;
+    private PlaybackControlsRow.RewindAction mRewindAction;
+    private PlaybackControlsRow.HighQualityAction mHighQualityAction;
+    private PlaybackControlsRow.ClosedCaptioningAction mClosedCaptioningAction;
+    private PlaybackControlsRow.MoreActions mMoreActions;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,26 +81,40 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         mRowsAdapter.add(mPlaybackControlsRow);
 
         ControlButtonPresenterSelector presenterSelector = new ControlButtonPresenterSelector();
-        mPrimaryActionAdapter = new ArrayObjectAdapter(presenterSelector);
-        mSecondaryActionAdapter = new ArrayObjectAdapter(presenterSelector);
-        mPlaybackControlsRow.setPrimaryActionsAdapter(mPrimaryActionAdapter);
-        mPlaybackControlsRow.setSecondaryActionsAdapter(mSecondaryActionAdapter);
-
+        mPrimaryActionsAdapter = new ArrayObjectAdapter(presenterSelector);
+        mSecondaryActionsAdapter = new ArrayObjectAdapter(presenterSelector);
+        mPlaybackControlsRow.setPrimaryActionsAdapter(mPrimaryActionsAdapter);
+        mPlaybackControlsRow.setSecondaryActionsAdapter(mSecondaryActionsAdapter);
+        
+        Activity activity = getActivity();
+        mPlayPauseAction = new PlaybackControlsRow.PlayPauseAction(activity);
+        mRepeatAction = new PlaybackControlsRow.RepeatAction(activity);
+        mThumbsUpAction = new PlaybackControlsRow.ThumbsUpAction(activity);
+        mThumbsDownAction = new PlaybackControlsRow.ThumbsDownAction(activity);
+        mShuffleAction = new PlaybackControlsRow.ShuffleAction(activity);
+        mSkipNextAction = new PlaybackControlsRow.SkipNextAction(activity);
+        mSkipPreviousAction = new PlaybackControlsRow.SkipPreviousAction(activity);
+        mFastForwardAction = new PlaybackControlsRow.FastForwardAction(activity);
+        mRewindAction = new PlaybackControlsRow.RewindAction(activity);
+        mHighQualityAction = new PlaybackControlsRow.HighQualityAction(activity);
+        mClosedCaptioningAction = new PlaybackControlsRow.ClosedCaptioningAction(activity);
+        mMoreActions = new PlaybackControlsRow.MoreActions(activity);
 
         /* PrimaryAction setting */
-        mPrimaryActionAdapter.add(new PlaybackControlsRow.SkipPreviousAction(sContext));
-        mPrimaryActionAdapter.add(new PlaybackControlsRow.RewindAction(sContext));
-        mPrimaryActionAdapter.add(new PlaybackControlsRow.PlayPauseAction(sContext));
-        mPrimaryActionAdapter.add(new PlaybackControlsRow.FastForwardAction(sContext));
-        mPrimaryActionAdapter.add(new PlaybackControlsRow.SkipNextAction(sContext));
+        mPrimaryActionsAdapter.add(mSkipPreviousAction);
+        mPrimaryActionsAdapter.add(mRewindAction);
+        mPrimaryActionsAdapter.add(mPlayPauseAction);
+        mPrimaryActionsAdapter.add(mFastForwardAction);
+        mPrimaryActionsAdapter.add(mSkipNextAction);
 
         /* SecondaryAction setting */
-        mSecondaryActionAdapter.add(new PlaybackControlsRow.ThumbsUpAction(sContext));
-        mSecondaryActionAdapter.add(new PlaybackControlsRow.ThumbsDownAction(sContext));
-        mSecondaryActionAdapter.add(new PlaybackControlsRow.RepeatAction(sContext));
-        mSecondaryActionAdapter.add(new PlaybackControlsRow.ShuffleAction(sContext));
-        mSecondaryActionAdapter.add(new PlaybackControlsRow.HighQualityAction(sContext));
-        mSecondaryActionAdapter.add(new PlaybackControlsRow.ClosedCaptioningAction(sContext));
+        mSecondaryActionsAdapter.add(mThumbsUpAction);
+        mSecondaryActionsAdapter.add(mThumbsDownAction);
+        mSecondaryActionsAdapter.add(mRepeatAction);
+        mSecondaryActionsAdapter.add(mShuffleAction);
+        mSecondaryActionsAdapter.add(mHighQualityAction);
+        mSecondaryActionsAdapter.add(mClosedCaptioningAction);
+        mSecondaryActionsAdapter.add(mMoreActions);
     }
 
     private void addOtherRows() {
