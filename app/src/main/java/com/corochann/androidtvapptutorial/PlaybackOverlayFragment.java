@@ -1,7 +1,6 @@
 package com.corochann.androidtvapptutorial;
 
 import android.app.Activity;
-import android.content.Context;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
 import android.os.Handler;
@@ -134,7 +133,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         ((PlaybackOverlayActivity) getActivity()).fastForward();
 
         /* UI part */
-        int currentTime = ((PlaybackOverlayActivity) getActivity()).getmPosition();
+        int currentTime = ((PlaybackOverlayActivity) getActivity()).getPosition();
         mPlaybackControlsRow.setCurrentTime(currentTime);
         mPlaybackControlsRow.setBufferedProgress(currentTime + SIMULATED_BUFFERED_TIME);
     }
@@ -144,14 +143,14 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         ((PlaybackOverlayActivity) getActivity()).rewind();
 
         /* UI part */
-        int currentTime = ((PlaybackOverlayActivity) getActivity()).getmPosition();
+        int currentTime = ((PlaybackOverlayActivity) getActivity()).getPosition();
         mPlaybackControlsRow.setCurrentTime(currentTime);
         mPlaybackControlsRow.setBufferedProgress(currentTime + SIMULATED_BUFFERED_TIME);
     }
 
     private void next(boolean autoPlay) {
         /* Video control part */
-        if (++mCurrentItem >= mItems.size()) {
+        if (++mCurrentItem >= mItems.size()) { // Current Item is set to next here
             mCurrentItem = 0;
         }
         //Bundle bundle = new Bundle();
@@ -165,7 +164,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         Movie movie = mItems.get(mCurrentItem);
         if (movie != null) {
             ((PlaybackOverlayActivity) getActivity()).setVideoPath(movie.getVideoUrl());
-            ((PlaybackOverlayActivity) getActivity()).setmPlaybackState(PlaybackOverlayActivity.LeanbackPlaybackState.PAUSED);
+            ((PlaybackOverlayActivity) getActivity()).setPlaybackState(PlaybackOverlayActivity.LeanbackPlaybackState.PAUSED);
             //updateMetadata(movie);
             ((PlaybackOverlayActivity) getActivity()).playPause(autoPlay); // extras.getBoolean(AUTO_PLAY));
         }
@@ -177,7 +176,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
     private void prev(boolean autoPlay) {
         /* Video control part */
-        if (--mCurrentItem < 0) {
+        if (--mCurrentItem < 0) { // Current Item is set to previous here
             mCurrentItem = mItems.size() - 1;
         }
         // Bundle bundle = new Bundle();
@@ -191,7 +190,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         Movie movie = mItems.get(mCurrentItem);
         if (movie != null) {
             ((PlaybackOverlayActivity) getActivity()).setVideoPath(movie.getVideoUrl());
-            ((PlaybackOverlayActivity) getActivity()).setmPlaybackState(PlaybackOverlayActivity.LeanbackPlaybackState.PAUSED);
+            ((PlaybackOverlayActivity) getActivity()).setPlaybackState(PlaybackOverlayActivity.LeanbackPlaybackState.PAUSED);
             //updateMetadata(movie);
             ((PlaybackOverlayActivity) getActivity()).playPause(autoPlay); // extras.getBoolean(AUTO_PLAY));
         }
@@ -235,7 +234,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         /*int currentTime = (int) state.getPosition();
         int currentTime = mPlaybackControlsRow.getCurrentTime();
         */
-        int currentTime = ((PlaybackOverlayActivity) getActivity()).getmPosition();
+        int currentTime = ((PlaybackOverlayActivity) getActivity()).getPosition();
         mPlaybackControlsRow.setCurrentTime(currentTime);
         mPlaybackControlsRow.setBufferedProgress(currentTime + SIMULATED_BUFFERED_TIME);
 

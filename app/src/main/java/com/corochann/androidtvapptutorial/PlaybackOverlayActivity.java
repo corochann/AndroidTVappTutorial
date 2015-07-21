@@ -16,15 +16,7 @@ public class PlaybackOverlayActivity extends Activity {
     public static final String AUTO_PLAY = "auto_play";
     private VideoView mVideoView;
 
-    public void setmPlaybackState(LeanbackPlaybackState mPlaybackState) {
-        this.mPlaybackState = mPlaybackState;
-    }
-
     private LeanbackPlaybackState mPlaybackState = LeanbackPlaybackState.IDLE;
-
-    public int getmPosition() {
-        return mPosition;
-    }
 
     private int mPosition = 0;
     private long mStartTimeMillis;
@@ -88,6 +80,14 @@ public class PlaybackOverlayActivity extends Activity {
         }
         mStartTimeMillis = System.currentTimeMillis();
         Log.d(TAG, "position set to " + mPosition);
+    }
+
+    public int getPosition() {
+        return mPosition;
+    }
+
+    public void setPlaybackState(LeanbackPlaybackState playbackState) {
+        this.mPlaybackState = playbackState;
     }
 
     @Override
