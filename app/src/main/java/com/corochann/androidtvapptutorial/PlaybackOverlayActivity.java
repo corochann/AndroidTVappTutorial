@@ -13,7 +13,7 @@ import android.widget.VideoView;
 public class PlaybackOverlayActivity extends Activity {
 
     private static final String TAG = PlaybackOverlayActivity.class.getSimpleName();
-    public static final String AUTO_PLAY = "auto_play";
+
     private VideoView mVideoView;
 
     private LeanbackPlaybackState mPlaybackState = LeanbackPlaybackState.IDLE;
@@ -43,7 +43,6 @@ public class PlaybackOverlayActivity extends Activity {
         stopPlayback();
         mVideoView.suspend();
         mVideoView.setVideoURI(null);
-        // mSession.release();
     }
 
     private void loadViews() {
@@ -53,7 +52,7 @@ public class PlaybackOverlayActivity extends Activity {
 
         Movie movie = (Movie) getIntent().getSerializableExtra(DetailsActivity.MOVIE);
         setVideoPath(movie.getVideoUrl());
-        // updateMetadata(movie);
+
     }
 
     private void stopPlayback() {
@@ -131,7 +130,7 @@ public class PlaybackOverlayActivity extends Activity {
             setPosition(mPosition + timeElapsedSinceStart);
             mVideoView.pause();
         }
-        //updatePlaybackState();
+
     }
 
     public void fastForward() {
@@ -139,7 +138,6 @@ public class PlaybackOverlayActivity extends Activity {
             // Fast forward 10 seconds.
             setPosition(mVideoView.getCurrentPosition() + (10 * 1000));
             mVideoView.seekTo(mPosition);
-            //updatePlaybackState();
         }
     }
 
@@ -147,7 +145,6 @@ public class PlaybackOverlayActivity extends Activity {
         // rewind 10 seconds
         setPosition(mVideoView.getCurrentPosition() - (10 * 1000));
         mVideoView.seekTo(mPosition);
-        //updatePlaybackState();
     }
 
     private void setupCallbacks() {

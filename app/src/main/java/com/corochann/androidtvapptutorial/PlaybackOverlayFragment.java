@@ -153,22 +153,17 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         if (++mCurrentItem >= mItems.size()) { // Current Item is set to next here
             mCurrentItem = 0;
         }
-        //Bundle bundle = new Bundle();
-        //bundle.putBoolean(PlaybackOverlayActivity.AUTO_PLAY, autoPlay);
+
         if (autoPlay) {
             mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
         }
-        //mMediaController.getTransportControls().playFromMediaId(mItems.get(mCurrentItem).getId(), bundle);
 
-        //Movie movie = VideoProvider.getMovieById(mediaId);
         Movie movie = mItems.get(mCurrentItem);
         if (movie != null) {
             ((PlaybackOverlayActivity) getActivity()).setVideoPath(movie.getVideoUrl());
             ((PlaybackOverlayActivity) getActivity()).setPlaybackState(PlaybackOverlayActivity.LeanbackPlaybackState.PAUSED);
-            //updateMetadata(movie);
             ((PlaybackOverlayActivity) getActivity()).playPause(autoPlay); // extras.getBoolean(AUTO_PLAY));
         }
-        //mFfwRwdSpeed = INITIAL_SPEED;
 
         /* UI part */
         playbackStateChanged();
@@ -179,19 +174,14 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         if (--mCurrentItem < 0) { // Current Item is set to previous here
             mCurrentItem = mItems.size() - 1;
         }
-        // Bundle bundle = new Bundle();
-        // bundle.putBoolean(PlaybackOverlayActivity.AUTO_PLAY, autoPlay);
         if (autoPlay) {
             mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
         }
-        //mMediaController.getTransportControls().playFromMediaId(mItems.get(mCurrentItem).getId(), bundle);
-        //mFfwRwdSpeed = INITIAL_SPEED;
 
         Movie movie = mItems.get(mCurrentItem);
         if (movie != null) {
             ((PlaybackOverlayActivity) getActivity()).setVideoPath(movie.getVideoUrl());
             ((PlaybackOverlayActivity) getActivity()).setPlaybackState(PlaybackOverlayActivity.LeanbackPlaybackState.PAUSED);
-            //updateMetadata(movie);
             ((PlaybackOverlayActivity) getActivity()).playPause(autoPlay); // extras.getBoolean(AUTO_PLAY));
         }
 
@@ -213,7 +203,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     }
 
     public void playbackStateChanged() {
-        //if (state.getState() == PlaybackState.STATE_PLAYING && mCurrentPlaybackState != PlaybackState.STATE_PLAYING) {
+
         if (mCurrentPlaybackState != PlaybackState.STATE_PLAYING) {
             mCurrentPlaybackState = PlaybackState.STATE_PLAYING;
             startProgressAutomation();
@@ -221,7 +211,6 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
             mPlayPauseAction.setIndex(PlaybackControlsRow.PlayPauseAction.PAUSE);
             mPlayPauseAction.setIcon(mPlayPauseAction.getDrawable(PlaybackControlsRow.PlayPauseAction.PAUSE));
             notifyChanged(mPlayPauseAction);
-            //} else if (state.getState() == PlaybackState.STATE_PAUSED && mCurrentPlaybackState != PlaybackState.STATE_PAUSED) {
         } else if (mCurrentPlaybackState != PlaybackState.STATE_PAUSED) {
             mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
             stopProgressAutomation();
@@ -231,9 +220,6 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
             notifyChanged(mPlayPauseAction);
         }
 
-        /*int currentTime = (int) state.getPosition();
-        int currentTime = mPlaybackControlsRow.getCurrentTime();
-        */
         int currentTime = ((PlaybackOverlayActivity) getActivity()).getPosition();
         mPlaybackControlsRow.setCurrentTime(currentTime);
         mPlaybackControlsRow.setBufferedProgress(currentTime + SIMULATED_BUFFERED_TIME);
