@@ -1,10 +1,14 @@
 package com.corochann.androidtvapptutorial;
 
 import android.app.Activity;
-import android.drm.DrmStore;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
@@ -17,6 +21,10 @@ import android.support.v17.leanback.widget.PlaybackControlsRow;
 import android.support.v17.leanback.widget.PlaybackControlsRowPresenter;
 import android.util.Log;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import java.net.URI;
 import java.util.ArrayList;
 
 /**
@@ -28,6 +36,11 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     private static final int SIMULATED_BUFFERED_TIME = 10000;
     private static final int DEFAULT_UPDATE_PERIOD = 1000;
     private static final int UPDATE_PERIOD = 16;
+    private static final int CARD_WIDTH = 200;
+    private static final int CARD_HEIGHT = 240;
+    private static final boolean SHOW_IMAGE = true;
+
+    private static Context sContext;
 
     private Movie mSelectedMovie;
     private PlaybackControlsRow mPlaybackControlsRow;
@@ -51,6 +64,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     private PlaybackControlsRow.ClosedCaptioningAction mClosedCaptioningAction;
     private PlaybackControlsRow.MoreActions mMoreActions;
     private int mCurrentItem;
+    private PicassoPlaybackControlsRowTarget mPlaybackControlsRowTarget;
 
 
     @Override
@@ -59,13 +73,14 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         super.onCreate(savedInstanceState);
 
         mSelectedMovie = (Movie) getActivity().getIntent().getSerializableExtra(DetailsActivity.MOVIE);
-
-        mHandler = new Handler();
+        sContext = getActivity();
+        mHandler = new Handler(Looper.getMainLooper());
 
         setBackgroundType(PlaybackOverlayFragment.BG_LIGHT);
         setFadingEnabled(true);
 
         mItems = MovieProvider.getMovieItems();
+        mCurrentItem = (int) mSelectedMovie.getId() - 1;
 
         setUpRows();
     }
@@ -76,7 +91,8 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         ClassPresenterSelector ps = new ClassPresenterSelector();
 
         PlaybackControlsRowPresenter playbackControlsRowPresenter;
-        playbackControlsRowPresenter = new PlaybackControlsRowPresenter(new DetailsDescriptionPresenter());
+        //playbackControlsRowPresenter = new PlaybackControlsRowPresenter(new DetailsDescriptionPresenter());
+        playbackControlsRowPresenter = new PlaybackControlsRowPresenter(new DescriptionPresenter());
 
         ps.addClassPresenter(PlaybackControlsRow.class, playbackControlsRowPresenter);
         ps.addClassPresenter(ListRow.class, new ListRowPresenter());
@@ -178,6 +194,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
         /* UI part */
         playbackStateChanged();
+        updatePlaybackRow(mCurrentItem);
     }
 
     private void prev(boolean autoPlay) {
@@ -198,6 +215,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
         /* UI part */
         playbackStateChanged();
+        updatePlaybackRow(mCurrentItem);
     }
 
     private void notifyChanged(Action action) {
@@ -265,7 +283,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
                     if (totalTime > 0 && totalTime <= currentTime) {
                         stopProgressAutomation();
-                        //next(true);
+                        next(true);
                     } else {
                         mHandler.postDelayed(this, updatePeriod);
                     }
@@ -321,6 +339,8 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         mSecondaryActionsAdapter.add(mHighQualityAction);
         mSecondaryActionsAdapter.add(mClosedCaptioningAction);
         mSecondaryActionsAdapter.add(mMoreActions);
+
+        updatePlaybackRow(mCurrentItem);
     }
 
     private void addOtherRows() {
@@ -333,5 +353,59 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         mRowsAdapter.add(new ListRow(header, listRowAdapter));
     }
 
+    private void updatePlaybackRow(int index) {
+        Log.d(TAG, "updatePlaybackRow");
+        if (mPlaybackControlsRow.getItem() != null) {
+            Movie item = (Movie) mPlaybackControlsRow.getItem();
+            item.setTitle(mItems.get(mCurrentItem).getTitle());
+            item.setStudio(mItems.get(mCurrentItem).getStudio());
+
+            mRowsAdapter.notifyArrayItemRangeChanged(0, 1);
+            /* total time is necessary to show video playing time progress bar */
+            int duration = (int) Utils.getDuration(mItems.get(mCurrentItem).getVideoUrl());
+            Log.i(TAG, "videoUrl: " + mItems.get(mCurrentItem).getVideoUrl());
+            Log.i(TAG, "duration = " + duration);
+            mPlaybackControlsRow.setTotalTime(duration);
+            mPlaybackControlsRow.setCurrentTime(0);
+            mPlaybackControlsRow.setBufferedProgress(0);
+        }
+        if (SHOW_IMAGE) {
+            mPlaybackControlsRowTarget = new PicassoPlaybackControlsRowTarget(mPlaybackControlsRow);
+            updateVideoImage(mItems.get(mCurrentItem).getCardImageURI());
+        }
+    }
+
+    /* For cardImage loading to playbackRow */
+    public static class PicassoPlaybackControlsRowTarget implements Target {
+        PlaybackControlsRow mPlaybackControlsRow;
+
+        public PicassoPlaybackControlsRowTarget(PlaybackControlsRow playbackControlsRow) {
+            mPlaybackControlsRow = playbackControlsRow;
+        }
+
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom loadedFrom) {
+            Drawable bitmapDrawable = new BitmapDrawable(sContext.getResources(), bitmap);
+            mPlaybackControlsRow.setImageDrawable(bitmapDrawable);
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable drawable) {
+            mPlaybackControlsRow.setImageDrawable(drawable);
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable drawable) {
+            // Do nothing, default_background manager has its own transitions
+        }
+    }
+
+    protected void updateVideoImage(URI uri) {
+        Picasso.with(sContext)
+                .load(uri.toString())
+                .resize(Utils.convertDpToPixel(sContext, CARD_WIDTH),
+                        Utils.convertDpToPixel(sContext, CARD_HEIGHT))
+                .into(mPlaybackControlsRowTarget);
+    }
 }
 
