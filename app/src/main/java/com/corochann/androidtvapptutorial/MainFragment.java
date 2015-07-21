@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.net.URI;
+import java.util.ArrayList;
 
 /**
  * Created by corochann on 2015/06/28.
@@ -120,6 +121,7 @@ public class MainFragment extends BrowseFragment {
         CardPresenter cardPresenter = new CardPresenter();
         ArrayObjectAdapter cardRowAdapter = new ArrayObjectAdapter(cardPresenter);
 
+/*
         for(int i=0; i<10; i++) {
             Movie movie = new Movie();
             if(i%3 == 0) {
@@ -150,6 +152,11 @@ public class MainFragment extends BrowseFragment {
                     "\n" +
                     "Solet laboramus no quo, cu aperiam inermis vix. Eum animal graecis id, ne quodsi abhorreant sit. Tale persequeris te qui. Labitur invenire explicari in vix.";
             movie.setDescription(description);
+            cardRowAdapter.add(movie);
+        }
+*/
+        ArrayList<Movie> mItems = MovieProvider.getMovieItems();
+        for (Movie movie : mItems) {
             cardRowAdapter.add(movie);
         }
 

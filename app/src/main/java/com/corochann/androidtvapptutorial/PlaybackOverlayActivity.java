@@ -21,22 +21,6 @@ public class PlaybackOverlayActivity extends Activity {
     private long mStartTimeMillis;
     private long mDuration = -1;
 
-    public void fastForward() {
-        if (mDuration != -1) {
-            // Fast forward 10 seconds.
-            setPosition(mVideoView.getCurrentPosition() + (10 * 1000));
-            mVideoView.seekTo(mPosition);
-            //updatePlaybackState();
-        }
-    }
-
-    public void rewind() {
-        // rewind 10 seconds
-        setPosition(mVideoView.getCurrentPosition() - (10 * 1000));
-        mVideoView.seekTo(mPosition);
-        // updatePlaybackState();
-    }
-
     /*
      * List of various states that we can be in
      */
@@ -58,7 +42,7 @@ public class PlaybackOverlayActivity extends Activity {
         mVideoView.setFocusableInTouchMode(false);
 
         Movie movie = (Movie) getIntent().getSerializableExtra(DetailsActivity.MOVIE);
-        setVideoPath("http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Zeitgeist/Zeitgeist%202010_%20Year%20in%20Review.mp4");
+        setVideoPath(movie.getVideoUrl());
         // updateMetadata(movie);
     }
 
@@ -124,6 +108,22 @@ public class PlaybackOverlayActivity extends Activity {
             mVideoView.pause();
         }
         //updatePlaybackState();
+    }
+
+    public void fastForward() {
+        if (mDuration != -1) {
+            // Fast forward 10 seconds.
+            setPosition(mVideoView.getCurrentPosition() + (10 * 1000));
+            mVideoView.seekTo(mPosition);
+            //updatePlaybackState();
+        }
+    }
+
+    public void rewind() {
+        // rewind 10 seconds
+        setPosition(mVideoView.getCurrentPosition() - (10 * 1000));
+        mVideoView.seekTo(mPosition);
+        // updatePlaybackState();
     }
 
     private void setupCallbacks() {
