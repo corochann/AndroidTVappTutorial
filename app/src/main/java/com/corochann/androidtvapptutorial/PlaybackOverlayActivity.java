@@ -21,6 +21,22 @@ public class PlaybackOverlayActivity extends Activity {
     private long mStartTimeMillis;
     private long mDuration = -1;
 
+    public void fastForward() {
+        if (mDuration != -1) {
+            // Fast forward 10 seconds.
+            setPosition(mVideoView.getCurrentPosition() + (10 * 1000));
+            mVideoView.seekTo(mPosition);
+            //updatePlaybackState();
+        }
+    }
+
+    public void rewind() {
+        // rewind 10 seconds
+        setPosition(mVideoView.getCurrentPosition() - (10 * 1000));
+        mVideoView.seekTo(mPosition);
+        // updatePlaybackState();
+    }
+
     /*
      * List of various states that we can be in
      */

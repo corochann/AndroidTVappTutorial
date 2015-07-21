@@ -66,32 +66,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         setBackgroundType(PlaybackOverlayFragment.BG_LIGHT);
         setFadingEnabled(true);
 
-        /* generate Movielist mItems */
-        Movie movie1 = new Movie();
-        movie1.setId(1);
-        movie1.setTitle("Title1");
-        movie1.setStudio("studio1");
-        movie1.setDescription("description1");
-        movie1.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02580.jpg");
-        movie1.setVideoUrl("http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Zeitgeist/Zeitgeist%202010_%20Year%20in%20Review.mp4");
-        mItems.add(movie1);
-
-        Movie movie2 = new Movie();
-        movie1.setId(2);
-        movie2.setTitle("Title2");
-        movie2.setStudio("studio2");
-        movie2.setDescription("description2");
-        movie2.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02630.jpg");
-        movie2.setVideoUrl("http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Demo%20Slam/Google%20Demo%20Slam_%2020ft%20Search.mp4");
-        mItems.add(movie2);
-
-        Movie movie3 = new Movie();
-        movie3.setId(3);
-        movie3.setStudio("studio3");
-        movie3.setDescription("description3");
-        movie3.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC026529.jpg");
-        movie3.setVideoUrl("http://commondatastorage.googleapis.com/android-tv/Sample%20videos/April%20Fool's%202013/Introducing%20Gmail%20Blue.mp4");
-        mItems.add(movie3);
+        mItems = MovieProvider.getMovieItems();
 
         setUpRows();
     }
@@ -127,13 +102,13 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                     next(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
                 } else if (action.getId() == mSkipPreviousAction.getId()) {
                     /* SkipPrevious action */
-
+                    prev(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
                 } else if (action.getId() == mFastForwardAction.getId()) {
                     /* FastForward action  */
-
+                    fastForward();
                 } else if (action.getId() == mRewindAction.getId()) {
                     /* Rewind action */
-
+                    rewind();
                 }
                 if (action instanceof PlaybackControlsRow.MultiAction) {
                     /* Following action is subclass of MultiAction
@@ -153,6 +128,14 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
         setAdapter(mRowsAdapter);
 
+    }
+
+    private void fastForward() {
+        ((PlaybackOverlayActivity) getActivity()).fastForward();
+    }
+
+    private void rewind() {
+        ((PlaybackOverlayActivity) getActivity()).rewind();
     }
 
     private void next(boolean autoPlay) {
@@ -175,6 +158,27 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
             ((PlaybackOverlayActivity) getActivity()).playPause(autoPlay); // extras.getBoolean(AUTO_PLAY));
         }
         //mFfwRwdSpeed = INITIAL_SPEED;
+    }
+
+    private void prev(boolean autoPlay) {
+        if (--mCurrentItem < 0) {
+            mCurrentItem = mItems.size() - 1;
+        }
+        // Bundle bundle = new Bundle();
+        // bundle.putBoolean(PlaybackOverlayActivity.AUTO_PLAY, autoPlay);
+        if (autoPlay) {
+            mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
+        }
+        //mMediaController.getTransportControls().playFromMediaId(mItems.get(mCurrentItem).getId(), bundle);
+        //mFfwRwdSpeed = INITIAL_SPEED;
+
+        Movie movie = mItems.get(mCurrentItem);
+        if (movie != null) {
+            ((PlaybackOverlayActivity) getActivity()).setVideoPath(movie.getVideoUrl());
+            mPlaybackState = PlaybackOverlayActivity.LeanbackPlaybackState.PAUSED;
+            //updateMetadata(movie);
+            ((PlaybackOverlayActivity) getActivity()).playPause(autoPlay); // extras.getBoolean(AUTO_PLAY));
+        }
     }
 
     private void notifyChanged(Action action) {
