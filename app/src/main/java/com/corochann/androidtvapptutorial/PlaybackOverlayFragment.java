@@ -2,6 +2,7 @@ package com.corochann.androidtvapptutorial;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -14,11 +15,18 @@ import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
 import android.support.v17.leanback.widget.ControlButtonPresenterSelector;
 import android.support.v17.leanback.widget.HeaderItem;
+import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnActionClickedListener;
+import android.support.v17.leanback.widget.OnItemViewClickedListener;
+import android.support.v17.leanback.widget.OnItemViewSelectedListener;
 import android.support.v17.leanback.widget.PlaybackControlsRow;
 import android.support.v17.leanback.widget.PlaybackControlsRowPresenter;
+import android.support.v17.leanback.widget.Presenter;
+import android.support.v17.leanback.widget.Row;
+import android.support.v17.leanback.widget.RowPresenter;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.util.Log;
 
 import com.squareup.picasso.Picasso;
@@ -83,6 +91,15 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         mCurrentItem = (int) mSelectedMovie.getId() - 1;
 
         setUpRows();
+
+        setOnItemViewSelectedListener(new OnItemViewSelectedListener() {
+            @Override
+            public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item,
+                                       RowPresenter.ViewHolder rowViewHolder, Row row) {
+                Log.v(TAG, "onItemSelected: " + item + " row " + row);
+            }
+        });
+        setOnItemViewClickedListener(new ItemViewClickedListener());
     }
 
     private ArrayObjectAdapter mRowsAdapter;
@@ -406,6 +423,27 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                 .resize(Utils.convertDpToPixel(sContext, CARD_WIDTH),
                         Utils.convertDpToPixel(sContext, CARD_HEIGHT))
                 .into(mPlaybackControlsRowTarget);
+    }
+
+
+    private final class ItemViewClickedListener implements OnItemViewClickedListener {
+        @Override
+        public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
+                                  RowPresenter.ViewHolder rowViewHolder, Row row) {
+
+            if (item instanceof Movie) {
+                Movie movie = (Movie) item;
+                Log.d(TAG, "Item: " + item.toString());
+                Intent intent = new Intent(getActivity(), PlaybackOverlayActivity.class);
+                intent.putExtra(DetailsActivity.MOVIE, movie);
+
+                Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        getActivity(),
+                        ((ImageCardView) itemViewHolder.view).getMainImageView(),
+                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
+                getActivity().startActivity(intent, bundle);
+            }
+        }
     }
 }
 
