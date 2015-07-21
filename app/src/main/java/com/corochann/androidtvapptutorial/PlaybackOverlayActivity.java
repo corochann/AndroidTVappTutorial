@@ -55,17 +55,17 @@ public class PlaybackOverlayActivity extends Activity {
 
     }
 
-    private void stopPlayback() {
-        if (mVideoView != null) {
-            mVideoView.stopPlayback();
-        }
-    }
-
     public void setVideoPath(String videoUrl) {
         setPosition(0);
         mVideoView.setVideoPath(videoUrl);
         mStartTimeMillis = 0;
         mDuration = Utils.getDuration(videoUrl);
+    }
+
+    private void stopPlayback() {
+        if (mVideoView != null) {
+            mVideoView.stopPlayback();
+        }
     }
 
     private void setPosition(int position) {
@@ -130,7 +130,6 @@ public class PlaybackOverlayActivity extends Activity {
             setPosition(mPosition + timeElapsedSinceStart);
             mVideoView.pause();
         }
-
     }
 
     public void fastForward() {
@@ -174,6 +173,5 @@ public class PlaybackOverlayActivity extends Activity {
                 mPlaybackState = LeanbackPlaybackState.IDLE;
             }
         });
-
     }
 }

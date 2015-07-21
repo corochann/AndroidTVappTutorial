@@ -1,6 +1,7 @@
 package com.corochann.androidtvapptutorial;
 
 import android.app.Activity;
+import android.drm.DrmStore;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
 import android.os.Handler;
@@ -120,6 +121,16 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                      * - ClosedCaptioningAction
                      */
                     notifyChanged(action);
+
+                    /* Change icon */
+                    if (action instanceof PlaybackControlsRow.ThumbsUpAction ||
+                            action instanceof PlaybackControlsRow.ThumbsDownAction ||
+                            action instanceof PlaybackControlsRow.RepeatAction ||
+                            action instanceof PlaybackControlsRow.ShuffleAction ||
+                            action instanceof PlaybackControlsRow.HighQualityAction ||
+                            action instanceof PlaybackControlsRow.ClosedCaptioningAction) {
+                        ((PlaybackControlsRow.MultiAction) action).nextIndex();
+                    }
                 }
             }
         });
@@ -162,7 +173,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         if (movie != null) {
             ((PlaybackOverlayActivity) getActivity()).setVideoPath(movie.getVideoUrl());
             ((PlaybackOverlayActivity) getActivity()).setPlaybackState(PlaybackOverlayActivity.LeanbackPlaybackState.PAUSED);
-            ((PlaybackOverlayActivity) getActivity()).playPause(autoPlay); // extras.getBoolean(AUTO_PLAY));
+            ((PlaybackOverlayActivity) getActivity()).playPause(autoPlay);
         }
 
         /* UI part */
@@ -182,7 +193,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         if (movie != null) {
             ((PlaybackOverlayActivity) getActivity()).setVideoPath(movie.getVideoUrl());
             ((PlaybackOverlayActivity) getActivity()).setPlaybackState(PlaybackOverlayActivity.LeanbackPlaybackState.PAUSED);
-            ((PlaybackOverlayActivity) getActivity()).playPause(autoPlay); // extras.getBoolean(AUTO_PLAY));
+            ((PlaybackOverlayActivity) getActivity()).playPause(autoPlay);
         }
 
         /* UI part */
