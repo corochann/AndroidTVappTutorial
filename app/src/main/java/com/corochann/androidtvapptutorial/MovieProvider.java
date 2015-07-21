@@ -24,6 +24,7 @@ public class MovieProvider {
             movie1.setDescription("description1");
             movie1.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02580.jpg");
             //movie1.setVideoUrl("http://corochann.com/wp-content/uploads/2015/07/MVI_0949.mp4");
+            /* Google sample app's movie */
             movie1.setVideoUrl("http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Zeitgeist/Zeitgeist%202010_%20Year%20in%20Review.mp4");
             mItems.add(movie1);
 
@@ -34,6 +35,7 @@ public class MovieProvider {
             movie2.setDescription("description2");
             movie2.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02630.jpg");
             //movie2.setVideoUrl("http://corochann.com/wp-content/uploads/2015/07/MVI_0962.mp4");
+            /* Google sample app's movie */
             movie2.setVideoUrl("http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Demo%20Slam/Google%20Demo%20Slam_%2020ft%20Search.mp4");
             mItems.add(movie2);
 

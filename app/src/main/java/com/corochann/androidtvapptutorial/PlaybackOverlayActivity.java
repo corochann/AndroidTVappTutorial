@@ -15,7 +15,16 @@ public class PlaybackOverlayActivity extends Activity {
     private static final String TAG = PlaybackOverlayActivity.class.getSimpleName();
     public static final String AUTO_PLAY = "auto_play";
     private VideoView mVideoView;
+
+    public void setmPlaybackState(LeanbackPlaybackState mPlaybackState) {
+        this.mPlaybackState = mPlaybackState;
+    }
+
     private LeanbackPlaybackState mPlaybackState = LeanbackPlaybackState.IDLE;
+
+    public int getmPosition() {
+        return mPosition;
+    }
 
     private int mPosition = 0;
     private long mStartTimeMillis;
@@ -36,6 +45,15 @@ public class PlaybackOverlayActivity extends Activity {
         loadViews();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopPlayback();
+        mVideoView.suspend();
+        mVideoView.setVideoURI(null);
+        // mSession.release();
+    }
+
     private void loadViews() {
         mVideoView = (VideoView) findViewById(R.id.videoView);
         mVideoView.setFocusable(false);
@@ -44,6 +62,12 @@ public class PlaybackOverlayActivity extends Activity {
         Movie movie = (Movie) getIntent().getSerializableExtra(DetailsActivity.MOVIE);
         setVideoPath(movie.getVideoUrl());
         // updateMetadata(movie);
+    }
+
+    private void stopPlayback() {
+        if (mVideoView != null) {
+            mVideoView.stopPlayback();
+        }
     }
 
     public void setVideoPath(String videoUrl) {
@@ -123,7 +147,7 @@ public class PlaybackOverlayActivity extends Activity {
         // rewind 10 seconds
         setPosition(mVideoView.getCurrentPosition() - (10 * 1000));
         mVideoView.seekTo(mPosition);
-        // updatePlaybackState();
+        //updatePlaybackState();
     }
 
     private void setupCallbacks() {
