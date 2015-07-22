@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaMetadata;
+import android.media.session.MediaController;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
 import android.os.Handler;
@@ -58,6 +60,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     private Handler mHandler;
     private Runnable mRunnable;
     private ArrayList<Movie> mItems = new ArrayList<Movie>();
+    private ArrayObjectAdapter mRowsAdapter;
 
     private PlaybackControlsRow.PlayPauseAction mPlayPauseAction;
     private PlaybackControlsRow.RepeatAction mRepeatAction;
@@ -74,6 +77,9 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     private int mCurrentItem;
     private PicassoPlaybackControlsRowTarget mPlaybackControlsRowTarget;
 
+    private MediaController mMediaController;
+    private MediaController.Callback mMediaControllerCallback = new MediaControllerCallback();
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,7 +88,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
         mSelectedMovie = (Movie) getActivity().getIntent().getSerializableExtra(DetailsActivity.MOVIE);
         sContext = getActivity();
-        mHandler = new Handler(Looper.getMainLooper());
+        mHandler = new Handler();
 
         setBackgroundType(PlaybackOverlayFragment.BG_LIGHT);
         setFadingEnabled(true);
@@ -102,7 +108,42 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         setOnItemViewClickedListener(new ItemViewClickedListener());
     }
 
-    private ArrayObjectAdapter mRowsAdapter;
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mMediaController = getActivity().getMediaController();
+        Log.d(TAG, "register callback of mediaController");
+        if(mMediaController == null){
+            Log.e(TAG, "mMediaController is null");
+        }
+        mMediaController.registerCallback(mMediaControllerCallback);
+    }
+
+    @Override
+    public void onDetach() {
+        if (mMediaController != null) {
+            Log.d(TAG, "unregister callback of mediaController");
+            mMediaController.unregisterCallback(mMediaControllerCallback);
+        }
+        super.onDetach();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        stopProgressAutomation();
+        mRowsAdapter = null;
+        super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 
     private void setUpRows() {
         ClassPresenterSelector ps = new ClassPresenterSelector();
@@ -194,20 +235,8 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
     private void next(boolean autoPlay) {
         /* Video control part */
-        if (++mCurrentItem >= mItems.size()) { // Current Item is set to next here
-            mCurrentItem = 0;
-        }
-
-        if (autoPlay) {
-            mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
-        }
-
-        Movie movie = mItems.get(mCurrentItem);
-        if (movie != null) {
-            ((PlaybackOverlayActivity) getActivity()).setVideoPath(movie.getVideoUrl());
-            ((PlaybackOverlayActivity) getActivity()).setPlaybackState(PlaybackOverlayActivity.LeanbackPlaybackState.PAUSED);
-            ((PlaybackOverlayActivity) getActivity()).playPause(autoPlay);
-        }
+        //mMediaController.getTransportControls().playFromMediaId(Long.toString(mItems.get(mCurrentItem).getId()), bundle);
+        mMediaController.getTransportControls().skipToNext();
 
         /* UI part */
         playbackStateChanged();
@@ -274,14 +303,18 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
     private void togglePlayback(boolean playPause) {
         /* Video control part */
-        ((PlaybackOverlayActivity) getActivity()).playPause(playPause);
+        if (playPause) {
+            mMediaController.getTransportControls().play();
+        } else {
+            mMediaController.getTransportControls().pause();
+        }
 
         /* UI control part */
         playbackStateChanged();
     }
 
     private int getUpdatePeriod() {
-        if (getView() == null || mPlaybackControlsRow.getTotalTime() <= 0) {
+        if (getView() == null || mPlaybackControlsRow.getTotalTime() <= 0 || getView().getWidth() == 0) {
             return DEFAULT_UPDATE_PERIOD;
         }
         return Math.max(UPDATE_PERIOD, mPlaybackControlsRow.getTotalTime() / getView().getWidth());
@@ -443,6 +476,45 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                         DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
                 getActivity().startActivity(intent, bundle);
             }
+        }
+    }
+
+    private class MediaControllerCallback extends MediaController.Callback {
+        @Override
+        public void onPlaybackStateChanged(PlaybackState state) {
+            Log.d(TAG, "playback state changed: " + state.getState());
+            if (state.getState() == PlaybackState.STATE_PLAYING && mCurrentPlaybackState != PlaybackState.STATE_PLAYING) {
+                mCurrentPlaybackState = PlaybackState.STATE_PLAYING;
+                startProgressAutomation();
+                setFadingEnabled(true);
+                mPlayPauseAction.setIndex(PlaybackControlsRow.PlayPauseAction.PAUSE);
+                mPlayPauseAction.setIcon(mPlayPauseAction.getDrawable(PlaybackControlsRow.PlayPauseAction.PAUSE));
+                notifyChanged(mPlayPauseAction);
+            } else if (state.getState() == PlaybackState.STATE_PAUSED && mCurrentPlaybackState != PlaybackState.STATE_PAUSED) {
+                mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
+                stopProgressAutomation();
+                setFadingEnabled(false);
+                mPlayPauseAction.setIndex(PlaybackControlsRow.PlayPauseAction.PLAY);
+                mPlayPauseAction.setIcon(mPlayPauseAction.getDrawable(PlaybackControlsRow.PlayPauseAction.PLAY));
+                notifyChanged(mPlayPauseAction);
+            }
+
+            int currentTime = (int) state.getPosition();
+            mPlaybackControlsRow.setCurrentTime(currentTime);
+            mPlaybackControlsRow.setBufferedProgress(currentTime + SIMULATED_BUFFERED_TIME);
+        }
+
+        @Override
+        public void onMetadataChanged(MediaMetadata metadata) {
+            Log.d(TAG, "received update of media metadata");
+/*
+            updateMovieView(
+                    metadata.getString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE),
+                    metadata.getString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE),
+                    metadata.getString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI),
+                    metadata.getLong(MediaMetadata.METADATA_KEY_DURATION)
+            );
+*/
         }
     }
 }
