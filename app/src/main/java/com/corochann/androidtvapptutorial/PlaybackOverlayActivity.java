@@ -319,20 +319,12 @@ public class PlaybackOverlayActivity extends Activity {
 
         @Override
         public void onFastForward() {
-            if (mDuration != -1) {
-                // Fast forward 10 seconds.
-                setPosition(mVideoView.getCurrentPosition() + (10 * 1000));
-                mVideoView.seekTo(mPosition);
-                updatePlaybackState();
-            }
+            fastForward();
         }
 
         @Override
         public void onRewind() {
-            // rewind 10 seconds
-            setPosition(mVideoView.getCurrentPosition() - (10 * 1000));
-            mVideoView.seekTo(mPosition);
-            updatePlaybackState();
+            rewind();
         }
     }
 }
