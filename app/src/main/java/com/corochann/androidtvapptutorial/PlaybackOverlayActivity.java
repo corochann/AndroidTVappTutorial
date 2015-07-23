@@ -60,7 +60,7 @@ public class PlaybackOverlayActivity extends Activity {
 
     private void createMediaSession() {
         if (mSession == null) {
-            mSession = new MediaSession(this, "AndroidTVLeanbackSampleApp");
+            mSession = new MediaSession(this, "AndroidTVappTutorialSession");
             mSession.setCallback(new MediaSessionCallback());
             mSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS |
                     MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
@@ -149,14 +149,14 @@ public class PlaybackOverlayActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-        if (mVideoView.isPlaying()) {
+        //if (mVideoView.isPlaying()) {
             if (!requestVisibleBehind(true)) {
                 // Try to play behind launcher, but if it fails, stop playback.
                 playPause(false);
             }
-        } else {
-            requestVisibleBehind(false);
-        }
+        //} else {
+//            requestVisibleBehind(false);
+        //}
     }
 
     public void playPause(boolean doPlay) {
@@ -209,13 +209,19 @@ public class PlaybackOverlayActivity extends Activity {
 
     private long getAvailableActions() {
         long actions = PlaybackState.ACTION_PLAY |
+                PlaybackState.ACTION_PAUSE |
+                PlaybackState.ACTION_PLAY_PAUSE |
+                PlaybackState.ACTION_REWIND |
+                PlaybackState.ACTION_FAST_FORWARD |
+                PlaybackState.ACTION_SKIP_TO_PREVIOUS |
+                PlaybackState.ACTION_SKIP_TO_NEXT |
                 PlaybackState.ACTION_PLAY_FROM_MEDIA_ID |
                 PlaybackState.ACTION_PLAY_FROM_SEARCH;
 
-        if (mPlaybackState == LeanbackPlaybackState.PLAYING) {
+        /*if (mPlaybackState == LeanbackPlaybackState.PLAYING) {
             actions |= PlaybackState.ACTION_PAUSE;
         }
-
+*/
         return actions;
     }
 
@@ -263,6 +269,22 @@ public class PlaybackOverlayActivity extends Activity {
         @Override
         public void onSkipToNext() {
             if (++mCurrentItem >= mItems.size()) { // Current Item is set to next here
+                mCurrentItem = 0;
+            }
+
+            Movie movie = mItems.get(mCurrentItem);
+            //Movie movie = VideoProvider.getMovieById(mediaId);
+            if (movie != null) {
+                setVideoPath(movie.getVideoUrl());
+                mPlaybackState = LeanbackPlaybackState.PAUSED;
+                //updateMetadata(movie);
+                playPause(mPlaybackState == LeanbackPlaybackState.PLAYING);
+            }
+        }
+
+        @Override
+        public void onSkipToPrevious() {
+            if (--mCurrentItem >= mItems.size()) { // Current Item is set to previous here
                 mCurrentItem = 0;
             }
 
