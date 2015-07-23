@@ -215,7 +215,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
     private void fastForward() {
         /* Video control part */
-        ((PlaybackOverlayActivity) getActivity()).fastForward();
+        mMediaController.getTransportControls().fastForward();
 
         /* UI part */
         int currentTime = ((PlaybackOverlayActivity) getActivity()).getPosition();
@@ -225,7 +225,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
     private void rewind() {
         /* Video control part */
-        ((PlaybackOverlayActivity) getActivity()).rewind();
+        mMediaController.getTransportControls().rewind();
 
         /* UI part */
         int currentTime = ((PlaybackOverlayActivity) getActivity()).getPosition();
@@ -245,19 +245,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
     private void prev(boolean autoPlay) {
         /* Video control part */
-        if (--mCurrentItem < 0) { // Current Item is set to previous here
-            mCurrentItem = mItems.size() - 1;
-        }
-        if (autoPlay) {
-            mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
-        }
-
-        Movie movie = mItems.get(mCurrentItem);
-        if (movie != null) {
-            ((PlaybackOverlayActivity) getActivity()).setVideoPath(movie.getVideoUrl());
-            ((PlaybackOverlayActivity) getActivity()).setPlaybackState(PlaybackOverlayActivity.LeanbackPlaybackState.PAUSED);
-            ((PlaybackOverlayActivity) getActivity()).playPause(autoPlay);
-        }
+        mMediaController.getTransportControls().skipToPrevious();
 
         /* UI part */
         playbackStateChanged();
