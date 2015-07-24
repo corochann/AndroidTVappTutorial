@@ -1,4 +1,5 @@
 <resources>
+    <!-- Copied from AOSP sample source code -->
     <style name="Theme.Example.Leanback" parent="Theme.Leanback">
         <item name="android:colorPrimary">@color/search_opaque</item>
         <item name="android:windowEnterTransition">@android:transition/fade</item>
