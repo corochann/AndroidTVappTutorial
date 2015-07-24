@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2014 The Android Open Source Project
+     Copyright (C) 2015 corochann
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -22,7 +22,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="?attr/guidanceContainerStyle" >
+        style="?attr/guidanceContainerStyle"
+        android:id="@+id/relative_layout">
 
         <ImageView
             android:id="@+id/guidance_icon"
@@ -32,15 +33,28 @@
 
         <TextView
             android:id="@+id/guidance_title"
-            style="?attr/guidanceTitleStyle" />
+            android:textColor="@color/guidance_title"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            style="?attr/guidanceTitleStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/guidance_breadcrumb"
-            style="?attr/guidanceBreadcrumbStyle" />
+            android:textColor="@color/guidance_breadcrumb"
+            android:textAlignment="center"
+            android:gravity="center"
+            style="?attr/guidanceBreadcrumbStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/guidance_description"
-            style="?attr/guidanceDescriptionStyle" />
+            android:textColor="@color/guidance_description"
+            style="?attr/guidanceDescriptionStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </RelativeLayout>
 

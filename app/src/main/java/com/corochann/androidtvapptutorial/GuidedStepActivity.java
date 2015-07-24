@@ -24,8 +24,11 @@ public class GuidedStepActivity extends Activity {
     /* Action ID definition */
     private static final int ACTION_CONTINUE = 0;
     private static final int ACTION_BACK = 1;
+
+    /* Action set ID */
     private static final int OPTION_CHECK_SET_ID = 10;
 
+    /* Options of SecondStepFragment */
     private static final String[] OPTION_NAMES = {"Option A", "Option B", "Option C"};
     private static final String[] OPTION_DESCRIPTIONS = {"Here's one thing you can do",
             "Here's another thing you can do", "Here's one more thing you can do"};
