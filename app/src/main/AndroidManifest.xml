@@ -42,6 +42,9 @@
             android:name=".PlaybackOverlayActivity"
             android:label="@string/title_activity_playback_overlay" >
         </activity>
+
+        <activity android:name="GuidedStepActivity"/>
+        <!-- android:theme="@style/Theme.Example.Leanback.GuidedStep" -->
     </application>
 
 </manifest>
