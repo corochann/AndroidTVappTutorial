@@ -60,9 +60,10 @@ public class GuidedStepActivity extends Activity {
 
         @Override
         public void onGuidedActionClicked(GuidedAction action) {
-            FragmentManager fm = getFragmentManager();
+
             switch ((int) action.getId()){
                 case ACTION_CONTINUE:
+                    // FragmentManager fm = getFragmentManager();
                     // GuidedStepFragment.add(fm, new SecondStepFragment());
                     break;
                 case ACTION_BACK:
@@ -71,13 +72,6 @@ public class GuidedStepActivity extends Activity {
                 default:
                     Log.w(TAG, "Action is not defined");
                     break;
-            }
-            if (action.getId() == ACTION_CONTINUE) {
-
-            } else if (action.getId() == ACTION_BACK) {
-                getActivity().finish();
-            } else {
-                Log.w(TAG, "Action is not defined");
             }
         }
     }
