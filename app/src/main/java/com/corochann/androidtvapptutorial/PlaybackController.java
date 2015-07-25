@@ -130,27 +130,11 @@ public class PlaybackController {
         mUiHandler = handler;
     }
 
-/*
-    public PlaybackController getInstance(Activity activity) {
-        if (mPlaybackController == null) {
-            mPlaybackController = new PlaybackController();
-        }
-        return mPlaybackController;
-    }
-*/
-
-
     public void setVideoPath(String videoUrl) {
         setPosition(0);
         mVideoView.setVideoPath(videoUrl);
         mStartTimeMillis = 0;
         mDuration = Utils.getDuration(videoUrl);
-    }
-
-    private void stopPlayback() {
-        if (mVideoView != null) {
-            mVideoView.stopPlayback();
-        }
     }
 
     public void setPosition(int position) {
@@ -319,9 +303,6 @@ public class PlaybackController {
             Message msg = Message.obtain();
             msg.what = MSG_PAUSE;
             mUiHandler.sendMessage(msg);
-            //if (PlaybackOverlayFragment.isActive()) {
-            //    PlaybackOverlayFragment.playbackOverlayFragmentInstance.playbackStateChanged();
-            //}
         }
 
         @Override

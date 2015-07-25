@@ -22,30 +22,15 @@ public class PlaybackOverlayActivity extends Activity {
 
     private VideoView mVideoView;
     private ArrayList<Movie> mItems = new ArrayList<Movie>();
-
-    //private LeanbackPlaybackState mPlaybackState = LeanbackPlaybackState.IDLE;
-    private int mPosition = 0;
-    private long mStartTimeMillis;
-    private long mDuration = -1;
-
-    private int mCurrentItem;
+    private PlaybackController mPlaybackController;
 
     private Movie mSelectedMovie;
+    private int mCurrentItem;
 
     public PlaybackController getmPlaybackController() {
         return mPlaybackController;
     }
 
-    private PlaybackController mPlaybackController;
-
-    /*
-     * List of various states that we can be in
-     */
-/*
-    public enum LeanbackPlaybackState {
-        PLAYING, PAUSED, IDLE
-    }
-*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +53,9 @@ public class PlaybackOverlayActivity extends Activity {
         mPlaybackController.setVideoView(mVideoView);
         mPlaybackController.setMovie(mSelectedMovie); // it must after video view setting
 
-
         loadViews();
 
-
     }
-
 
     @Override
     public void onDestroy() {
@@ -92,41 +74,11 @@ public class PlaybackOverlayActivity extends Activity {
         mPlaybackController.setVideoPath(mSelectedMovie.getVideoUrl());
     }
 
-/*
-    public void setVideoPath(String videoUrl) {
-        mPlaybackController.setPosition(0);
-        mVideoView.setVideoPath(videoUrl);
-        mStartTimeMillis = 0;
-        mDuration = Utils.getDuration(videoUrl);
-    }
-*/
-
     private void stopPlayback() {
         if (mVideoView != null) {
             mVideoView.stopPlayback();
         }
     }
-
-/*    private void setPosition(int position) {
-        if (position > mDuration) {
-            mPosition = (int) mDuration;
-        } else if (position < 0) {
-            mPosition = 0;
-            mStartTimeMillis = System.currentTimeMillis();
-        } else {
-            mPosition = position;
-        }
-        mStartTimeMillis = System.currentTimeMillis();
-        Log.d(TAG, "position set to " + mPosition);
-    }
-
-    public int getPosition() {
-        return mPosition;
-    }*/
-
-/*    public void setPlaybackState(LeanbackPlaybackState playbackState) {
-        this.mPlaybackState = playbackState;
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -162,75 +114,6 @@ public class PlaybackOverlayActivity extends Activity {
             requestVisibleBehind(false);
         }
     }
-
-/*
-    public void playPause(boolean doPlay) {
-        if (mPlaybackState == LeanbackPlaybackState.IDLE) {
-            /*/
-/* Callbacks for mVideoView *//*
-
-            setupCallbacks();
-        }
-
-        if (doPlay && mPlaybackState != LeanbackPlaybackState.PLAYING) {
-            mPlaybackState = LeanbackPlaybackState.PLAYING;
-            if (mPosition > 0) {
-                mVideoView.seekTo(mPosition);
-            }
-            mVideoView.start();
-            mStartTimeMillis = System.currentTimeMillis();
-        } else {
-            mPlaybackState = LeanbackPlaybackState.PAUSED;
-            int timeElapsedSinceStart = (int) (System.currentTimeMillis() - mStartTimeMillis);
-            setPosition(mPosition + timeElapsedSinceStart);
-            mVideoView.pause();
-        }
-
-        updatePlaybackState();*//*
-
-    }
-
-/*
-    public void fastForward() {
-        if (mDuration != -1) {
-            // Fast forward 10 seconds.
-            setPosition(mVideoView.getCurrentPosition() + (10 * 1000));
-            mVideoView.seekTo(mPosition);
-        }
-    }
-
-    public void rewind() {
-        // rewind 10 seconds
-        setPosition(mVideoView.getCurrentPosition() - (10 * 1000));
-        mVideoView.seekTo(mPosition);
-    }
-
-    private void updatePlaybackState() {
-        PlaybackState.Builder stateBuilder = new PlaybackState.Builder()
-                .setActions(getAvailableActions());
-        int state = PlaybackState.STATE_PLAYING;
-        if (mPlaybackState == LeanbackPlaybackState.PAUSED || mPlaybackState == LeanbackPlaybackState.IDLE) {
-            state = PlaybackState.STATE_PAUSED;
-        }
-        stateBuilder.setState(state, mPosition, 1.0f);
-        // mSession.setPlaybackState(stateBuilder.build());
-    }
-*/
-
-/*
-    private long getAvailableActions() {
-        long actions = PlaybackState.ACTION_PLAY |
-                PlaybackState.ACTION_PAUSE |
-                PlaybackState.ACTION_PLAY_PAUSE |
-                PlaybackState.ACTION_REWIND |
-                PlaybackState.ACTION_FAST_FORWARD |
-                PlaybackState.ACTION_SKIP_TO_PREVIOUS |
-                PlaybackState.ACTION_SKIP_TO_NEXT |
-                PlaybackState.ACTION_PLAY_FROM_MEDIA_ID |
-                PlaybackState.ACTION_PLAY_FROM_SEARCH;
-        return actions;
-    }
-*/
 
 }
 
