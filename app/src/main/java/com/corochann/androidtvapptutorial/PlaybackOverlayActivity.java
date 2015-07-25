@@ -38,8 +38,6 @@ public class PlaybackOverlayActivity extends Activity {
 
     private PlaybackController mPlaybackController;
 
-    private Handler mHandler;
-
     /*
      * List of various states that we can be in
      */
@@ -58,32 +56,32 @@ public class PlaybackOverlayActivity extends Activity {
          * BEFORE inflating Fragment!
          */
         mPlaybackController = new PlaybackController(this);
+
+        mItems = MovieProvider.getMovieItems();
+        mSelectedMovie = (Movie) getIntent().getSerializableExtra(DetailsActivity.MOVIE);
+        //mSelectedMovie = (Movie) getIntent().getExtras().getSerializable(DetailsActivity.MOVIE);
+        mCurrentItem = (int) mSelectedMovie.getId() - 1;
+        mPlaybackController.setCurrentItem(mCurrentItem);
+
         setContentView(R.layout.activity_playback_overlay);
         mVideoView = (VideoView) findViewById(R.id.videoView);
         mPlaybackController.setVideoView(mVideoView);
+        mPlaybackController.setMovie(mSelectedMovie); // it must after video view setting
 
 
-        // mHandler = new Handler();
+        loadViews();
 
-        // mItems = MovieProvider.getMovieItems();
-        mSelectedMovie = (Movie) getIntent().getSerializableExtra(DetailsActivity.MOVIE);
-        mCurrentItem = (int) mSelectedMovie.getId() - 1;
 
-        mPlaybackController.setMovie(mSelectedMovie);
-        mPlaybackController.setCurrentItem(mCurrentItem);
-        mPlaybackController.playPause(true);
-        // loadViews();
-        // playPause(true);
     }
 
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-       stopPlayback();
+        stopPlayback();
         mVideoView.suspend();
         mVideoView.setVideoURI(null);
-        // mSession.release();
+        mPlaybackController.releaseMediaSession();
     }
 
     private void loadViews() {
@@ -91,15 +89,17 @@ public class PlaybackOverlayActivity extends Activity {
         mVideoView.setFocusable(false);
         mVideoView.setFocusableInTouchMode(false);
 
-        setVideoPath(mSelectedMovie.getVideoUrl());
+        mPlaybackController.setVideoPath(mSelectedMovie.getVideoUrl());
     }
 
+/*
     public void setVideoPath(String videoUrl) {
         mPlaybackController.setPosition(0);
         mVideoView.setVideoPath(videoUrl);
         mStartTimeMillis = 0;
         mDuration = Utils.getDuration(videoUrl);
     }
+*/
 
     private void stopPlayback() {
         if (mVideoView != null) {

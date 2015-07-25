@@ -13,7 +13,7 @@ public class MovieProvider {
     
     private MovieProvider() {}
 
-    public static ArrayList<Movie> getMovieItems() {
+    public static synchronized ArrayList<Movie> getMovieItems() {
         if(mItems == null) {
             mItems = new ArrayList<Movie>();
 
