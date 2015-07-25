@@ -1,11 +1,15 @@
 package com.corochann.androidtvapptutorial;
 
 import android.app.Activity;
+import android.drm.DrmStore;
 import android.media.MediaPlayer;
 import android.media.session.MediaController;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v17.leanback.widget.PlaybackControlsRow;
 import android.util.Log;
 import android.widget.VideoView;
 
@@ -25,13 +29,28 @@ public class PlaybackController {
     /* Constants */
     private static final String TAG = PlaybackController.class.getSimpleName();
     private static final String MEDIA_SESSION_TAG = "AndroidTVappTutorialSession";
+
+    public static final int MSG_PLAY = 1;
+    public static final int MSG_PAUSE = 2;
+    public static final int MSG_PLAYPAUSE = 3;
     // private static final int VIDEO_VIEW_RESOURCE_ID = R.id.videoView;
 
 /*private static PlaybackController mPlaybackController = null;*/
     /* Attributes */
+    private Activity mActivity;
     private MediaSession mSession;
+    private MediaSessionCallback mMediaSessionCallback;
+    private Handler mUiHandler; // to update UI of Activity/Fragment
     private VideoView mVideoView;
     private ArrayList<Movie> mItems = new ArrayList<Movie>();
+
+    public int getmCurrentPlaybackState() {
+        return mCurrentPlaybackState;
+    }
+
+    public void setmCurrentPlaybackState(int mCurrentPlaybackState) {
+        this.mCurrentPlaybackState = mCurrentPlaybackState;
+    }
 
     /* Global variables */
     private int mCurrentPlaybackState = PlaybackState.STATE_NONE;
@@ -40,7 +59,9 @@ public class PlaybackController {
     private long mDuration = -1;
     private int mCurrentItem; // index of current item
 
+
     public PlaybackController(Activity activity) {
+        mActivity = activity;
         // mVideoView = (VideoView) activity.findViewById(VIDEO_VIEW_RESOURCE_ID);
         createMediaSession(activity);
         mItems = MovieProvider.getMovieItems();
@@ -49,7 +70,8 @@ public class PlaybackController {
     private void createMediaSession(Activity activity) {
         if (mSession == null) {
             mSession = new MediaSession(activity, MEDIA_SESSION_TAG);
-            mSession.setCallback(new MediaSessionCallback());
+            mMediaSessionCallback = new MediaSessionCallback();
+            mSession.setCallback(mMediaSessionCallback);
             mSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS |
                     MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
@@ -58,11 +80,28 @@ public class PlaybackController {
         }
     }
 
+    public MediaSessionCallback getmMediaSessionCallback() {
+        return mMediaSessionCallback;
+    }
+
+
     public void setVideoView (VideoView videoView) {
         mVideoView = videoView;
 
         mVideoView.setFocusable(false);
         mVideoView.setFocusableInTouchMode(false);
+        /* Callbacks for mVideoView */
+        setupCallbacks();
+
+    }
+
+    public void setMovie (Movie movie) {
+        mVideoView.setVideoPath(movie.getVideoUrl());
+    }
+
+
+    public void setUiHandler (Handler handler) {
+        mUiHandler = handler;
     }
 
 /*
@@ -88,7 +127,7 @@ public class PlaybackController {
         }
     }
 
-    private void setPosition(int position) {
+    public void setPosition(int position) {
         if (position > mDuration) {
             mPosition = (int) mDuration;
         } else if (position < 0) {
@@ -131,10 +170,14 @@ public class PlaybackController {
     }
 
     public void playPause(boolean doPlay) {
+/*
         if (mCurrentPlaybackState == PlaybackState.STATE_NONE) {
-            //* Callbacks for mVideoView *//*
+            */
+/* Callbacks for mVideoView *//*
+
             setupCallbacks();
         }
+*/
 
         if (doPlay && mCurrentPlaybackState != PlaybackState.STATE_PLAYING) {
             mCurrentPlaybackState = PlaybackState.STATE_PLAYING;
@@ -159,6 +202,7 @@ public class PlaybackController {
             setPosition(mVideoView.getCurrentPosition() + (10 * 1000));
             mVideoView.seekTo(mPosition);
         }
+
     }
 
     public void rewind() {
@@ -196,17 +240,38 @@ public class PlaybackController {
         });
     }
 
+    public void setCurrentItem(int currentItem) {
+        this.mCurrentItem = currentItem;
+    }
 
+    public void releaseMediaSession() {
+        mSession.release();
+    }
 
     private class MediaSessionCallback extends MediaSession.Callback {
         @Override
         public void onPlay() {
             playPause(true);
+
+            Message msg = Message.obtain();
+            msg.what = MSG_PLAY;
+            mUiHandler.sendMessage(msg);
+            /*if (PlaybackOverlayFragment.isActive()) {
+                PlaybackOverlayFragment.playbackOverlayFragmentInstance.playbackStateChanged();
+            }
+*/
         }
 
         @Override
         public void onPause() {
             playPause(false);
+
+            Message msg = Message.obtain();
+            msg.what = MSG_PAUSE;
+            mUiHandler.sendMessage(msg);
+            //if (PlaybackOverlayFragment.isActive()) {
+            //    PlaybackOverlayFragment.playbackOverlayFragmentInstance.playbackStateChanged();
+            //}
         }
 
         @Override
@@ -223,7 +288,15 @@ public class PlaybackController {
                 //updateMetadata(movie);
                 playPause(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
             }
+
+            if (PlaybackOverlayFragment.isActive()) {
+                PlaybackOverlayFragment.playbackOverlayFragmentInstance.playbackStateChanged();
+                PlaybackOverlayFragment.playbackOverlayFragmentInstance.updatePlaybackRow(mCurrentItem);
+                //updatePlaybackRow(mCurrentItem);
+            }
+
         }
+
 
         @Override
         public void onSkipToPrevious() {
@@ -238,6 +311,11 @@ public class PlaybackController {
                 mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
                 //updateMetadata(movie);
                 playPause(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
+            }
+
+            if (PlaybackOverlayFragment.isActive()) {
+                PlaybackOverlayFragment.playbackOverlayFragmentInstance.playbackStateChanged();
+                PlaybackOverlayFragment.playbackOverlayFragmentInstance.updatePlaybackRow(mCurrentItem);
             }
         }
 

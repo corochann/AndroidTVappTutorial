@@ -11,7 +11,7 @@ import android.media.session.MediaController;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
+import android.os.Message;
 import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
@@ -30,9 +30,12 @@ import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.util.Log;
+import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import junit.framework.Assert;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -51,12 +54,20 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     private static final boolean SHOW_IMAGE = true;
 
     private static Context sContext;
+    private PlaybackOverlayActivity activity;
 
     private Movie mSelectedMovie;
+    private PlaybackController mPlaybackController;
+    private VideoView mVideoView;
+
+    public PlaybackControlsRow getmPlaybackControlsRow() {
+        return mPlaybackControlsRow;
+    }
+
     private PlaybackControlsRow mPlaybackControlsRow;
     private ArrayObjectAdapter mPrimaryActionsAdapter;
     private ArrayObjectAdapter mSecondaryActionsAdapter;
-    private int mCurrentPlaybackState;
+    //private int mCurrentPlaybackState;
     private Handler mHandler;
     private Runnable mRunnable;
     private ArrayList<Movie> mItems = new ArrayList<Movie>();
@@ -80,21 +91,43 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     private MediaController mMediaController;
     private MediaController.Callback mMediaControllerCallback = new MediaControllerCallback();
 
+    public static PlaybackControlsRowHandler mPlaybackControlsRowHandler = null;
+    /* To check if this Fragment is top or not (to decide update UI) */
+    private static boolean active = false;
+
+    public static PlaybackOverlayFragment playbackOverlayFragmentInstance;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
-        mSelectedMovie = (Movie) getActivity().getIntent().getSerializableExtra(DetailsActivity.MOVIE);
+
+
+
         sContext = getActivity();
+        activity = (PlaybackOverlayActivity) getActivity();
         mHandler = new Handler();
+
+
+
+        mPlaybackControlsRowHandler = new PlaybackControlsRowHandler();
+        mPlaybackController = ((PlaybackOverlayActivity) getActivity()).getmPlaybackController();
+
+        playbackOverlayFragmentInstance = this;
 
         setBackgroundType(PlaybackOverlayFragment.BG_LIGHT);
         setFadingEnabled(true);
 
         mItems = MovieProvider.getMovieItems();
-        mCurrentItem = (int) mSelectedMovie.getId() - 1;
+        //mCurrentItem = (int) mSelectedMovie.getId() - 1;
+
+        //mPlaybackController.setMovie(mSelectedMovie);
+        mPlaybackController.setCurrentItem(mCurrentItem);
+        mPlaybackController.setUiHandler(mPlaybackControlsRowHandler);
+
+        mPlaybackController.playPause(true);
 
         setUpRows();
 
@@ -117,6 +150,14 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
             Log.e(TAG, "mMediaController is null");
         }
         mMediaController.registerCallback(mMediaControllerCallback);
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        Log.d(TAG, "onActivityCreated");
+        super.onActivityCreated(savedInstanceState);
+
     }
 
     @Override
@@ -130,11 +171,16 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
     @Override
     public void onStart() {
+        this.active = true;
         super.onStart();
+
     }
 
     @Override
     public void onStop() {
+        mPlaybackControlsRowHandler = null;
+        this.active = false;
+
         stopProgressAutomation();
         mRowsAdapter = null;
         super.onStop();
@@ -143,6 +189,38 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mVideoView.isPlaying()) {
+            if (!getActivity().requestVisibleBehind(true)) {
+                // Try to play behind launcher, but if it fails, stop playback.
+                mMediaController.getTransportControls().pause();
+            }
+        } else {
+            getActivity().requestVisibleBehind(false);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mVideoView.suspend();
+        mVideoView.setVideoURI(null);
+        mPlaybackController.releaseMediaSession();
+    }
+
+    private void stopPlayback() {
+        if (mVideoView != null) {
+            mVideoView.stopPlayback();
+        }
+    }
+
+
+    public static boolean isActive () {
+        return active;
     }
 
     private void setUpRows() {
@@ -169,19 +247,29 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
             public void onActionClicked(Action action) {
                 if (action.getId() == mPlayPauseAction.getId()) {
                     /* PlayPause action */
-                    togglePlayback(mPlayPauseAction.getIndex() == PlaybackControlsRow.PlayPauseAction.PLAY);
+                    if (mPlayPauseAction.getIndex() == PlaybackControlsRow.PlayPauseAction.PLAY) {
+                        mMediaController.getTransportControls().play();
+                    } else if (mPlayPauseAction.getIndex() == PlaybackControlsRow.PlayPauseAction.PAUSE) {
+                        mMediaController.getTransportControls().pause();
+                    }
+
+                    //togglePlayback(mPlayPauseAction.getIndex() == PlaybackControlsRow.PlayPauseAction.PLAY);
                 } else if (action.getId() == mSkipNextAction.getId()) {
                     /* SkipNext action */
-                    next(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
+                    mMediaController.getTransportControls().skipToNext();
+                    // next(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
                 } else if (action.getId() == mSkipPreviousAction.getId()) {
                     /* SkipPrevious action */
-                    prev(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
+                    mMediaController.getTransportControls().skipToPrevious();
+                    // prev(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
                 } else if (action.getId() == mFastForwardAction.getId()) {
                     /* FastForward action  */
-                    fastForward();
+                    mMediaController.getTransportControls().fastForward();
+                    // fastForward();
                 } else if (action.getId() == mRewindAction.getId()) {
                     /* Rewind action */
-                    rewind();
+                    mMediaController.getTransportControls().rewind();
+                    // rewind();
                 }
                 if (action instanceof PlaybackControlsRow.MultiAction) {
                     /* Following action is subclass of MultiAction
@@ -218,7 +306,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         mMediaController.getTransportControls().fastForward();
 
         /* UI part */
-        int currentTime = ((PlaybackOverlayActivity) getActivity()).getPosition();
+        int currentTime = mPlaybackController.getPosition();
         mPlaybackControlsRow.setCurrentTime(currentTime);
         mPlaybackControlsRow.setBufferedProgress(currentTime + SIMULATED_BUFFERED_TIME);
     }
@@ -228,7 +316,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         mMediaController.getTransportControls().rewind();
 
         /* UI part */
-        int currentTime = ((PlaybackOverlayActivity) getActivity()).getPosition();
+        int currentTime = mPlaybackController.getPosition();
         mPlaybackControlsRow.setCurrentTime(currentTime);
         mPlaybackControlsRow.setBufferedProgress(currentTime + SIMULATED_BUFFERED_TIME);
     }
@@ -267,15 +355,15 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
     public void playbackStateChanged() {
 
-        if (mCurrentPlaybackState != PlaybackState.STATE_PLAYING) {
-            mCurrentPlaybackState = PlaybackState.STATE_PLAYING;
+        if (mPlaybackController.getmCurrentPlaybackState() != PlaybackState.STATE_PLAYING) {
+            mPlaybackController.setmCurrentPlaybackState(PlaybackState.STATE_PLAYING);
             startProgressAutomation();
             setFadingEnabled(true);
             mPlayPauseAction.setIndex(PlaybackControlsRow.PlayPauseAction.PAUSE);
             mPlayPauseAction.setIcon(mPlayPauseAction.getDrawable(PlaybackControlsRow.PlayPauseAction.PAUSE));
             notifyChanged(mPlayPauseAction);
-        } else if (mCurrentPlaybackState != PlaybackState.STATE_PAUSED) {
-            mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
+        } else if (mPlaybackController.getmCurrentPlaybackState() != PlaybackState.STATE_PAUSED) {
+            mPlaybackController.setmCurrentPlaybackState(PlaybackState.STATE_PAUSED);
             stopProgressAutomation();
             //setFadingEnabled(false); // if set to false, PlaybackcontrolsRow will always be on the screen
             mPlayPauseAction.setIndex(PlaybackControlsRow.PlayPauseAction.PLAY);
@@ -283,7 +371,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
             notifyChanged(mPlayPauseAction);
         }
 
-        int currentTime = ((PlaybackOverlayActivity) getActivity()).getPosition();
+        int currentTime = mPlaybackController.getPosition();
         mPlaybackControlsRow.setCurrentTime(currentTime);
         mPlaybackControlsRow.setBufferedProgress(currentTime + SIMULATED_BUFFERED_TIME);
 
@@ -391,17 +479,17 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         mRowsAdapter.add(new ListRow(header, listRowAdapter));
     }
 
-    private void updatePlaybackRow(int index) {
+    public void updatePlaybackRow(int index) {
         Log.d(TAG, "updatePlaybackRow");
         if (mPlaybackControlsRow.getItem() != null) {
             Movie item = (Movie) mPlaybackControlsRow.getItem();
-            item.setTitle(mItems.get(mCurrentItem).getTitle());
-            item.setStudio(mItems.get(mCurrentItem).getStudio());
+            item.setTitle(mItems.get(index).getTitle());
+            item.setStudio(mItems.get(index).getStudio());
 
             mRowsAdapter.notifyArrayItemRangeChanged(0, 1);
             /* total time is necessary to show video playing time progress bar */
-            int duration = (int) Utils.getDuration(mItems.get(mCurrentItem).getVideoUrl());
-            Log.i(TAG, "videoUrl: " + mItems.get(mCurrentItem).getVideoUrl());
+            int duration = (int) Utils.getDuration(mItems.get(index).getVideoUrl());
+            Log.i(TAG, "videoUrl: " + mItems.get(index).getVideoUrl());
             Log.i(TAG, "duration = " + duration);
             mPlaybackControlsRow.setTotalTime(duration);
             mPlaybackControlsRow.setCurrentTime(0);
@@ -471,15 +559,16 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         @Override
         public void onPlaybackStateChanged(PlaybackState state) {
             Log.d(TAG, "playback state changed: " + state.getState());
-            if (state.getState() == PlaybackState.STATE_PLAYING && mCurrentPlaybackState != PlaybackState.STATE_PLAYING) {
-                mCurrentPlaybackState = PlaybackState.STATE_PLAYING;
+            Log.d(TAG, "playback state changed: " + state.toString());
+            if (state.getState() == PlaybackState.STATE_PLAYING && mPlaybackController.getmCurrentPlaybackState() != PlaybackState.STATE_PLAYING) {
+                mPlaybackController.setmCurrentPlaybackState(PlaybackState.STATE_PLAYING);
                 startProgressAutomation();
                 setFadingEnabled(true);
                 mPlayPauseAction.setIndex(PlaybackControlsRow.PlayPauseAction.PAUSE);
                 mPlayPauseAction.setIcon(mPlayPauseAction.getDrawable(PlaybackControlsRow.PlayPauseAction.PAUSE));
                 notifyChanged(mPlayPauseAction);
-            } else if (state.getState() == PlaybackState.STATE_PAUSED && mCurrentPlaybackState != PlaybackState.STATE_PAUSED) {
-                mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
+            } else if (state.getState() == PlaybackState.STATE_PAUSED && mPlaybackController.getmCurrentPlaybackState() != PlaybackState.STATE_PAUSED) {
+                mPlaybackController.setmCurrentPlaybackState(PlaybackState.STATE_PAUSED);
                 stopProgressAutomation();
                 setFadingEnabled(false);
                 mPlayPauseAction.setIndex(PlaybackControlsRow.PlayPauseAction.PLAY);
@@ -505,5 +594,46 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 */
         }
     }
+
+    /**
+     * Handles the message queue from PlaybackController to update UI when user press Media key
+     */
+    public class PlaybackControlsRowHandler extends Handler {
+        private final String TAG = PlaybackControlsRowHandler.class.getSimpleName();
+
+        private PlaybackControlsRowHandler() {
+            super(sContext.getMainLooper());
+        }
+
+        public PlaybackControlsRowHandler getInstance () {
+            if (mPlaybackControlsRowHandler == null) {
+                mPlaybackControlsRowHandler = new PlaybackControlsRowHandler();
+            }
+            return mPlaybackControlsRowHandler;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            Assert.assertNotNull("msg is null!", msg);
+            Integer code = msg.what;
+            Log.d(TAG, "code: " + code);
+
+            Bundle b = msg.getData();
+            if (b == null){
+                Log.d(TAG, "this msg has no bundle data...");
+            }
+
+            switch(code) {
+                case PlaybackController.MSG_PLAY :
+
+                case PlaybackController.MSG_PAUSE :
+                default:
+                    playbackStateChanged();
+                    break;
+            }
+        }
+    }
+
+
 }
 

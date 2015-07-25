@@ -65,7 +65,7 @@ public class PicassoBackgroundManager {
     private class UpdateBackgroundTask extends TimerTask {
         @Override
         public void run() {
-            /* Here is TimerTask thread, not UI thread */
+            /* Here is TimerTask thread, may not be UI thread */
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
