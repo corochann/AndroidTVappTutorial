@@ -45,6 +45,11 @@
 
         <activity android:name="GuidedStepActivity"
             android:theme="@style/Theme.Example.Leanback.GuidedStep"/>
-    </application>
 
+        <!-- Recommendation -->
+        <provider
+            android:name=".RecommendationBuilder$RecommendationBackgroundContentProvider"
+            android:authorities="com.corochann.androidtvapptutorial"
+            android:exported="true" />
+    </application>
 </manifest>

@@ -40,7 +40,7 @@ import java.io.IOException;
 public class RecommendationBuilder {
 
     private static final String TAG = RecommendationBuilder.class.getSimpleName();
-    private static final String BACKGROUND_URI_PREFIX = "content://com.corochann.androidtvapptutorial.recommendation/";
+    private static final String BACKGROUND_URI_PREFIX = "content://com.corochann.androidtvapptutorial/";
 
     private Context mContext;
 
@@ -128,8 +128,11 @@ public class RecommendationBuilder {
         File bitmapFile = getNotificationBackground(mContext, mId);
 
         if (mBackgroundBitmap != null) {
+            Log.d(TAG, "making URI for mBackgroundBitmap");
             extras.putString(Notification.EXTRA_BACKGROUND_IMAGE_URI,
                     Uri.parse(BACKGROUND_URI_PREFIX + Integer.toString(mId)).toString());
+        } else {
+            Log.w(TAG, "mBackgroundBitmap is null");
         }
 
         // the following simulates group assignment into "Top", "Middle", "Bottom"
@@ -187,13 +190,14 @@ public class RecommendationBuilder {
     @Override
     public String toString() {
         return "RecommendationBuilder{" +
-                ", mId=" + mId +
+                "mId=" + mId +
                 ", mPriority=" + mPriority +
                 ", mSmallIcon=" + mSmallIcon +
                 ", mTitle='" + mTitle + '\'' +
                 ", mDescription='" + mDescription + '\'' +
                 ", mCardImageBitmap='" + mCardImageBitmap + '\'' +
                 ", mBackgroundUri='" + mBackgroundUri + '\'' +
+                ", mBackgroundBitmap='" + mBackgroundBitmap + '\'' +
                 ", mIntent=" + mIntent +
                 '}';
     }
@@ -236,6 +240,7 @@ public class RecommendationBuilder {
          * content provider serving files that are saved locally when recommendations are built
          */
         public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
+            Log.i(TAG, "openFile");
             int backgroundId = Integer.parseInt(uri.getLastPathSegment());
             File bitmapFile = getNotificationBackground(getContext(), backgroundId);
             return ParcelFileDescriptor.open(bitmapFile, ParcelFileDescriptor.MODE_READ_ONLY);
@@ -243,6 +248,7 @@ public class RecommendationBuilder {
     }
 
     private static File getNotificationBackground(Context context, int notificationId) {
+        Log.i(TAG, "getNotificationBackground: " + context.getCacheDir() + "tmp" + Integer.toString(notificationId) + ".png");
         return new File(context.getCacheDir(), "tmp" + Integer.toString(notificationId) + ".png");
     }
 

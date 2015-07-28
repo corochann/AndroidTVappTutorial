@@ -14,10 +14,12 @@ import android.support.v17.leanback.widget.OnItemViewSelectedListener;
 import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -31,10 +33,18 @@ public class MainFragment extends BrowseFragment {
     private static final String TAG = MainFragment.class.getSimpleName();
 
     private ArrayObjectAdapter mRowsAdapter;
+
+    /* Grid row item settings */
     private static final int GRID_ITEM_WIDTH = 300;
     private static final int GRID_ITEM_HEIGHT = 200;
+    private static final String GRID_STRING_ERROR_FRAGMENT = "ErrorFragment";
+    private static final String GRID_STRING_GUIDED_STEP_FRAGMENT = "GuidedStepFragment";
+    private static final String GRID_STRING_RECOMMENDATION = "Recommendation";
 
     private static PicassoBackgroundManager picassoBackgroundManager = null;
+
+    ArrayList<Movie> mItems = MovieProvider.getMovieItems();
+    private static int recommendationCounter = 0;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -70,12 +80,19 @@ public class MainFragment extends BrowseFragment {
 
                 getActivity().startActivity(intent);
             } else if (item instanceof String){
-                if (item == "ErrorFragment") {
+                if (item == GRID_STRING_ERROR_FRAGMENT) {
                     Intent intent = new Intent(getActivity(), ErrorActivity.class);
                     startActivity(intent);
-                } else if (item == "GuidedStepFragment") {
+                } else if (item == GRID_STRING_GUIDED_STEP_FRAGMENT) {
                     Intent intent = new Intent(getActivity(), GuidedStepActivity.class);
                     startActivity(intent);
+                } else if (item == GRID_STRING_RECOMMENDATION) {
+                    Log.v(TAG, "onClick recommendation. counter " + recommendationCounter);
+                    RecommendationFactory recommendationFactory = new RecommendationFactory(getActivity().getApplicationContext());
+                    Movie movie = mItems.get(recommendationCounter % mItems.size());
+                    recommendationFactory.recommend(recommendationCounter, movie, NotificationCompat.PRIORITY_HIGH);
+                    Toast.makeText(getActivity(), "Recommendation sent (item " + recommendationCounter +")", Toast.LENGTH_SHORT).show();
+                    recommendationCounter++;
                 }
             }
         }
@@ -115,9 +132,9 @@ public class MainFragment extends BrowseFragment {
 
         GridItemPresenter mGridPresenter = new GridItemPresenter();
         ArrayObjectAdapter gridRowAdapter = new ArrayObjectAdapter(mGridPresenter);
-        gridRowAdapter.add("ErrorFragment");
-        gridRowAdapter.add("GuidedStepFragment");
-        gridRowAdapter.add("ITEM 3");
+        gridRowAdapter.add(GRID_STRING_ERROR_FRAGMENT);
+        gridRowAdapter.add(GRID_STRING_GUIDED_STEP_FRAGMENT);
+        gridRowAdapter.add(GRID_STRING_RECOMMENDATION);
         mRowsAdapter.add(new ListRow(gridItemPresenterHeader, gridRowAdapter));
 
         /* CardPresenter */
@@ -125,7 +142,6 @@ public class MainFragment extends BrowseFragment {
         CardPresenter cardPresenter = new CardPresenter();
         ArrayObjectAdapter cardRowAdapter = new ArrayObjectAdapter(cardPresenter);
 
-        ArrayList<Movie> mItems = MovieProvider.getMovieItems();
         for (Movie movie : mItems) {
             cardRowAdapter.add(movie);
         }
