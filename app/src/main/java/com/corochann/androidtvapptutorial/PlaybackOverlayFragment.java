@@ -162,6 +162,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
     @Override
     public void onStart() {
+        startProgressAutomation();
         this.active = true;
         super.onStart();
 
@@ -292,7 +293,9 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                 @Override
                 public void run() {
                     int updatePeriod = getUpdatePeriod();
-                    int currentTime = mPlaybackControlsRow.getCurrentTime() + updatePeriod;
+
+                    //int currentTime = mPlaybackControlsRow.getCurrentTime(); // + updatePeriod;
+                    int currentTime = mPlaybackController.getCurrentPosition();
                     int totalTime = mPlaybackControlsRow.getTotalTime();
                     mPlaybackControlsRow.setCurrentTime(currentTime);
                     mPlaybackControlsRow.setBufferedProgress(mPlaybackController.calcBufferedTime(currentTime));
@@ -472,7 +475,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                 notifyChanged(mPlayPauseAction);
             } else if (state.getState() == PlaybackState.STATE_PAUSED) {
                 mPlaybackController.setmCurrentPlaybackState(PlaybackState.STATE_PAUSED);
-                stopProgressAutomation();
+                // stopProgressAutomation();
                 setFadingEnabled(false);
                 mPlayPauseAction.setIndex(PlaybackControlsRow.PlayPauseAction.PLAY);
                 mPlayPauseAction.setIcon(mPlayPauseAction.getDrawable(PlaybackControlsRow.PlayPauseAction.PLAY));
@@ -529,8 +532,8 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                     break;
                 case PlaybackController.MSG_FAST_FORWARD:
                 case PlaybackController.MSG_REWIND:
-                    mPlaybackControlsRow.setCurrentTime(mPlaybackController.getPosition());
-                    mPlaybackControlsRow.setBufferedProgress(mPlaybackController.calcBufferedTime(mPlaybackController.getPosition()));
+                    //mPlaybackControlsRow.setCurrentTime(mPlaybackController.getCurrentPosition());
+                    //mPlaybackControlsRow.setBufferedProgress(mPlaybackController.calcBufferedTime(mPlaybackController.getCurrentPosition()));
                     break;
                 case PlaybackController.MSG_SKIP_TO_PREVIOUS:
                     updatePlaybackRow(mPlaybackController.getmCurrentItem());

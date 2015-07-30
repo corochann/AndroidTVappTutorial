@@ -155,6 +155,10 @@ public class PlaybackController {
         return mPosition;
     }
 
+    public int getCurrentPosition() {
+        return mVideoView.getCurrentPosition();
+    }
+
 
     private void updatePlaybackState() {
         PlaybackState.Builder stateBuilder = new PlaybackState.Builder()
@@ -163,7 +167,8 @@ public class PlaybackController {
         if (mCurrentPlaybackState == PlaybackState.STATE_PAUSED || mCurrentPlaybackState == PlaybackState.STATE_NONE) {
             state = PlaybackState.STATE_PAUSED;
         }
-        stateBuilder.setState(state, mPosition, 1.0f);
+        // stateBuilder.setState(state, mPosition, 1.0f);
+        stateBuilder.setState(state, getCurrentPosition(), 1.0f);
         mSession.setPlaybackState(stateBuilder.build());
     }
 
@@ -195,10 +200,12 @@ public class PlaybackController {
                 return;
             } else {
                 mCurrentPlaybackState = PlaybackState.STATE_PLAYING;
+/*
                 if (mPosition > 0) {
                     mVideoView.seekTo(mPosition);
                 }
-                mVideoView.seekTo(mPosition);
+*/
+                //mVideoView.seekTo(mPosition);
                 mVideoView.start();
                 mStartTimeMillis = System.currentTimeMillis();
             }
@@ -209,11 +216,17 @@ public class PlaybackController {
                 return;
             } else {
                 mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
+/*
                 int timeElapsedSinceStart = (int) (System.currentTimeMillis() - mStartTimeMillis);
                 Log.d(TAG, "timeElapsedSinceStart" + timeElapsedSinceStart);
                 setPosition(mPosition + timeElapsedSinceStart);
-                mVideoView.pause();
+*/
+                //setPosition(mVideoView.getCurrentPosition());
+                //mVideoView.pause();
             }
+            setPosition(mVideoView.getCurrentPosition());
+            mVideoView.pause();
+
         }
 
         updatePlaybackState();
@@ -222,7 +235,8 @@ public class PlaybackController {
     public void fastForward() {
         if (mDuration != -1) {
             // Fast forward 10 seconds.
-            setPosition(mVideoView.getCurrentPosition() + (10 * 1000));
+
+            setPosition(getCurrentPosition() + (10 * 1000));
             mVideoView.seekTo(mPosition);
         }
 
@@ -230,7 +244,7 @@ public class PlaybackController {
 
     public void rewind() {
         // rewind 10 seconds
-        setPosition(mVideoView.getCurrentPosition() - (10 * 1000));
+        setPosition(getCurrentPosition() - (10 * 1000));
         mVideoView.seekTo(mPosition);
     }
 
