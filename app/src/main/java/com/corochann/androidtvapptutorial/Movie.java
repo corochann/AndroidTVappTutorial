@@ -101,7 +101,10 @@ public class Movie implements Serializable {
         return "Movie{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", studio='" + studio + '\'' +
+                ", description='" + description + '\'' +
                 ", cardImageUrl='" + cardImageUrl + '\'' +
+                ", videoUrl='" + videoUrl + '\'' +
                 '}';
     }
 }

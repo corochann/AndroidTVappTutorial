@@ -2,16 +2,23 @@ package com.corochann.androidtvapptutorial;
 
 import android.app.Activity;
 import android.drm.DrmStore;
+import android.graphics.Bitmap;
+import android.media.MediaMetadata;
 import android.media.MediaPlayer;
 import android.media.session.MediaController;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v17.leanback.widget.PlaybackControlsRow;
 import android.util.Log;
 import android.widget.VideoView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 
 import java.util.ArrayList;
 
@@ -55,43 +62,40 @@ public class PlaybackController {
     private MediaSessionCallback mMediaSessionCallback;
     private Handler mUiHandler; // to update UI of Activity/Fragment
     private VideoView mVideoView;
-    private ArrayList<Movie> mItems = new ArrayList<Movie>();
-
-    public int getmCurrentPlaybackState() {
-        return mCurrentPlaybackState;
-    }
-
-    public void setmCurrentPlaybackState(int mCurrentPlaybackState) {
-        this.mCurrentPlaybackState = mCurrentPlaybackState;
-    }
+    private static final ArrayList<Movie> mItems =  MovieProvider.getMovieItems(); // new ArrayList<Movie>();
 
     /* Global variables */
     private int mCurrentPlaybackState = PlaybackState.STATE_NONE;
+    private int mCurrentItem; // index of current item
     private int mPosition = 0;
     private long mStartTimeMillis;
+    private long mDuration = -1;
 
-    public void setmDuration(long mDuration) {
-        this.mDuration = mDuration;
+    public int getCurrentPlaybackState() {
+        return mCurrentPlaybackState;
     }
 
-    public long getmDuration() {
+    public void setCurrentPlaybackState(int currentPlaybackState) {
+        this.mCurrentPlaybackState = currentPlaybackState;
+    }
+
+    public void setDuration(long duration) {
+        this.mDuration = duration;
+    }
+
+    public long getDuration() {
         return mDuration;
     }
 
-    private long mDuration = -1;
-
-    public int getmCurrentItem() {
+    public int getCurrentItem() {
         return mCurrentItem;
     }
-
-    private int mCurrentItem; // index of current item
-
 
     public PlaybackController(Activity activity) {
         mActivity = activity;
         // mVideoView = (VideoView) activity.findViewById(VIDEO_VIEW_RESOURCE_ID);
-        createMediaSession(activity);
-        mItems = MovieProvider.getMovieItems();
+        createMediaSession(mActivity);
+        // mItems = MovieProvider.getMovieItems();
     }
 
     private void createMediaSession(Activity activity) {
@@ -107,10 +111,9 @@ public class PlaybackController {
         }
     }
 
-    public MediaSessionCallback getmMediaSessionCallback() {
+    public MediaSessionCallback getMediaSessionCallback() {
         return mMediaSessionCallback;
     }
-
 
     public void setVideoView (VideoView videoView) {
         mVideoView = videoView;
@@ -205,7 +208,6 @@ public class PlaybackController {
                     mVideoView.seekTo(mPosition);
                 }
 */
-                //mVideoView.seekTo(mPosition);
                 mVideoView.start();
                 mStartTimeMillis = System.currentTimeMillis();
             }
@@ -235,7 +237,6 @@ public class PlaybackController {
     public void fastForward() {
         if (mDuration != -1) {
             // Fast forward 10 seconds.
-
             setPosition(getCurrentPosition() + (10 * 1000));
             mVideoView.seekTo(mPosition);
         }
@@ -292,6 +293,46 @@ public class PlaybackController {
         this.mCurrentItem = currentItem;
     }
 
+    public void updateMetadata() {
+        Log.i(TAG, "updateMetadata: getCurrentItem" + getCurrentItem());
+        Movie movie = mItems.get(getCurrentItem());
+        mDuration = Utils.getDuration(movie.getVideoUrl());
+        updateMetadata(movie);
+    }
+
+    public void updateMetadata(Movie movie) {
+        final MediaMetadata.Builder metadataBuilder = new MediaMetadata.Builder();
+
+        String title = movie.getTitle().replace("_", " -");
+
+        metadataBuilder.putString(MediaMetadata.METADATA_KEY_MEDIA_ID, Long.toString(movie.getId()));
+        metadataBuilder.putString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE, title);
+        metadataBuilder.putString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE, movie.getStudio());
+        metadataBuilder.putString(MediaMetadata.METADATA_KEY_DISPLAY_DESCRIPTION, movie.getDescription());
+        metadataBuilder.putString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI, movie.getCardImageUrl());
+        metadataBuilder.putLong(MediaMetadata.METADATA_KEY_DURATION, mDuration);
+
+        Log.w(TAG, "updateMetadata");
+        Log.w(TAG, movie.toString());
+
+        // And at minimum the title and artist for legacy support
+        metadataBuilder.putString(MediaMetadata.METADATA_KEY_TITLE, title);
+        metadataBuilder.putString(MediaMetadata.METADATA_KEY_ARTIST, movie.getStudio());
+
+        Glide.with(mActivity)
+                .load(Uri.parse(movie.getCardImageUrl()))
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>(500, 500) {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation anim) {
+
+                        metadataBuilder.putBitmap(MediaMetadata.METADATA_KEY_ART, bitmap);
+                        mSession.setMetadata(metadataBuilder.build());
+                    }
+                });
+    }
+
+
     public void releaseMediaSession() {
         mSession.release();
     }
@@ -331,16 +372,11 @@ public class PlaybackController {
                 setVideoPath(movie.getVideoUrl());
                 //mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
                 //updateMetadata(movie);
+                updateMetadata();
                 playPause(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
+            } else {
+                Log.e(TAG, "onSkipToNext movie is null!");
             }
-
-/*
-            if (PlaybackOverlayFragment.isActive()) {
-                PlaybackOverlayFragment.playbackOverlayFragmentInstance.playbackStateChanged();
-                PlaybackOverlayFragment.playbackOverlayFragmentInstance.updatePlaybackRow(mCurrentItem);
-                //updatePlaybackRow(mCurrentItem);
-            }
-*/
 
             Message msg = Message.obtain();
             msg.what = MSG_SKIP_TO_NEXT;
@@ -360,14 +396,11 @@ public class PlaybackController {
                 setVideoPath(movie.getVideoUrl());
                 //mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
                 //updateMetadata(movie);
+                updateMetadata();
                 playPause(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
+            } else {
+                Log.e(TAG, "onSkipToPrevious movie is null!");
             }
-
-/*            if (PlaybackOverlayFragment.isActive()) {
-                PlaybackOverlayFragment.playbackOverlayFragmentInstance.playbackStateChanged();
-                PlaybackOverlayFragment.playbackOverlayFragmentInstance.updatePlaybackRow(mCurrentItem);
-            }*/
-
             Message msg = Message.obtain();
             msg.what = MSG_SKIP_TO_PREVIOUS;
             mUiHandler.sendMessage(msg);
@@ -375,13 +408,15 @@ public class PlaybackController {
 
         @Override
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
-            Movie movie = mItems.get(Integer.parseInt(mediaId));
+            mCurrentItem = Integer.parseInt(mediaId);
+            Movie movie = mItems.get(mCurrentItem);
             //Movie movie = VideoProvider.getMovieById(mediaId);
             if (movie != null) {
                 setVideoPath(movie.getVideoUrl());
-                mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
-                //updateMetadata(movie);
-                //playPause(extras.getBoolean(AUTO_PLAY));
+                // mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
+                // updateMetadata(movie);
+                updateMetadata();
+                playPause(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
             }
         }
 
