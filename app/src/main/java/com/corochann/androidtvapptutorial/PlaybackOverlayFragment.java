@@ -51,21 +51,14 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     private static final int CARD_WIDTH = 200;
     private static final int CARD_HEIGHT = 240;
     private static final boolean SHOW_IMAGE = true;
-
     private static Context sContext;
     private PlaybackOverlayActivity activity;
 
     //private Movie mSelectedMovie;
     private PlaybackController mPlaybackController;
-
-    public PlaybackControlsRow getmPlaybackControlsRow() {
-        return mPlaybackControlsRow;
-    }
-
     private PlaybackControlsRow mPlaybackControlsRow;
     private ArrayObjectAdapter mPrimaryActionsAdapter;
     private ArrayObjectAdapter mSecondaryActionsAdapter;
-    //private int mCurrentPlaybackState;
     private Handler mHandler;
     private Runnable mRunnable;
     private ArrayList<Movie> mItems = new ArrayList<Movie>();
@@ -89,9 +82,9 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     private MediaController mMediaController;
     private MediaController.Callback mMediaControllerCallback = new MediaControllerCallback();
 
-
-    public static PlaybackOverlayFragment playbackOverlayFragmentInstance;
-
+    public PlaybackControlsRow getPlaybackControlsRow() {
+        return mPlaybackControlsRow;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,8 +96,6 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         mHandler = new Handler();
 
         mPlaybackController = activity.getPlaybackController();
-
-        playbackOverlayFragmentInstance = this;
 
         setBackgroundType(PlaybackOverlayFragment.BG_LIGHT);
         setFadingEnabled(true);

@@ -1,7 +1,6 @@
 package com.corochann.androidtvapptutorial;
 
 import android.app.Activity;
-import android.drm.DrmStore;
 import android.graphics.Bitmap;
 import android.media.MediaMetadata;
 import android.media.MediaPlayer;
@@ -10,8 +9,6 @@ import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v17.leanback.widget.PlaybackControlsRow;
 import android.util.Log;
 import android.widget.VideoView;
@@ -177,6 +174,18 @@ public class PlaybackController {
         return actions;
     }
 
+    /**
+     * should be called Activity's onDestroy
+     */
+    public void finishPlayback() {
+        if (mVideoView != null) {
+            mVideoView.stopPlayback();
+            mVideoView.suspend();
+            mVideoView.setVideoURI(null);
+        }
+        releaseMediaSession();
+    }
+
     public void playPause(boolean doPlay) {
 
         if (mCurrentPlaybackState == PlaybackState.STATE_NONE) {
@@ -308,7 +317,9 @@ public class PlaybackController {
 
 
     public void releaseMediaSession() {
-        mSession.release();
+        if(mSession != null) {
+            mSession.release();
+        }
     }
 
     private class MediaSessionCallback extends MediaSession.Callback {

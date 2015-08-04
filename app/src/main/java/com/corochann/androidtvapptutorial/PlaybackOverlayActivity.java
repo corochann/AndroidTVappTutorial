@@ -59,10 +59,7 @@ public class PlaybackOverlayActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopPlayback();
-        mVideoView.suspend();
-        mVideoView.setVideoURI(null);
-        mPlaybackController.releaseMediaSession();
+        mPlaybackController.finishPlayback();
     }
 
     private void loadViews() {
@@ -71,12 +68,6 @@ public class PlaybackOverlayActivity extends Activity {
         mVideoView.setFocusableInTouchMode(false);
 
         mPlaybackController.setVideoPath(mSelectedMovie.getVideoUrl());
-    }
-
-    private void stopPlayback() {
-        if (mVideoView != null) {
-            mVideoView.stopPlayback();
-        }
     }
 
     @Override
