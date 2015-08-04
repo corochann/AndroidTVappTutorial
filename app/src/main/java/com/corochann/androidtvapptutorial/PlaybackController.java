@@ -51,16 +51,10 @@ public class PlaybackController {
     public static final int MSG_PLAY_FROM_SEARCH = 11;
     public static final int MSG_SKIP_TO_QUEUE_ITEM = 12;
 
-
-
-    // private static final int VIDEO_VIEW_RESOURCE_ID = R.id.videoView;
-
-/*private static PlaybackController mPlaybackController = null;*/
     /* Attributes */
     private Activity mActivity;
     private MediaSession mSession;
     private MediaSessionCallback mMediaSessionCallback;
-    private Handler mUiHandler; // to update UI of Activity/Fragment
     private VideoView mVideoView;
     private static final ArrayList<Movie> mItems =  MovieProvider.getMovieItems(); // new ArrayList<Movie>();
 
@@ -126,11 +120,6 @@ public class PlaybackController {
     public void setMovie (Movie movie) {
         // Log.v(TAG, "setMovie: " + movie.toString());
         mVideoView.setVideoPath(movie.getVideoUrl());
-    }
-
-
-    public void setUiHandler (Handler handler) {
-        mUiHandler = handler;
     }
 
     public void setVideoPath(String videoUrl) {
@@ -203,11 +192,6 @@ public class PlaybackController {
                 return;
             } else {
                 mCurrentPlaybackState = PlaybackState.STATE_PLAYING;
-/*
-                if (mPosition > 0) {
-                    mVideoView.seekTo(mPosition);
-                }
-*/
                 mVideoView.start();
                 mStartTimeMillis = System.currentTimeMillis();
             }
@@ -218,13 +202,6 @@ public class PlaybackController {
                 return;
             } else {
                 mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
-/*
-                int timeElapsedSinceStart = (int) (System.currentTimeMillis() - mStartTimeMillis);
-                Log.d(TAG, "timeElapsedSinceStart" + timeElapsedSinceStart);
-                setPosition(mPosition + timeElapsedSinceStart);
-*/
-                //setPosition(mVideoView.getCurrentPosition());
-                //mVideoView.pause();
             }
             setPosition(mVideoView.getCurrentPosition());
             mVideoView.pause();
@@ -312,9 +289,6 @@ public class PlaybackController {
         metadataBuilder.putString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI, movie.getCardImageUrl());
         metadataBuilder.putLong(MediaMetadata.METADATA_KEY_DURATION, mDuration);
 
-        Log.w(TAG, "updateMetadata");
-        Log.w(TAG, movie.toString());
-
         // And at minimum the title and artist for legacy support
         metadataBuilder.putString(MediaMetadata.METADATA_KEY_TITLE, title);
         metadataBuilder.putString(MediaMetadata.METADATA_KEY_ARTIST, movie.getStudio());
@@ -341,23 +315,11 @@ public class PlaybackController {
         @Override
         public void onPlay() {
             playPause(true);
-
-            Message msg = Message.obtain();
-            msg.what = MSG_PLAY;
-            mUiHandler.sendMessage(msg);
-            /*if (PlaybackOverlayFragment.isActive()) {
-                PlaybackOverlayFragment.playbackOverlayFragmentInstance.playbackStateChanged();
-            }
-*/
         }
 
         @Override
         public void onPause() {
             playPause(false);
-
-            Message msg = Message.obtain();
-            msg.what = MSG_PAUSE;
-            mUiHandler.sendMessage(msg);
         }
 
         @Override
@@ -378,9 +340,6 @@ public class PlaybackController {
                 Log.e(TAG, "onSkipToNext movie is null!");
             }
 
-            Message msg = Message.obtain();
-            msg.what = MSG_SKIP_TO_NEXT;
-            mUiHandler.sendMessage(msg);
         }
 
 
@@ -401,9 +360,6 @@ public class PlaybackController {
             } else {
                 Log.e(TAG, "onSkipToPrevious movie is null!");
             }
-            Message msg = Message.obtain();
-            msg.what = MSG_SKIP_TO_PREVIOUS;
-            mUiHandler.sendMessage(msg);
         }
 
         @Override
@@ -425,28 +381,16 @@ public class PlaybackController {
             setPosition((int) pos);
             mVideoView.seekTo(mPosition);
             updatePlaybackState();
-
-            Message msg = Message.obtain();
-            msg.what = MSG_SEEK_TO;
-            mUiHandler.sendMessage(msg);
         }
 
         @Override
         public void onFastForward() {
             fastForward();
-
-            Message msg = Message.obtain();
-            msg.what = MSG_FAST_FORWARD;
-            mUiHandler.sendMessage(msg);
         }
 
         @Override
         public void onRewind() {
             rewind();
-
-            Message msg = Message.obtain();
-            msg.what = MSG_REWIND;
-            mUiHandler.sendMessage(msg);
         }
     }
 

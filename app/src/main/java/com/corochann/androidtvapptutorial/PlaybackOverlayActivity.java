@@ -18,7 +18,6 @@ import java.util.ArrayList;
 public class PlaybackOverlayActivity extends Activity {
 
     private static final String TAG = PlaybackOverlayActivity.class.getSimpleName();
-    public static final String AUTO_PLAY = "auto_play";
 
     private VideoView mVideoView;
     private ArrayList<Movie> mItems = new ArrayList<Movie>();
@@ -27,7 +26,7 @@ public class PlaybackOverlayActivity extends Activity {
     private Movie mSelectedMovie;
     private int mCurrentItem;
 
-    public PlaybackController getmPlaybackController() {
+    public PlaybackController getPlaybackController() {
         return mPlaybackController;
     }
 
@@ -105,13 +104,9 @@ public class PlaybackOverlayActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-        if (mVideoView.isPlaying()) {
-            if (!requestVisibleBehind(true)) {
+        if (!requestVisibleBehind(true)) {
             // Try to play behind launcher, but if it fails, stop playback.
-            //playPause(false);
-        }
-        } else {
-            requestVisibleBehind(false);
+            mPlaybackController.playPause(false);
         }
     }
 

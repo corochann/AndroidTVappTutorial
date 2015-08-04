@@ -89,9 +89,6 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     private MediaController mMediaController;
     private MediaController.Callback mMediaControllerCallback = new MediaControllerCallback();
 
-    public static PlaybackControlsRowHandler mPlaybackControlsRowHandler = null;
-    /* To check if this Fragment is top or not (to decide update UI) */
-    private static boolean active = false;
 
     public static PlaybackOverlayFragment playbackOverlayFragmentInstance;
 
@@ -105,8 +102,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         activity = (PlaybackOverlayActivity) getActivity();
         mHandler = new Handler();
 
-        mPlaybackControlsRowHandler = new PlaybackControlsRowHandler();
-        mPlaybackController = activity.getmPlaybackController();
+        mPlaybackController = activity.getPlaybackController();
 
         playbackOverlayFragmentInstance = this;
 
@@ -114,8 +110,6 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         setFadingEnabled(true);
 
         mItems = MovieProvider.getMovieItems();
-
-        mPlaybackController.setUiHandler(mPlaybackControlsRowHandler);
 
         setUpRows();
 
@@ -162,17 +156,12 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     @Override
     public void onStart() {
         startProgressAutomation();
-        this.active = true;
         super.onStart();
 
     }
 
     @Override
     public void onStop() {
-        mPlaybackControlsRowHandler = null;
-        this.active = false;
-
-        stopProgressAutomation();
         mRowsAdapter = null;
         super.onStop();
     }
@@ -182,8 +171,10 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         super.onResume();
     }
 
-    public static boolean isActive () {
-        return active;
+    @Override
+    public void onDestroy() {
+        stopProgressAutomation();
+        super.onDestroy();
     }
 
     private void setUpRows() {
@@ -481,7 +472,6 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
-
     }
 
 
@@ -549,53 +539,6 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                     );
         }
     }
-
-    /**
-     * Handles the message queue from PlaybackController to update UI when user press Media key
-     */
-    public class PlaybackControlsRowHandler extends Handler {
-        private final String TAG = PlaybackControlsRowHandler.class.getSimpleName();
-
-        private PlaybackControlsRowHandler() {
-            super(sContext.getMainLooper());
-        }
-
-        public PlaybackControlsRowHandler getInstance () {
-            if (mPlaybackControlsRowHandler == null) {
-                mPlaybackControlsRowHandler = new PlaybackControlsRowHandler();
-            }
-            return mPlaybackControlsRowHandler;
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            Assert.assertNotNull("msg is null!", msg);
-            Integer code = msg.what;
-            Log.d(TAG, "code: " + code);
-
-            switch(code) {
-                case PlaybackController.MSG_PLAY :
-                    break;
-                case PlaybackController.MSG_PAUSE :
-                    break;
-                case PlaybackController.MSG_FAST_FORWARD:
-                case PlaybackController.MSG_REWIND:
-                    //mPlaybackControlsRow.setCurrentTime(mPlaybackController.getCurrentPosition());
-                    //mPlaybackControlsRow.setBufferedProgress(mPlaybackController.calcBufferedTime(mPlaybackController.getCurrentPosition()));
-                    break;
-                case PlaybackController.MSG_SKIP_TO_PREVIOUS:
-                    //updatePlaybackRow(mPlaybackController.getCurrentItem());
-                    break;
-                case PlaybackController.MSG_SKIP_TO_NEXT:
-                    //updatePlaybackRow(mPlaybackController.getCurrentItem());
-                    break;
-                default:
-            }
-        }
-    }
-
-    Context context;
-
 
 }
 
