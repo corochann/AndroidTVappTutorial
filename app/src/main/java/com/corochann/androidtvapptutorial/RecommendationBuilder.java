@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 The Android Open Source Project
+ * Copyright (C) 2015 corochann
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -247,6 +247,12 @@ public class RecommendationBuilder {
         }
     }
 
+    /**
+     * returns file path to store background bitmap image (caching)
+     * @param context
+     * @param notificationId
+     * @return the file path of background image
+     */
     private static File getNotificationBackground(Context context, int notificationId) {
         Log.i(TAG, "getNotificationBackground: " + context.getCacheDir() + "tmp" + Integer.toString(notificationId) + ".png");
         return new File(context.getCacheDir(), "tmp" + Integer.toString(notificationId) + ".png");

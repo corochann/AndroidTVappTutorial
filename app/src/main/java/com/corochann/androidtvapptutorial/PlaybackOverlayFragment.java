@@ -594,6 +594,8 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         }
     }
 
+    Context context;
+
 
 }
 

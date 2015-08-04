@@ -15,10 +15,6 @@ import com.squareup.picasso.Picasso;
 
 import java.net.URI;
 
-
-/**
- * Created by corochann on 2015/07/28.
- */
 public class RecommendationFactory {
 
     private static final String TAG = RecommendationFactory.class.getSimpleName();
