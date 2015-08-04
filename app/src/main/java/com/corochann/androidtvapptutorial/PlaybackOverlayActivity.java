@@ -51,15 +51,7 @@ public class PlaybackOverlayActivity extends Activity {
         mVideoView = (VideoView) findViewById(R.id.videoView);
         mPlaybackController.setVideoView(mVideoView);
         mPlaybackController.setMovie(mSelectedMovie); // it must after video view setting
-
         loadViews();
-
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mPlaybackController.finishPlayback();
     }
 
     private void loadViews() {
@@ -69,6 +61,14 @@ public class PlaybackOverlayActivity extends Activity {
 
         mPlaybackController.setVideoPath(mSelectedMovie.getVideoUrl());
     }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPlaybackController.finishPlayback();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

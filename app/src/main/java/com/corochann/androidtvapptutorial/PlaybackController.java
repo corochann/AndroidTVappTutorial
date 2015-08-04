@@ -365,7 +365,6 @@ public class PlaybackController {
             if (movie != null) {
                 setVideoPath(movie.getVideoUrl());
                 //mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
-                //updateMetadata(movie);
                 updateMetadata();
                 playPause(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
             } else {
