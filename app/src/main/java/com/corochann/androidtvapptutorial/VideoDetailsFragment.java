@@ -53,6 +53,8 @@ public class VideoDetailsFragment extends DetailsFragment {
         mSelectedMovie = (Movie)getActivity().getIntent().getSerializableExtra(MOVIE);
 
         mDetailsRowBuilderTask = (DetailsRowBuilderTask) new DetailsRowBuilderTask().execute(mSelectedMovie);
+
+
         mPicassoBackgroundManager.updateBackgroundWithDelay(mSelectedMovie.getCardImageUrl());
     }
 
@@ -65,6 +67,7 @@ public class VideoDetailsFragment extends DetailsFragment {
     private class DetailsRowBuilderTask extends AsyncTask<Movie, Integer, DetailsOverviewRow> {
         @Override
         protected DetailsOverviewRow doInBackground(Movie... params) {
+            Log.v(TAG, "DetailsRowBuilderTask doInBackground");
             DetailsOverviewRow row = new DetailsOverviewRow(mSelectedMovie);
             try {
                 // Bitmap loading must be done in background thread in Android.
@@ -85,6 +88,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 
         @Override
         protected void onPostExecute(DetailsOverviewRow row) {
+            Log.v(TAG, "DetailsRowBuilderTask onPostExecute");
             /* 1st row: DetailsOverviewRow */
 
               /* action setting*/
@@ -110,21 +114,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 
             /* 2nd row: ListRow */
             ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
-/*
-            for(int i = 0; i < 10; i++){
-                Movie movie = new Movie();
-                if(i%3 == 0) {
-                    movie.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02580.jpg");
-                } else if (i%3 == 1) {
-                    movie.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02630.jpg");
-                } else {
-                    movie.setCardImageUrl("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/08/DSC02529.jpg");
-                }
-                movie.setTitle("title" + i);
-                movie.setStudio("studio" + i);
-                listRowAdapter.add(movie);
-            }
-*/
+
             ArrayList<Movie> mItems = MovieProvider.getMovieItems();
             for (Movie movie : mItems) {
                 listRowAdapter.add(movie);
@@ -132,7 +122,7 @@ public class VideoDetailsFragment extends DetailsFragment {
             HeaderItem headerItem = new HeaderItem(0, "Related Videos");
 
             ClassPresenterSelector classPresenterSelector = new ClassPresenterSelector();
-            Log.e(TAG, "mFwdorPresenter.getInitialState: " +mFwdorPresenter.getInitialState());
+            Log.v(TAG, "mFwdorPresenter.getInitialState: " +mFwdorPresenter.getInitialState());
 
             classPresenterSelector.addClassPresenter(DetailsOverviewRow.class, mFwdorPresenter);
             classPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());

@@ -197,24 +197,18 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                     } else if (mPlayPauseAction.getIndex() == PlaybackControlsRow.PlayPauseAction.PAUSE) {
                         mMediaController.getTransportControls().pause();
                     }
-
-                    //togglePlayback(mPlayPauseAction.getIndex() == PlaybackControlsRow.PlayPauseAction.PLAY);
                 } else if (action.getId() == mSkipNextAction.getId()) {
                     /* SkipNext action */
                     mMediaController.getTransportControls().skipToNext();
-                    // next(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
                 } else if (action.getId() == mSkipPreviousAction.getId()) {
                     /* SkipPrevious action */
                     mMediaController.getTransportControls().skipToPrevious();
-                    // prev(mCurrentPlaybackState == PlaybackState.STATE_PLAYING);
                 } else if (action.getId() == mFastForwardAction.getId()) {
                     /* FastForward action  */
                     mMediaController.getTransportControls().fastForward();
-                    // fastForward();
                 } else if (action.getId() == mRewindAction.getId()) {
                     /* Rewind action */
                     mMediaController.getTransportControls().rewind();
-                    // rewind();
                 }
                 if (action instanceof PlaybackControlsRow.MultiAction) {
                     /* Following action is subclass of MultiAction
@@ -392,14 +386,6 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
     private void updateMovieView(String title, String studio, String cardImageUrl, long duration) {
         Log.d(TAG, "updateMovieView");
-        Log.d(TAG, "title: " + title);
-        Log.d(TAG, "studio: " + studio);
-        Log.d(TAG, "cardImageUrl: " + cardImageUrl);
-        Log.d(TAG, "duration: " + duration);
-
-        Log.i(TAG, "update MovieView getCurrentItem" + mPlaybackController.getCurrentItem());
-
-
 
         if (mPlaybackControlsRow.getItem() != null) {
             Movie item = (Movie) mPlaybackControlsRow.getItem();

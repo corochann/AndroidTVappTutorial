@@ -86,7 +86,6 @@ public class PlaybackController {
         mActivity = activity;
         // mVideoView = (VideoView) activity.findViewById(VIDEO_VIEW_RESOURCE_ID);
         createMediaSession(mActivity);
-        // mItems = MovieProvider.getMovieItems();
     }
 
     private void createMediaSession(Activity activity) {
@@ -186,54 +185,6 @@ public class PlaybackController {
         releaseMediaSession();
     }
 
-    public void playPause(boolean doPlay) {
-
-        if (mCurrentPlaybackState == PlaybackState.STATE_NONE) {
-            /* Callbacks for mVideoView */
-            setupCallbacks();
-        }
-
-        //if (doPlay && mCurrentPlaybackState != PlaybackState.STATE_PLAYING) {
-        if (doPlay) { // Play
-            Log.d(TAG, "playPause: play");
-            if(mCurrentPlaybackState == PlaybackState.STATE_PLAYING) {
-                /* if current state is already playing, do nothing */
-                return;
-            } else {
-                mCurrentPlaybackState = PlaybackState.STATE_PLAYING;
-                mVideoView.start();
-                mStartTimeMillis = System.currentTimeMillis();
-            }
-        } else { // Pause
-            Log.d(TAG, "playPause: pause");
-            if(mCurrentPlaybackState == PlaybackState.STATE_PAUSED) {
-                /* if current state is already paused, do nothing */
-                return;
-            } else {
-                mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
-            }
-            setPosition(mVideoView.getCurrentPosition());
-            mVideoView.pause();
-
-        }
-
-        updatePlaybackState();
-    }
-
-    public void fastForward() {
-        if (mDuration != -1) {
-            // Fast forward 10 seconds.
-            setPosition(getCurrentPosition() + (10 * 1000));
-            mVideoView.seekTo(mPosition);
-        }
-
-    }
-
-    public void rewind() {
-        // rewind 10 seconds
-        setPosition(getCurrentPosition() - (10 * 1000));
-        mVideoView.seekTo(mPosition);
-    }
 
     public int getBufferPercentage() {
         return mVideoView.getBufferPercentage();
@@ -321,6 +272,56 @@ public class PlaybackController {
             mSession.release();
         }
     }
+
+    public void playPause(boolean doPlay) {
+
+        if (mCurrentPlaybackState == PlaybackState.STATE_NONE) {
+            /* Callbacks for mVideoView */
+            setupCallbacks();
+        }
+
+        //if (doPlay && mCurrentPlaybackState != PlaybackState.STATE_PLAYING) {
+        if (doPlay) { // Play
+            Log.d(TAG, "playPause: play");
+            if(mCurrentPlaybackState == PlaybackState.STATE_PLAYING) {
+                /* if current state is already playing, do nothing */
+                return;
+            } else {
+                mCurrentPlaybackState = PlaybackState.STATE_PLAYING;
+                mVideoView.start();
+                mStartTimeMillis = System.currentTimeMillis();
+            }
+        } else { // Pause
+            Log.d(TAG, "playPause: pause");
+            if(mCurrentPlaybackState == PlaybackState.STATE_PAUSED) {
+                /* if current state is already paused, do nothing */
+                return;
+            } else {
+                mCurrentPlaybackState = PlaybackState.STATE_PAUSED;
+            }
+            setPosition(mVideoView.getCurrentPosition());
+            mVideoView.pause();
+
+        }
+
+        updatePlaybackState();
+    }
+
+    public void fastForward() {
+        if (mDuration != -1) {
+            // Fast forward 10 seconds.
+            setPosition(getCurrentPosition() + (10 * 1000));
+            mVideoView.seekTo(mPosition);
+        }
+
+    }
+
+    public void rewind() {
+        // rewind 10 seconds
+        setPosition(getCurrentPosition() - (10 * 1000));
+        mVideoView.seekTo(mPosition);
+    }
+
 
     private class MediaSessionCallback extends MediaSession.Callback {
         @Override
