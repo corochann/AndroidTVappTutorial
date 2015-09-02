@@ -18,5 +18,6 @@
     <string name="oops">Oops</string>
     <string name="title_activity_playback_overlay">PlaybackOverlayActivity</string>
     <string name="should_start">shouldStart</string>
+    <string name="title_activity_search">SearchActivity</string>
 
 </resources>

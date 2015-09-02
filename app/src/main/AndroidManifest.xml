@@ -42,14 +42,20 @@
             android:name=".PlaybackOverlayActivity"
             android:label="@string/title_activity_playback_overlay" >
         </activity>
-
-        <activity android:name="GuidedStepActivity"
-            android:theme="@style/Theme.Example.Leanback.GuidedStep"/>
+        <activity
+            android:name=".GuidedStepActivity"
+            android:theme="@style/Theme.Example.Leanback.GuidedStep" />
 
         <!-- Recommendation -->
         <provider
             android:name=".RecommendationBuilder$RecommendationBackgroundContentProvider"
             android:authorities="com.corochann.androidtvapptutorial"
             android:exported="true" />
+
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search" >
+        </activity>
     </application>
+
 </manifest>

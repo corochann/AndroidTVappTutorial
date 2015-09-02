@@ -17,6 +17,7 @@ import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,6 +65,15 @@ public class MainFragment extends BrowseFragment {
     private void setupEventListeners() {
         setOnItemViewSelectedListener(new ItemViewSelectedListener());
         setOnItemViewClickedListener(new ItemViewClickedListener());
+
+        // Existence of this method make In-app search icon visible
+        setOnSearchClickedListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private final class ItemViewClickedListener implements OnItemViewClickedListener {
