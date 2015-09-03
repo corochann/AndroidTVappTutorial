@@ -9,22 +9,24 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
+import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.ObjectAdapter;
+import android.support.v17.leanback.widget.OnItemViewClickedListener;
+import android.support.v17.leanback.widget.Presenter;
+import android.support.v17.leanback.widget.Row;
+import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v17.leanback.widget.SpeechRecognitionCallback;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-/**
- * Created by corochann on 2/9/2015.
- */
 public class SearchFragment extends android.support.v17.leanback.app.SearchFragment
         implements android.support.v17.leanback.app.SearchFragment.SearchResultProvider {
 
@@ -52,7 +54,7 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 
         setSearchResultProvider(this);
-        //setOnItemViewClickedListener(new ItemViewClickedListener());
+        setOnItemViewClickedListener(new ItemViewClickedListener());
         if (!Utils.hasPermission(getActivity(), Manifest.permission.RECORD_AUDIO)) {
             Log.v(TAG, "no permission RECORD_AUDIO");
             // SpeechRecognitionCallback is not required and if not provided recognition will be handled
@@ -108,7 +110,7 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
     @Override
     public boolean onQueryTextSubmit(String query) {
         Log.i(TAG, String.format("Search Query Text Submit %s", query));
-        // No need to delay(wait) loadQuery
+        // No need to delay(wait) loadQuery, since the query typing has completed.
         loadQueryWithDelay(query, 0);
         return true;
     }
@@ -127,6 +129,9 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
         }
     }
 
+    /**
+     * Searches query specified by mQuery, and sets the result to mRowsAdapter.
+     */
     private void loadRows() {
         // offload processing from the UI thread
         new AsyncTask<String, Void, ListRow>() {
@@ -162,5 +167,28 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
                 mRowsAdapter.add(listRow);
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private final class ItemViewClickedListener implements OnItemViewClickedListener {
+        @Override
+        public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
+                                  RowPresenter.ViewHolder rowViewHolder, Row row) {
+
+            if (item instanceof Movie) {
+                Movie movie = (Movie) item;
+                Log.d(TAG, "Movie: " + movie.toString());
+                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                intent.putExtra(DetailsActivity.MOVIE, movie);
+
+                Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        getActivity(),
+                        ((ImageCardView) itemViewHolder.view).getMainImageView(),
+                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
+                getActivity().startActivity(intent, bundle);
+            } else {
+                Toast.makeText(getActivity(), ((String) item), Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
     }
 }
