@@ -22,16 +22,27 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Created by corochann on 2/9/2015.
+ */
 public class SearchFragment extends android.support.v17.leanback.app.SearchFragment
         implements android.support.v17.leanback.app.SearchFragment.SearchResultProvider {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
 
     private static final int REQUEST_SPEECH = 0x00000010;
+    private static final long SEARCH_DELAY_MS = 1000L;
 
     private ArrayObjectAdapter mRowsAdapter;
     private ArrayList<Movie> mItems = MovieProvider.getMovieItems();
 
+    private final Handler mHandler = new Handler();
+    private final Runnable mDelayedLoad = new Runnable() {
+        @Override
+        public void run() {
+            loadRows();
+        }
+    };
     private String mQuery;
 
     @Override
@@ -75,7 +86,7 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         setSearchQuery(data, true);
-                         break;
+                        break;
                 }
         }
     }
@@ -83,23 +94,37 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
     @Override
     public ObjectAdapter getResultsAdapter() {
         Log.d(TAG, "getResultsAdapter");
-        // Delete previously implemented mock code.
-        // mRowsAdapter (Search result) is already prepared in loadRows method
+        // mRowsAdapter (Search result) has prepared in loadRows method
         return mRowsAdapter;
     }
 
     @Override
     public boolean onQueryTextChange(String newQuery){
         Log.i(TAG, String.format("Search Query Text Change %s", newQuery));
+        loadQueryWithDelay(newQuery, SEARCH_DELAY_MS);
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
         Log.i(TAG, String.format("Search Query Text Submit %s", query));
-        mQuery = query;
-        loadRows();
+        // No need to delay(wait) loadQuery
+        loadQueryWithDelay(query, 0);
         return true;
+    }
+
+    /**
+     * Starts {@link #loadRows()} method after delay.
+     * It also cancels previously registered task if it has not yet executed.
+     * @param query the word to be searched
+     * @param delay the time to wait until loadRows will be executed (milliseconds).
+     */
+    private void loadQueryWithDelay(String query, long delay) {
+        mHandler.removeCallbacks(mDelayedLoad);
+        if (!TextUtils.isEmpty(query) && !query.equals("nil")) {
+            mQuery = query;
+            mHandler.postDelayed(mDelayedLoad, delay);
+        }
     }
 
     private void loadRows() {
