@@ -10,7 +10,7 @@
         android:layout_centerInParent="true"></VideoView>
 
     <fragment android:id="@+id/playback_controls_fragment"
-        android:name="com.corochann.androidtvapptutorial.PlaybackOverlayFragment"
+        android:name="com.corochann.androidtvapptutorial.ui.PlaybackOverlayFragment"
         android:layout_width="match_parent" android:layout_height="match_parent" />
 
 </FrameLayout>

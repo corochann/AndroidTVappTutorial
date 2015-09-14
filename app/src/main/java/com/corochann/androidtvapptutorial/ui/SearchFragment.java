@@ -1,4 +1,4 @@
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.ui;
 
 import android.Manifest;
 import android.app.Activity;
@@ -22,6 +22,11 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.corochann.androidtvapptutorial.model.Movie;
+import com.corochann.androidtvapptutorial.data.MovieProvider;
+import com.corochann.androidtvapptutorial.common.Utils;
+import com.corochann.androidtvapptutorial.ui.presenter.CardPresenter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.common;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -9,13 +9,14 @@ import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v17.leanback.widget.PlaybackControlsRow;
 import android.util.Log;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.corochann.androidtvapptutorial.data.MovieProvider;
+import com.corochann.androidtvapptutorial.model.Movie;
 
 import java.util.ArrayList;
 

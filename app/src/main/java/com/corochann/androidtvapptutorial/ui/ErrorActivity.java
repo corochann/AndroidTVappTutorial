@@ -1,7 +1,9 @@
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
+
+import com.corochann.androidtvapptutorial.R;
 
 /**
  * Created by corochann on 7/7/2015.

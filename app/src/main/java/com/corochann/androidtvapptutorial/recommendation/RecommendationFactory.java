@@ -1,6 +1,5 @@
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.recommendation;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,6 +10,9 @@ import android.graphics.Bitmap;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.corochann.androidtvapptutorial.R;
+import com.corochann.androidtvapptutorial.model.Movie;
+import com.corochann.androidtvapptutorial.ui.DetailsActivity;
 import com.squareup.picasso.Picasso;
 
 import java.net.URI;

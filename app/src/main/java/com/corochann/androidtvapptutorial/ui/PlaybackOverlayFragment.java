@@ -1,4 +1,4 @@
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,7 +11,6 @@ import android.media.session.MediaController;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
@@ -31,10 +30,14 @@ import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.util.Log;
 
+import com.corochann.androidtvapptutorial.model.Movie;
+import com.corochann.androidtvapptutorial.data.MovieProvider;
+import com.corochann.androidtvapptutorial.common.PlaybackController;
+import com.corochann.androidtvapptutorial.common.Utils;
+import com.corochann.androidtvapptutorial.ui.presenter.CardPresenter;
+import com.corochann.androidtvapptutorial.ui.presenter.DescriptionPresenter;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-
-import junit.framework.Assert;
 
 import java.net.URI;
 import java.util.ArrayList;

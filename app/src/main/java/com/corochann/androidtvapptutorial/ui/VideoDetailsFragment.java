@@ -1,4 +1,4 @@
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,6 +16,14 @@ import android.support.v17.leanback.widget.OnActionClickedListener;
 import android.support.v17.leanback.widget.SparseArrayObjectAdapter;
 import android.util.Log;
 
+import com.corochann.androidtvapptutorial.model.Movie;
+import com.corochann.androidtvapptutorial.data.MovieProvider;
+import com.corochann.androidtvapptutorial.ui.background.PicassoBackgroundManager;
+import com.corochann.androidtvapptutorial.R;
+import com.corochann.androidtvapptutorial.common.Utils;
+import com.corochann.androidtvapptutorial.ui.presenter.CardPresenter;
+import com.corochann.androidtvapptutorial.ui.presenter.CustomFullWidthDetailsOverviewRowPresenter;
+import com.corochann.androidtvapptutorial.ui.presenter.DetailsDescriptionPresenter;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;

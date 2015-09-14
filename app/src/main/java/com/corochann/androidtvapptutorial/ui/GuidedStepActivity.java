@@ -1,4 +1,4 @@
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.ui;
 
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -11,6 +11,8 @@ import android.support.v17.leanback.widget.GuidanceStylist;
 import android.support.v17.leanback.widget.GuidedAction;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.corochann.androidtvapptutorial.R;
 
 import java.util.List;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.recommendation;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -28,6 +28,8 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.corochann.androidtvapptutorial.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;

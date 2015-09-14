@@ -1,6 +1,8 @@
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.ui.presenter;
 
 import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter;
+
+import com.corochann.androidtvapptutorial.model.Movie;
 
 public class DescriptionPresenter extends AbstractDetailsDescriptionPresenter {
 

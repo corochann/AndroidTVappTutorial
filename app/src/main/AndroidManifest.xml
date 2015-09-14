@@ -23,7 +23,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.Leanback" >
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:icon="@drawable/app_icon_your_company"
             android:label="@string/app_name"
             android:logo="@drawable/app_icon_your_company" >
@@ -34,26 +34,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DetailsActivity"
+            android:name=".ui.DetailsActivity"
             android:label="@string/title_activity_details" >
         </activity>
-        <activity android:name=".ErrorActivity" />
+        <activity android:name=".ui.ErrorActivity" />
         <activity
-            android:name=".PlaybackOverlayActivity"
+            android:name=".ui.PlaybackOverlayActivity"
             android:label="@string/title_activity_playback_overlay" >
         </activity>
         <activity
-            android:name=".GuidedStepActivity"
+            android:name=".ui.GuidedStepActivity"
             android:theme="@style/Theme.Example.Leanback.GuidedStep" />
 
         <!-- Recommendation -->
         <provider
-            android:name=".RecommendationBuilder$RecommendationBackgroundContentProvider"
+            android:name=".recommendation.RecommendationBuilder$RecommendationBackgroundContentProvider"
             android:authorities="com.corochann.androidtvapptutorial"
             android:exported="true" />
 
         <activity
-            android:name=".SearchActivity"
+            android:name=".ui.SearchActivity"
             android:label="@string/title_activity_search" >
         </activity>
     </application>

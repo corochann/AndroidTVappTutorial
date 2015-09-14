@@ -1,4 +1,6 @@
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.data;
+
+import com.corochann.androidtvapptutorial.model.Movie;
 
 import java.util.ArrayList;
 

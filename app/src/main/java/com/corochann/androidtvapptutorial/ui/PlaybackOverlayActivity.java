@@ -1,16 +1,16 @@
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.ui;
 
 import android.app.Activity;
-import android.media.MediaPlayer;
-import android.media.session.MediaController;
-import android.media.session.MediaSession;
-import android.media.session.PlaybackState;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.VideoView;
+
+import com.corochann.androidtvapptutorial.model.Movie;
+import com.corochann.androidtvapptutorial.data.MovieProvider;
+import com.corochann.androidtvapptutorial.common.PlaybackController;
+import com.corochann.androidtvapptutorial.R;
 
 import java.util.ArrayList;
 

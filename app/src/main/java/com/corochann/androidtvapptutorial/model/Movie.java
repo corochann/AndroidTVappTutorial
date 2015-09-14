@@ -12,9 +12,7 @@
  * the License.
  */
 
-package com.corochann.androidtvapptutorial;
-
-import android.util.Log;
+package com.corochann.androidtvapptutorial.model;
 
 import java.io.Serializable;
 import java.net.URI;

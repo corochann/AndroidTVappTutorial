@@ -1,27 +1,40 @@
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.corochann.androidtvapptutorial.R;
 
-public class DetailsActivity extends Activity {
+public class SearchActivity extends Activity {
 
-    public static final String MOVIE = "Movie";
-    public static final String SHARED_ELEMENT_NAME = "hero";
-    public static final String NOTIFICATION_ID = "ID";
+    private static final String TAG = SearchActivity.class.getSimpleName();
+    private SearchFragment mSearchFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
+        setContentView(R.layout.activity_search);
+
+        mSearchFragment = (SearchFragment) getFragmentManager().findFragmentById(R.id.search_fragment);
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        //if (mSearchFragment.hasResults()) {
+            startActivity(new Intent(this, SearchActivity.class));
+        //} else {
+            //mSearchFragment.startRecognition();
+        //}
+        return true;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_details, menu);
+        getMenuInflater().inflate(R.menu.menu_search, menu);
         return true;
     }
 
@@ -39,4 +52,5 @@ public class DetailsActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }

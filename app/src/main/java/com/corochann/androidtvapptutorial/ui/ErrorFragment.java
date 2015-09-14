@@ -1,8 +1,10 @@
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.ui;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
+import com.corochann.androidtvapptutorial.R;
 
 /**
  * Modified from AOSP sample code by corochann on 7/7/2015.

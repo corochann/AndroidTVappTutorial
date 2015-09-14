@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.ui.presenter;
 
 
 import android.content.Context;
@@ -26,6 +26,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.corochann.androidtvapptutorial.model.Movie;
+import com.corochann.androidtvapptutorial.R;
+import com.corochann.androidtvapptutorial.common.Utils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 

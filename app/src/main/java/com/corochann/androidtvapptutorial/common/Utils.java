@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.common;
 
 import android.content.Context;
 import android.content.pm.PackageManager;

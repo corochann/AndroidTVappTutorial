@@ -1,4 +1,4 @@
-package com.corochann.androidtvapptutorial;
+package com.corochann.androidtvapptutorial.ui.presenter;
 
 import android.support.v17.leanback.widget.FullWidthDetailsOverviewRowPresenter;
 import android.support.v17.leanback.widget.Presenter;
@@ -11,7 +11,7 @@ public class CustomFullWidthDetailsOverviewRowPresenter extends FullWidthDetails
 
     private static final String TAG = CustomFullWidthDetailsOverviewRowPresenter.class.getSimpleName();
 
-    CustomFullWidthDetailsOverviewRowPresenter(Presenter presenter) {
+    public CustomFullWidthDetailsOverviewRowPresenter(Presenter presenter) {
         super(presenter);
     }
     @Override
