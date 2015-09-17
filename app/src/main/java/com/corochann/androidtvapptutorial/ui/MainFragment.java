@@ -2,7 +2,9 @@ package com.corochann.androidtvapptutorial.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
@@ -44,6 +46,7 @@ public class MainFragment extends BrowseFragment {
     private static final String GRID_STRING_ERROR_FRAGMENT = "ErrorFragment";
     private static final String GRID_STRING_GUIDED_STEP_FRAGMENT = "GuidedStepFragment";
     private static final String GRID_STRING_RECOMMENDATION = "Recommendation";
+    private static final String GRID_STRING_SPINNER = "Spinner";
 
     private static PicassoBackgroundManager picassoBackgroundManager = null;
 
@@ -106,6 +109,9 @@ public class MainFragment extends BrowseFragment {
                     recommendationFactory.recommend(recommendationCounter, movie, NotificationCompat.PRIORITY_HIGH);
                     Toast.makeText(getActivity(), "Recommendation sent (item " + recommendationCounter +")", Toast.LENGTH_SHORT).show();
                     recommendationCounter++;
+                } else if (item == GRID_STRING_SPINNER) {
+                    // Show SpinnerFragment, while backgroundtask is executed
+                    new ShowSpinnerTask().execute();
                 }
             }
         }
@@ -148,6 +154,7 @@ public class MainFragment extends BrowseFragment {
         gridRowAdapter.add(GRID_STRING_ERROR_FRAGMENT);
         gridRowAdapter.add(GRID_STRING_GUIDED_STEP_FRAGMENT);
         gridRowAdapter.add(GRID_STRING_RECOMMENDATION);
+        gridRowAdapter.add(GRID_STRING_SPINNER);
         mRowsAdapter.add(new ListRow(gridItemPresenterHeader, gridRowAdapter));
 
         /* CardPresenter */
@@ -193,5 +200,26 @@ public class MainFragment extends BrowseFragment {
         }
     }
 
+    private class ShowSpinnerTask extends AsyncTask<Void, Void, Void> {
+        SpinnerFragment mSpinnerFragment;
 
+        @Override
+        protected void onPreExecute() {
+            mSpinnerFragment = new SpinnerFragment();
+            getFragmentManager().beginTransaction().add(R.id.main_browse_fragment, mSpinnerFragment).commit();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            // Do some background process here.
+            // It just waits 5 sec in this Tutorial
+            SystemClock.sleep(5000);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            getFragmentManager().beginTransaction().remove(mSpinnerFragment).commit();
+        }
+    }
 }
