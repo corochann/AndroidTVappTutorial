@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.RecognizerIntent;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ImageCardView;
@@ -94,6 +95,8 @@ public class SearchFragment extends android.support.v17.leanback.app.SearchFragm
                     case Activity.RESULT_OK:
                         setSearchQuery(data, true);
                         break;
+                    case RecognizerIntent.RESULT_CLIENT_ERROR:
+                        Log.w(TAG, Integer.toString(requestCode));
                 }
         }
     }

@@ -1,6 +1,8 @@
 package com.corochann.androidtvapptutorial.ui;
 
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.content.Loader;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.corochann.androidtvapptutorial.data.VideoItemLoader;
 import com.corochann.androidtvapptutorial.model.Movie;
 import com.corochann.androidtvapptutorial.data.MovieProvider;
 import com.corochann.androidtvapptutorial.ui.background.PicassoBackgroundManager;
@@ -31,6 +34,10 @@ import com.corochann.androidtvapptutorial.recommendation.RecommendationFactory;
 import com.corochann.androidtvapptutorial.ui.presenter.CardPresenter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by corochann on 2015/06/28.
@@ -48,6 +55,7 @@ public class MainFragment extends BrowseFragment {
     private static final String GRID_STRING_RECOMMENDATION = "Recommendation";
     private static final String GRID_STRING_SPINNER = "Spinner";
 
+    private static final int VIDEO_ITEM_LOADER_ID = 1;
     private static PicassoBackgroundManager picassoBackgroundManager = null;
 
     ArrayList<Movie> mItems = MovieProvider.getMovieItems();
@@ -61,6 +69,7 @@ public class MainFragment extends BrowseFragment {
         setupUIElements();
 
         loadRows();
+        getLoaderManager().initLoader(VIDEO_ITEM_LOADER_ID, null, new MainFragmentLoaderCallbacks());
 
         setupEventListeners();
 
@@ -143,6 +152,8 @@ public class MainFragment extends BrowseFragment {
         setSearchAffordanceColor(getResources().getColor(R.color.search_opaque));
     }
 
+
+
     private void loadRows() {
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 
@@ -170,6 +181,72 @@ public class MainFragment extends BrowseFragment {
 
         /* Set */
         setAdapter(mRowsAdapter);
+    }
+
+    private class MainFragmentLoaderCallbacks implements LoaderManager.LoaderCallbacks<LinkedHashMap<String, List<Movie>>> {
+        @Override
+        public Loader<LinkedHashMap<String, List<Movie>>> onCreateLoader(int id, Bundle args) {
+            /* Create new Loader */
+            Log.d(TAG, "onCreateLoader");
+            if(id == VIDEO_ITEM_LOADER_ID) {
+                Log.d(TAG, "create VideoItemLoader");
+                return new VideoItemLoader(getActivity());
+            }
+            return null;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<LinkedHashMap<String, List<Movie>>> loader, LinkedHashMap<String, List<Movie>> data) {
+            Log.d(TAG, "onLoadFinished");
+            /* Loader data has prepared. Start updating UI here */
+            switch (loader.getId()) {
+                case VIDEO_ITEM_LOADER_ID:
+                    Log.d(TAG, "VideoLists UI update");
+
+                    mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+
+                    int index = 0;
+        /* GridItemPresenter */
+                    HeaderItem gridItemPresenterHeader = new HeaderItem(index, "GridItemPresenter");
+                    index++;
+
+                    GridItemPresenter mGridPresenter = new GridItemPresenter();
+                    ArrayObjectAdapter gridRowAdapter = new ArrayObjectAdapter(mGridPresenter);
+                    gridRowAdapter.add(GRID_STRING_ERROR_FRAGMENT);
+                    gridRowAdapter.add(GRID_STRING_GUIDED_STEP_FRAGMENT);
+                    gridRowAdapter.add(GRID_STRING_RECOMMENDATION);
+                    gridRowAdapter.add(GRID_STRING_SPINNER);
+                    mRowsAdapter.add(new ListRow(gridItemPresenterHeader, gridRowAdapter));
+
+        /* CardPresenter */
+                    CardPresenter cardPresenter = new CardPresenter();
+
+                    if (null != data) {
+                        for (Map.Entry<String, List<Movie>> entry : data.entrySet()) {
+                            ArrayObjectAdapter cardRowAdapter = new ArrayObjectAdapter(cardPresenter);
+                            List<Movie> list = entry.getValue();
+
+                            for (int j = 0; j < list.size(); j++) {
+                                cardRowAdapter.add(list.get(j));
+                            }
+                            HeaderItem header = new HeaderItem(index, entry.getKey());
+                            index++;
+                            mRowsAdapter.add(new ListRow(header, cardRowAdapter));
+                        }
+                    } else {
+                        Log.e(TAG, "An error occurred fetching videos");
+                    }
+        /* Set */
+                    setAdapter(mRowsAdapter);
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<LinkedHashMap<String, List<Movie>>> loader) {
+            Log.d(TAG, "onLoadReset");
+            /* When it is called, Loader data is now unavailable due to some reason. */
+
+        }
     }
 
     /**
