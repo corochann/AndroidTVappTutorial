@@ -36,7 +36,7 @@ public class VideoItemLoader extends AsyncTaskLoader<LinkedHashMap<String, List<
             videoLists = VideoProvider.buildMedia(getContext(), VideoProvider.VIDEO_LIST_URL);
         } catch (Exception e) {
             Log.e(TAG, e.toString());
-            cancelLoad();
+            //cancelLoad();
         }
         return videoLists;
     }
