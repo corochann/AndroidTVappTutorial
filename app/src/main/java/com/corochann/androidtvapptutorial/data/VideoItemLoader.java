@@ -30,7 +30,14 @@ public class VideoItemLoader extends AsyncTaskLoader<LinkedHashMap<String, List<
          * Prepare data here, it may take long time (Database access, URL connection, etc).
          * return value is used in onLoadFinished() method in Activity/Fragment's LoaderCallbacks.
          */
-        LinkedHashMap<String, List<Movie>> videoLists = prepareData();
+        //LinkedHashMap<String, List<Movie>> videoLists = prepareData();
+        LinkedHashMap<String, List<Movie>> videoLists = null;
+        try {
+            videoLists = VideoProvider.buildMedia(getContext(), VideoProvider.VIDEO_LIST_URL);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+            cancelLoad();
+        }
         return videoLists;
     }
 

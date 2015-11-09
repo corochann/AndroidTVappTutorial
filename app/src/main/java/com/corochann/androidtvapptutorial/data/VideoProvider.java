@@ -30,7 +30,9 @@ public class VideoProvider {
 
     private static final String TAG = VideoProvider.class.getSimpleName();
     public  static final String VIDEO_LIST_URL = "https://raw.githubusercontent.com/corochann/AndroidTVappTutorial/master/app/src/main/assets/video_lists.json";
-    public  static final String PREFIX_URL = "http://commondatastorage.googleapis.com/android-tv/Sample%20videos/";
+            //"https://raw.githubusercontent.com/corochann/AndroidTVappTutorial/master/app/src/main/assets/video_lists.json";
+    public  static final String PREFIX_URL = "http://corochann.com/wp-content/uploads/2015/11/";
+                    //"http://commondatastorage.googleapis.com/android-tv/Sample%20videos/";
 
 
     private static String TAG_MEDIA = "videos";
@@ -106,7 +108,7 @@ public class VideoProvider {
                                 video.getString(TAG_CARD_THUMB));
                         studio = video.getString(TAG_STUDIO);
 
-                        movie = buildMovieInfo(categoryName, title, description, studio,
+                        movie = buildMovieInfo(0, categoryName, title, description, studio,
                                 videoUrl, cardImageUrl, bgImageUrl);
                         //sMovieListById.put(movie.getId(), movie);
                         categoryList.add(movie);
@@ -118,7 +120,8 @@ public class VideoProvider {
         return sMovieList;
     }
 
-    private static Movie buildMovieInfo(String category,
+    private static Movie buildMovieInfo(long id,
+                                        String category,
                                         String title,
                                         String description,
                                         String studio,
@@ -126,8 +129,9 @@ public class VideoProvider {
                                         String cardImageUrl,
                                         String bgImageUrl) {
         Movie movie = new Movie();
-        movie.setId(Movie.getCount());
-        Movie.incrementCount();
+        movie.setId(id);
+        //movie.setId(Movie.getCount());
+        //Movie.incrementCount();
         movie.setTitle(title);
         movie.setDescription(description);
         movie.setStudio(studio);
@@ -173,7 +177,8 @@ public class VideoProvider {
         Log.d(TAG, "Parse URL: " + urlString);
         BufferedReader reader = null;
 
-        sPrefixUrl = Uri.parse(sResources.getString(R.string.prefix_url));
+        //sPrefixUrl = Uri.parse(sResources.getString(R.string.prefix_url));
+        sPrefixUrl = Uri.parse(PREFIX_URL);
 
         try {
             java.net.URL url = new java.net.URL(urlString);
