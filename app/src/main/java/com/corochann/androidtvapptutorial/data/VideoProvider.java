@@ -101,11 +101,14 @@ public class VideoProvider {
                             continue;
                         }
                         title = video.getString(TAG_TITLE);
-                        videoUrl = getVideoPrefix(categoryName, getVideoSourceUrl(videoUrls));
-                        bgImageUrl = getThumbPrefix(categoryName, title,
-                                video.getString(TAG_BACKGROUND));
-                        cardImageUrl = getThumbPrefix(categoryName, title,
-                                video.getString(TAG_CARD_THUMB));
+                        videoUrl = PREFIX_URL + getVideoSourceUrl(videoUrls);
+                                //getVideoPrefix(categoryName, getVideoSourceUrl(videoUrls));
+                        bgImageUrl = PREFIX_URL + video.getString(TAG_BACKGROUND);
+                                //getThumbPrefix(categoryName, title,
+                                //video.getString(TAG_BACKGROUND));
+                        cardImageUrl = PREFIX_URL + video.getString(TAG_CARD_THUMB);
+                                //getThumbPrefix(categoryName, title,
+                                //video.getString(TAG_CARD_THUMB));
                         studio = video.getString(TAG_STUDIO);
 
                         movie = buildMovieInfo(0, categoryName, title, description, studio,
@@ -157,7 +160,7 @@ public class VideoProvider {
     // Ex. "http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Google+/Google+_%20Instant%20Upload.mp4"
     private static String getVideoPrefix(String category, String videoUrl) {
         return sPrefixUrl.buildUpon()
-                .appendPath(category)
+                //.appendPath(category)
                 .appendPath(videoUrl)
                 .toString();
     }
@@ -166,8 +169,8 @@ public class VideoProvider {
     // Ex. "http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Google+/Google+_%20Instant%20Upload/bg.jpg"
     private static String getThumbPrefix(String category, String title, String imageUrl) {
         return sPrefixUrl.buildUpon()
-                .appendPath(category)
-                .appendPath(title)
+                //.appendPath(category)
+                //.appendPath(title)
                 .appendPath(imageUrl)
                 .toString();
     }

@@ -8,20 +8,20 @@
           "sources": [
             "birds_on_street_at_city.mp4"
           ],
-          "card": "card.jpg",
-          "background": "bg.jpg",
-          "title": "Google+_ Instant Upload",
-          "studio": "Google Plus"
+          "card": "birds_on_street_at_city_thumbnail.jpg",
+          "background": "birds_on_street_at_city_bg.jpg",
+          "title": "Birds on street at city",
+          "studio": "Pexel: https://videos.pexels.com/videos/birds-on-street-at-city-485"
         },
         {
           "description": "Fusce id nisi turpis. Praesent viverra bibendum semper. Donec tristique, orci sed semper lacinia, quam erat rhoncus massa, non congue tellus est quis tellus. Sed mollis orci venenatis quam scelerisque accumsan. Curabitur a massa sit amet mi accumsan mollis sed et magna. Vivamus sed aliquam risus. Nulla eget dolor in elit facilisis mattis. Ut aliquet luctus lacus. Phasellus nec commodo erat. Praesent tempus id lectus ac scelerisque. Maecenas pretium cursus lectus id volutpat.",
           "sources": [
-            "Google+_ New Dad.mp4"
+            "waterfall_stream_nature.mp4"
           ],
-          "card": "card.jpg",
-          "background": "bg.jpg",
-          "title": "Google+_ New Dad",
-          "studio": "Google Plus"
+          "card": "waterfall_stream_nature_thumbnail.jpg",
+          "background": "waterfall_stream_nature_bg.jpg",
+          "title": "Waterfall stream nature",
+          "studio": "Pexel: https://videos.pexels.com/videos/waterfall-stream-nature-423"
         },
         {
           "description": "Fusce id nisi turpis. Praesent viverra bibendum semper. Donec tristique, orci sed semper lacinia, quam erat rhoncus massa, non congue tellus est quis tellus. Sed mollis orci venenatis quam scelerisque accumsan. Curabitur a massa sit amet mi accumsan mollis sed et magna. Vivamus sed aliquam risus. Nulla eget dolor in elit facilisis mattis. Ut aliquet luctus lacus. Phasellus nec commodo erat. Praesent tempus id lectus ac scelerisque. Maecenas pretium cursus lectus id volutpat.",
@@ -31,46 +31,6 @@
           "card": "card.jpg",
           "background": "bg.jpg",
           "title": "Google+_ Say more with Hangouts",
-          "studio": "Google Plus"
-        },
-        {
-          "description": "Fusce id nisi turpis. Praesent viverra bibendum semper. Donec tristique, orci sed semper lacinia, quam erat rhoncus massa, non congue tellus est quis tellus. Sed mollis orci venenatis quam scelerisque accumsan. Curabitur a massa sit amet mi accumsan mollis sed et magna. Vivamus sed aliquam risus. Nulla eget dolor in elit facilisis mattis. Ut aliquet luctus lacus. Phasellus nec commodo erat. Praesent tempus id lectus ac scelerisque. Maecenas pretium cursus lectus id volutpat.",
-          "sources": [
-            "Google+_ Search.mp4"
-          ],
-          "card": "card.jpg",
-          "background": "bg.jpg",
-          "title": "Google+_ Search",
-          "studio": "Google Plus"
-        },
-        {
-          "description": "Fusce id nisi turpis. Praesent viverra bibendum semper. Donec tristique, orci sed semper lacinia, quam erat rhoncus massa, non congue tellus est quis tellus. Sed mollis orci venenatis quam scelerisque accumsan. Curabitur a massa sit amet mi accumsan mollis sed et magna. Vivamus sed aliquam risus. Nulla eget dolor in elit facilisis mattis. Ut aliquet luctus lacus. Phasellus nec commodo erat. Praesent tempus id lectus ac scelerisque. Maecenas pretium cursus lectus id volutpat.",
-          "sources": [
-            "Google+_ Sharing but like real life.mp4"
-          ],
-          "card": "card.jpg",
-          "background": "bg.jpg",
-          "title": "Google+_ Sharing but like real life",
-          "studio": "Google Plus"
-        },
-        {
-          "description": "Fusce id nisi turpis. Praesent viverra bibendum semper. Donec tristique, orci sed semper lacinia, quam erat rhoncus massa, non congue tellus est quis tellus. Sed mollis orci venenatis quam scelerisque accumsan. Curabitur a massa sit amet mi accumsan mollis sed et magna. Vivamus sed aliquam risus. Nulla eget dolor in elit facilisis mattis. Ut aliquet luctus lacus. Phasellus nec commodo erat. Praesent tempus id lectus ac scelerisque. Maecenas pretium cursus lectus id volutpat.",
-          "sources": [
-            "Google+_ Circles.mp4"
-          ],
-          "card": "card.jpg",
-          "background": "bg.jpg",
-          "title": "Google+_ Circles",
-          "studio": "Google Plus"
-        },
-        {
-          "description": "Fusce id nisi turpis. Praesent viverra bibendum semper. Donec tristique, orci sed semper lacinia, quam erat rhoncus massa, non congue tellus est quis tellus. Sed mollis orci venenatis quam scelerisque accumsan. Curabitur a massa sit amet mi accumsan mollis sed et magna. Vivamus sed aliquam risus. Nulla eget dolor in elit facilisis mattis. Ut aliquet luctus lacus. Phasellus nec commodo erat. Praesent tempus id lectus ac scelerisque. Maecenas pretium cursus lectus id volutpat.",
-          "sources": [
-            "Google+_ Hangouts.mp4"
-          ],
-          "card": "card.jpg",
-          "background": "bg.jpg",
-          "title": "Google+_ Hangouts",
           "studio": "Google Plus"
         }
       ]
