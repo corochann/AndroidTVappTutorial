@@ -61,7 +61,7 @@
           "card": "timelapse_of_stockholm_at_night_thumbnail.jpg",
           "background": "timelapse_of_stockholm_at_night_bg.jpg",
           "title": "Timelapse of stockholm at night",
-          "studio": "https://videos.pexels.com/videos/timelapse-of-stockholm-at-night-539 "
+          "studio": "https://videos.pexels.com/videos/timelapse-of-stockholm-at-night-539"
         },
         {
           "id": 6,
@@ -72,9 +72,9 @@
           "card": "roller_coaster_thumbnail.jpg",
           "background": "roller_coaster_bg.jpg",
           "title": "Roller coaster",
-          "studio": "Pexel: https://videos.pexels.com/videos/roller-coaster-560 "
+          "studio": "Pexel: https://videos.pexels.com/videos/roller-coaster-560"
         }
       ]
-    },
+    }
   ]
 }

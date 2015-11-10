@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.corochann.androidtvapptutorial.model.Movie;
 
+import org.json.JSONException;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,8 +37,8 @@ public class VideoItemLoader extends AsyncTaskLoader<LinkedHashMap<String, List<
         LinkedHashMap<String, List<Movie>> videoLists = null;
         try {
             videoLists = VideoProvider.buildMedia(getContext(), VideoProvider.VIDEO_LIST_URL);
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
+        } catch (JSONException e) {
+            Log.e(TAG, "buildMedia failed", e);
             //cancelLoad();
         }
         return videoLists;
