@@ -46,6 +46,7 @@ public class VideoItemLoader extends AsyncTaskLoader<LinkedHashMap<String, List<
 
     @Override
     protected void onStartLoading() {
+        Log.d(TAG, "onStartLoading");
         //super.onStartLoading();
         forceLoad();
     }

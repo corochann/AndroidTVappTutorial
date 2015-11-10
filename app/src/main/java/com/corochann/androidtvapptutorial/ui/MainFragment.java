@@ -211,7 +211,7 @@ public class MainFragment extends BrowseFragment {
                     Log.d(TAG, "VideoLists UI update");
 
                     /* Hold data reference to use it for recommendation */
-                    mItems = null;
+                    mItems = new ArrayList<Movie>();
 
                     mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 

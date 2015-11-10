@@ -47,6 +47,7 @@ public class VideoDetailsFragment extends DetailsFragment {
     private static final int DETAIL_THUMB_WIDTH = 274;
     private static final int DETAIL_THUMB_HEIGHT = 274;
 
+    private static final int LOADER_ID = 2;
 
     private static final String MOVIE = "Movie";
 
@@ -75,6 +76,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 
 
         mPicassoBackgroundManager.updateBackgroundWithDelay(mSelectedMovie.getCardImageUrl());
+        getLoaderManager().initLoader(VideoItemLoader.VIDEO_ITEM_LOADER_ID, null, new VideoDetailsFragmentLoaderCallbacks());
     }
 
     @Override
@@ -124,14 +126,14 @@ public class VideoDetailsFragment extends DetailsFragment {
 
                             mRelatedVideoRow = new ListRow(header, cardRowAdapter);
                             if(isBuilderTaskDone){
+                                /* Set */
                                 mAdapter.add(mRelatedVideoRow);
+                                setAdapter(mAdapter);
                             }
                         }
                     } else {
                         Log.e(TAG, "An error occurred fetching videos");
                     }
-        /* Set */
-                    setAdapter(mAdapter);
                     isLoadFinished = true;
             }
         }
