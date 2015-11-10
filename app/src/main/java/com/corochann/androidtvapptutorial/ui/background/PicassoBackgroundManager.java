@@ -73,10 +73,20 @@ public class PicassoBackgroundManager {
                      /* Here is main (UI) thread */
                     if (mBackgroundURI != null) {
                         updateBackground(mBackgroundURI);
+                    } else {
+                        updateBackground();
                     }
                 }
             });
         }
+    }
+
+    /**
+     * update backgroud to default
+     */
+    public void updateBackgroundWithDelay() {
+        mBackgroundURI = null;
+        startBackgroundTimer();
     }
 
     public void updateBackgroundWithDelay(String url) {
@@ -103,6 +113,22 @@ public class PicassoBackgroundManager {
         try {
             Picasso.with(mActivity)
                     .load(uri.toString())
+                    .resize(mMetrics.widthPixels, mMetrics.heightPixels)
+                    .centerCrop()
+                    .error(mDefaultBackground)
+                    .into(mBackgroundTarget);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+    }
+
+    /**
+     * update background to default image
+     */
+    private void updateBackground() {
+        try {
+            Picasso.with(mActivity)
+                    .load(DEFAULT_BACKGROUND_RES_ID)
                     .resize(mMetrics.widthPixels, mMetrics.heightPixels)
                     .centerCrop()
                     .error(mDefaultBackground)

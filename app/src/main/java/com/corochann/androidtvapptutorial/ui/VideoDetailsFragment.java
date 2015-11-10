@@ -1,6 +1,8 @@
 package com.corochann.androidtvapptutorial.ui;
 
+import android.app.LoaderManager;
 import android.content.Intent;
+import android.content.Loader;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.support.v17.leanback.widget.OnActionClickedListener;
 import android.support.v17.leanback.widget.SparseArrayObjectAdapter;
 import android.util.Log;
 
+import com.corochann.androidtvapptutorial.data.VideoItemLoader;
 import com.corochann.androidtvapptutorial.model.Movie;
 import com.corochann.androidtvapptutorial.data.MovieProvider;
 import com.corochann.androidtvapptutorial.ui.background.PicassoBackgroundManager;
@@ -28,6 +31,9 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by corochann on 6/7/2015.
@@ -49,6 +55,11 @@ public class VideoDetailsFragment extends DetailsFragment {
 
     private Movie mSelectedMovie;
     private DetailsRowBuilderTask mDetailsRowBuilderTask;
+    private boolean isBuilderTaskDone = false;
+    private boolean isLoadFinished = false;
+
+    private ArrayObjectAdapter mAdapter;
+    private ListRow mRelatedVideoRow = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,6 +82,68 @@ public class VideoDetailsFragment extends DetailsFragment {
         mDetailsRowBuilderTask.cancel(true);
         super.onStop();
     }
+
+    private class VideoDetailsFragmentLoaderCallbacks implements LoaderManager.LoaderCallbacks<LinkedHashMap<String, List<Movie>>> {
+        @Override
+        public Loader<LinkedHashMap<String, List<Movie>>> onCreateLoader(int id, Bundle args) {
+            /* Create new Loader */
+            Log.d(TAG, "onCreateLoader");
+            if(id == VideoItemLoader.VIDEO_ITEM_LOADER_ID) {
+                Log.d(TAG, "create VideoItemLoader");
+                return new VideoItemLoader(getActivity());
+            }
+            return null;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<LinkedHashMap<String, List<Movie>>> loader, LinkedHashMap<String, List<Movie>> data) {
+            Log.d(TAG, "onLoadFinished");
+            /* Loader data has prepared. Start updating UI here */
+            switch (loader.getId()) {
+                case VideoItemLoader.VIDEO_ITEM_LOADER_ID:
+                    Log.d(TAG, "VideoLists UI update");
+
+                    //mAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+
+                    int index = 0;
+
+                    /* CardPresenter */
+                    CardPresenter cardPresenter = new CardPresenter();
+
+                    if (null != data) {
+                        for (Map.Entry<String, List<Movie>> entry : data.entrySet()) {
+                            ArrayObjectAdapter cardRowAdapter = new ArrayObjectAdapter(cardPresenter);
+                            List<Movie> list = entry.getValue();
+
+                            for (int j = 0; j < list.size(); j++) {
+                                cardRowAdapter.add(list.get(j));
+                            }
+                            //HeaderItem header = new HeaderItem(index, entry.getKey());
+                            HeaderItem header = new HeaderItem(0, "Related Videos");
+                            index++;
+
+                            mRelatedVideoRow = new ListRow(header, cardRowAdapter);
+                            if(isBuilderTaskDone){
+                                mAdapter.add(mRelatedVideoRow);
+                            }
+                        }
+                    } else {
+                        Log.e(TAG, "An error occurred fetching videos");
+                    }
+        /* Set */
+                    setAdapter(mAdapter);
+                    isLoadFinished = true;
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<LinkedHashMap<String, List<Movie>>> loader) {
+            Log.d(TAG, "onLoadReset");
+            /* When it is called, Loader data is now unavailable due to some reason. */
+
+        }
+    }
+
 
     private class DetailsRowBuilderTask extends AsyncTask<Movie, Integer, DetailsOverviewRow> {
         @Override
@@ -121,29 +194,35 @@ public class VideoDetailsFragment extends DetailsFragment {
 
 
             /* 2nd row: ListRow */
-            ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
+/*            ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
 
             ArrayList<Movie> mItems = MovieProvider.getMovieItems();
             for (Movie movie : mItems) {
                 listRowAdapter.add(movie);
             }
-            HeaderItem headerItem = new HeaderItem(0, "Related Videos");
+            HeaderItem headerItem = new HeaderItem(0, "Related Videos");*/
 
             ClassPresenterSelector classPresenterSelector = new ClassPresenterSelector();
-            Log.v(TAG, "mFwdorPresenter.getInitialState: " +mFwdorPresenter.getInitialState());
+            Log.v(TAG, "mFwdorPresenter.getInitialState: " + mFwdorPresenter.getInitialState());
 
             classPresenterSelector.addClassPresenter(DetailsOverviewRow.class, mFwdorPresenter);
             classPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
 
-            ArrayObjectAdapter adapter = new ArrayObjectAdapter(classPresenterSelector);
+
+            mAdapter = new ArrayObjectAdapter(classPresenterSelector);
             /* 1st row */
-            adapter.add(row);
+            mAdapter.add(row);
             /* 2nd row */
-            adapter.add(new ListRow(headerItem, listRowAdapter));
+            //mAdapter.add(new ListRow(headerItem, listRowAdapter));
+            if(isLoadFinished){
+                if(mRelatedVideoRow != null) {
+                    mAdapter.add(mRelatedVideoRow);
+                }
+            }
             /* 3rd row */
             //adapter.add(new ListRow(headerItem, listRowAdapter));
-            setAdapter(adapter);
-
+            setAdapter(mAdapter);
+            isBuilderTaskDone = true;
         }
     }
 }

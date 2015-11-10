@@ -35,6 +35,7 @@ public class VideoProvider {
                     //"http://commondatastorage.googleapis.com/android-tv/Sample%20videos/";
 
 
+    private static String TAG_ID = "id";
     private static String TAG_MEDIA = "videos";
     private static String TAG_VIDEO_LISTS = "videolists";
     private static String TAG_CATEGORY = "category";
@@ -78,6 +79,7 @@ public class VideoProvider {
         if (null != categories) {
             final int categoryLength = categories.length();
             Log.d(TAG, "category #: " + categoryLength);
+            long id;
             String title;
             String videoUrl;
             String bgImageUrl;
@@ -100,6 +102,7 @@ public class VideoProvider {
                         if (null == videoUrls || videoUrls.length() == 0) {
                             continue;
                         }
+                        id = video.getLong(TAG_ID);
                         title = video.getString(TAG_TITLE);
                         videoUrl = PREFIX_URL + getVideoSourceUrl(videoUrls);
                                 //getVideoPrefix(categoryName, getVideoSourceUrl(videoUrls));
@@ -111,7 +114,7 @@ public class VideoProvider {
                                 //video.getString(TAG_CARD_THUMB));
                         studio = video.getString(TAG_STUDIO);
 
-                        movie = buildMovieInfo(0, categoryName, title, description, studio,
+                        movie = buildMovieInfo(id, categoryName, title, description, studio,
                                 videoUrl, cardImageUrl, bgImageUrl);
                         //sMovieListById.put(movie.getId(), movie);
                         categoryList.add(movie);

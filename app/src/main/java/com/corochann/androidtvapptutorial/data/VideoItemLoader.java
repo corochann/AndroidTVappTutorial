@@ -16,6 +16,7 @@ import java.util.List;
 public class VideoItemLoader extends AsyncTaskLoader<LinkedHashMap<String, List<Movie>>> {
 
     private static final String TAG = VideoItemLoader.class.getSimpleName();
+    public static final int VIDEO_ITEM_LOADER_ID = 1;
 
     public VideoItemLoader(Context context) {
         super(context);

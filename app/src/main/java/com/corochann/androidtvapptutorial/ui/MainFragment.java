@@ -55,10 +55,10 @@ public class MainFragment extends BrowseFragment {
     private static final String GRID_STRING_RECOMMENDATION = "Recommendation";
     private static final String GRID_STRING_SPINNER = "Spinner";
 
-    private static final int VIDEO_ITEM_LOADER_ID = 1;
     private static PicassoBackgroundManager picassoBackgroundManager = null;
 
-    ArrayList<Movie> mItems = MovieProvider.getMovieItems();
+    ArrayList<Movie> mItems = null; //MovieProvider.getMovieItems();
+    LinkedHashMap<String, List<Movie>> mVideoLists = null;
     private static int recommendationCounter = 0;
 
     @Override
@@ -69,12 +69,13 @@ public class MainFragment extends BrowseFragment {
         setupUIElements();
 
         loadRows();
-        getLoaderManager().initLoader(VIDEO_ITEM_LOADER_ID, null, new MainFragmentLoaderCallbacks());
+        getLoaderManager().initLoader(VideoItemLoader.VIDEO_ITEM_LOADER_ID, null, new MainFragmentLoaderCallbacks());
 
         setupEventListeners();
 
         picassoBackgroundManager = new PicassoBackgroundManager(getActivity());
-        picassoBackgroundManager.updateBackgroundWithDelay("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/10/RIMG0656.jpg");
+        picassoBackgroundManager.updateBackgroundWithDelay();
+        //picassoBackgroundManager.updateBackgroundWithDelay("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/10/RIMG0656.jpg");
     }
 
     private void setupEventListeners() {
@@ -114,10 +115,14 @@ public class MainFragment extends BrowseFragment {
                 } else if (item == GRID_STRING_RECOMMENDATION) {
                     Log.v(TAG, "onClick recommendation. counter " + recommendationCounter);
                     RecommendationFactory recommendationFactory = new RecommendationFactory(getActivity().getApplicationContext());
-                    Movie movie = mItems.get(recommendationCounter % mItems.size());
-                    recommendationFactory.recommend(recommendationCounter, movie, NotificationCompat.PRIORITY_HIGH);
-                    Toast.makeText(getActivity(), "Recommendation sent (item " + recommendationCounter +")", Toast.LENGTH_SHORT).show();
-                    recommendationCounter++;
+                    if(mVideoLists != null){
+                        Movie movie = mItems.get(recommendationCounter % mItems.size());
+                        recommendationFactory.recommend(recommendationCounter, movie, NotificationCompat.PRIORITY_HIGH);
+                        Toast.makeText(getActivity(), "Recommendation sent (item " + recommendationCounter +")", Toast.LENGTH_SHORT).show();
+                        recommendationCounter++;
+                    } else {
+                        Toast.makeText(getActivity(), "Recommendation unsuccessful (video data not prepared yet)", Toast.LENGTH_SHORT).show();
+                    }
                 } else if (item == GRID_STRING_SPINNER) {
                     // Show SpinnerFragment, while backgroundtask is executed
                     new ShowSpinnerTask().execute();
@@ -132,9 +137,9 @@ public class MainFragment extends BrowseFragment {
                                    RowPresenter.ViewHolder rowViewHolder, Row row) {
             // each time the item is selected, code inside here will be executed.
             if (item instanceof String) {                    // GridItemPresenter
-                picassoBackgroundManager.updateBackgroundWithDelay("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/10/RIMG0656.jpg");
+                picassoBackgroundManager.updateBackgroundWithDelay();
             } else if (item instanceof Movie) {              // CardPresenter
-                picassoBackgroundManager.updateBackgroundWithDelay(((Movie) item).getCardImageUrl());
+                picassoBackgroundManager.updateBackgroundWithDelay(((Movie) item).getBackgroundImageUrl());
             }
         }
     }
@@ -169,6 +174,7 @@ public class MainFragment extends BrowseFragment {
         mRowsAdapter.add(new ListRow(gridItemPresenterHeader, gridRowAdapter));
 
         /* CardPresenter */
+/*
         HeaderItem cardPresenterHeader = new HeaderItem(1, "CardPresenter");
         CardPresenter cardPresenter = new CardPresenter();
         ArrayObjectAdapter cardRowAdapter = new ArrayObjectAdapter(cardPresenter);
@@ -178,6 +184,7 @@ public class MainFragment extends BrowseFragment {
         }
 
         mRowsAdapter.add(new ListRow(cardPresenterHeader, cardRowAdapter));
+*/
 
         /* Set */
         setAdapter(mRowsAdapter);
@@ -188,7 +195,7 @@ public class MainFragment extends BrowseFragment {
         public Loader<LinkedHashMap<String, List<Movie>>> onCreateLoader(int id, Bundle args) {
             /* Create new Loader */
             Log.d(TAG, "onCreateLoader");
-            if(id == VIDEO_ITEM_LOADER_ID) {
+            if(id == VideoItemLoader.VIDEO_ITEM_LOADER_ID) {
                 Log.d(TAG, "create VideoItemLoader");
                 return new VideoItemLoader(getActivity());
             }
@@ -200,8 +207,11 @@ public class MainFragment extends BrowseFragment {
             Log.d(TAG, "onLoadFinished");
             /* Loader data has prepared. Start updating UI here */
             switch (loader.getId()) {
-                case VIDEO_ITEM_LOADER_ID:
+                case VideoItemLoader.VIDEO_ITEM_LOADER_ID:
                     Log.d(TAG, "VideoLists UI update");
+
+                    /* Hold data reference to use it for recommendation */
+                    mItems = null;
 
                     mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 
@@ -227,7 +237,9 @@ public class MainFragment extends BrowseFragment {
                             List<Movie> list = entry.getValue();
 
                             for (int j = 0; j < list.size(); j++) {
-                                cardRowAdapter.add(list.get(j));
+                                Movie movie = list.get(j);
+                                cardRowAdapter.add(movie);
+                                mItems.add(movie);           // Add movie reference for recommendation purpose.
                             }
                             HeaderItem header = new HeaderItem(index, entry.getKey());
                             index++;

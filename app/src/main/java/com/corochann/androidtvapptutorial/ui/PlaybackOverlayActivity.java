@@ -44,7 +44,7 @@ public class PlaybackOverlayActivity extends Activity {
         mItems = MovieProvider.getMovieItems();
         mSelectedMovie = (Movie) getIntent().getSerializableExtra(DetailsActivity.MOVIE);
         //mSelectedMovie = (Movie) getIntent().getExtras().getSerializable(DetailsActivity.MOVIE);
-        mCurrentItem = (int) mSelectedMovie.getId() - 1;
+        mCurrentItem = 0;//(int) mSelectedMovie.getId() - 1;
         mPlaybackController.setCurrentItem(mCurrentItem);
 
         setContentView(R.layout.activity_playback_overlay);
