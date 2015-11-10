@@ -47,7 +47,7 @@ public class VideoDetailsFragment extends DetailsFragment {
     private static final int DETAIL_THUMB_WIDTH = 274;
     private static final int DETAIL_THUMB_HEIGHT = 274;
 
-    private static final int LOADER_ID = 2;
+    private static final int LOADER_ID = 0;
 
     private static final String MOVIE = "Movie";
 
@@ -76,7 +76,12 @@ public class VideoDetailsFragment extends DetailsFragment {
 
 
         mPicassoBackgroundManager.updateBackgroundWithDelay(mSelectedMovie.getCardImageUrl());
-        getLoaderManager().initLoader(VideoItemLoader.VIDEO_ITEM_LOADER_ID, null, new VideoDetailsFragmentLoaderCallbacks());
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(LOADER_ID, null, new VideoDetailsFragmentLoaderCallbacks());
     }
 
     @Override
@@ -90,9 +95,10 @@ public class VideoDetailsFragment extends DetailsFragment {
         public Loader<LinkedHashMap<String, List<Movie>>> onCreateLoader(int id, Bundle args) {
             /* Create new Loader */
             Log.d(TAG, "onCreateLoader");
-            if(id == VideoItemLoader.VIDEO_ITEM_LOADER_ID) {
+            if(id == LOADER_ID) {
                 Log.d(TAG, "create VideoItemLoader");
-                return new VideoItemLoader(getActivity());
+                //return new VideoItemLoader(getActivity());
+                return new VideoItemLoader(getActivity().getApplicationContext());
             }
             return null;
         }
@@ -102,7 +108,7 @@ public class VideoDetailsFragment extends DetailsFragment {
             Log.d(TAG, "onLoadFinished");
             /* Loader data has prepared. Start updating UI here */
             switch (loader.getId()) {
-                case VideoItemLoader.VIDEO_ITEM_LOADER_ID:
+                case LOADER_ID:
                     Log.d(TAG, "VideoLists UI update");
 
                     //mAdapter = new ArrayObjectAdapter(new ListRowPresenter());

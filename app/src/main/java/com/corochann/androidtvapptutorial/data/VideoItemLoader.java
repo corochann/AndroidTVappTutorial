@@ -18,7 +18,9 @@ import java.util.List;
 public class VideoItemLoader extends AsyncTaskLoader<LinkedHashMap<String, List<Movie>>> {
 
     private static final String TAG = VideoItemLoader.class.getSimpleName();
-    public static final int VIDEO_ITEM_LOADER_ID = 1;
+    public static final int VIDEO_ITEM_LOADER_ID = 0;
+
+    LinkedHashMap<String, List<Movie>> mData;
 
     public VideoItemLoader(Context context) {
         super(context);
@@ -45,10 +47,66 @@ public class VideoItemLoader extends AsyncTaskLoader<LinkedHashMap<String, List<
     }
 
     @Override
+    public void deliverResult(LinkedHashMap<String, List<Movie>> data) {
+        Log.d(TAG, "deliverResult");
+
+        LinkedHashMap<String, List<Movie>> oldData = mData;
+        mData = data;
+
+        if(isStarted()){
+            Log.d(TAG, "isStarted true");
+            super.deliverResult(data);
+        }
+
+        if(oldData != null && oldData != data) {
+            releaseResources(oldData);
+        }
+    }
+
+    private void releaseResources(LinkedHashMap<String, List<Movie>> data) {
+        Log.d(TAG, "releaseResources");
+        // For a simple List, there is nothing to do. For something like a Cursor, we
+        // would close it in this method. All resources associated with the Loader
+        // should be released here.
+        data = null;
+    }
+
+    @Override
     protected void onStartLoading() {
         Log.d(TAG, "onStartLoading");
+        if (mData != null) {
+            Log.d(TAG, "mData remaining");
+            deliverResult(mData);
+        } else {
+            Log.d(TAG, "mData is null, forceLoad");
+            forceLoad();
+        }
         //super.onStartLoading();
-        forceLoad();
+
+    }
+
+    @Override
+    protected void onStopLoading() {
+        Log.d(TAG, "onStopLoading");
+        //super.onStopLoading();
+        cancelLoad();
+    }
+
+    @Override
+    protected void onReset() {
+        Log.d(TAG, "onReset");
+        super.onReset();
+    }
+
+    @Override
+    public void onCanceled(LinkedHashMap<String, List<Movie>> data) {
+        Log.d(TAG, "onCanceled");
+        super.onCanceled(data);
+    }
+
+    @Override
+    protected boolean onCancelLoad() {
+        return super.onCancelLoad();
     }
 
     private LinkedHashMap<String, List<Movie>> prepareData() {

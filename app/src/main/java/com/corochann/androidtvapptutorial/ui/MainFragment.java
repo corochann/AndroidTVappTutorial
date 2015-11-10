@@ -69,7 +69,9 @@ public class MainFragment extends BrowseFragment {
         setupUIElements();
 
         loadRows();
+        LoaderManager.enableDebugLogging(true);
         getLoaderManager().initLoader(VideoItemLoader.VIDEO_ITEM_LOADER_ID, null, new MainFragmentLoaderCallbacks());
+
 
         setupEventListeners();
 
@@ -197,7 +199,8 @@ public class MainFragment extends BrowseFragment {
             Log.d(TAG, "onCreateLoader");
             if(id == VideoItemLoader.VIDEO_ITEM_LOADER_ID) {
                 Log.d(TAG, "create VideoItemLoader");
-                return new VideoItemLoader(getActivity());
+                //return new VideoItemLoader(getActivity());
+                return new VideoItemLoader(getActivity().getApplicationContext());
             }
             return null;
         }
@@ -259,6 +262,8 @@ public class MainFragment extends BrowseFragment {
             /* When it is called, Loader data is now unavailable due to some reason. */
 
         }
+
+
     }
 
     /**
