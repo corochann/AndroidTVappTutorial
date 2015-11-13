@@ -16,9 +16,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.corochann.androidtvapptutorial.data.MovieProvider;
+import com.corochann.androidtvapptutorial.data.VideoProvider;
 import com.corochann.androidtvapptutorial.model.Movie;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Created by corochann on 24/7/2015.
@@ -54,7 +57,7 @@ public class PlaybackController {
     private MediaSession mSession;
     private MediaSessionCallback mMediaSessionCallback;
     private VideoView mVideoView;
-    private static final ArrayList<Movie> mItems =  MovieProvider.getMovieItems(); // new ArrayList<Movie>();
+    private static ArrayList<Movie> mItems; // =  MovieProvider.getMovieItems(); // new ArrayList<Movie>();
 
     /* Global variables */
     private int mCurrentPlaybackState = PlaybackState.STATE_NONE;
@@ -86,7 +89,25 @@ public class PlaybackController {
     public PlaybackController(Activity activity) {
         mActivity = activity;
         // mVideoView = (VideoView) activity.findViewById(VIDEO_VIEW_RESOURCE_ID);
+
         createMediaSession(mActivity);
+    }
+
+    public PlaybackController(Activity activity, int currentItemIndex, ArrayList<Movie> items) {
+        mActivity = activity;
+        // mVideoView = (VideoView) activity.findViewById(VIDEO_VIEW_RESOURCE_ID);
+        this.setPlaylist(currentItemIndex, items);
+        createMediaSession(mActivity);
+    }
+
+    public void setPlaylist(int currentItemIndex, ArrayList<Movie> items) {
+        mCurrentItem = currentItemIndex;
+        mItems = items;
+        if(mItems == null){
+            Log.e(TAG, "mItems null!!");
+        } else {
+            Log.i(TAG, mItems.toString());
+        }
     }
 
     private void createMediaSession(Activity activity) {

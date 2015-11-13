@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -57,7 +58,42 @@ public class VideoProvider {
         }
     }
 
+    /**
+     * It may return null when data is not prepared yet by {@link #buildMedia}.
+     * Ensure that data is already prepared before call this function.
+     * @return
+     */
+    public static LinkedHashMap<String, List<Movie>> getMedia() {
+        return sMovieList;
+    }
 
+    /**
+     *
+     * @param category
+     * @return ArrayList of movies within specified "category"
+     */
+    public static ArrayList<Movie> getMovieItems(String category) {
+        if(sMovieList == null) {
+            Log.e(TAG, "sMovieList is not prepared yet!");
+            return null;
+        } else {
+            ArrayList<Movie> movieItems = new ArrayList<>();
+            for (Map.Entry<String, List<Movie>> entry : sMovieList.entrySet()) {
+                String categoryName = entry.getKey();
+                if(!categoryName.equals(categoryName)) {
+                    continue;
+                }
+                List<Movie> list = entry.getValue();
+                for (int j = 0; j < list.size(); j++) {
+                    movieItems.add(list.get(j));
+                }
+            }
+            if(movieItems == null) {
+                Log.w(TAG, "No data foud with category: " + category);
+            }
+            return movieItems;
+        }
+    }
 
     public static LinkedHashMap<String, List<Movie>> buildMedia(Context ctx, String url)
             throws JSONException {

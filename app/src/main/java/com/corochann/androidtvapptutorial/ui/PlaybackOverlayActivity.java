@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.VideoView;
 
+import com.corochann.androidtvapptutorial.data.VideoProvider;
 import com.corochann.androidtvapptutorial.model.Movie;
 import com.corochann.androidtvapptutorial.data.MovieProvider;
 import com.corochann.androidtvapptutorial.common.PlaybackController;
@@ -23,7 +24,8 @@ public class PlaybackOverlayActivity extends Activity {
     private PlaybackController mPlaybackController;
 
     private Movie mSelectedMovie;
-    private int mCurrentItem;
+    String mCategoryName;
+    //private int mCurrentItem;
 
     public PlaybackController getPlaybackController() {
         return mPlaybackController;
@@ -35,15 +37,21 @@ public class PlaybackOverlayActivity extends Activity {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
-        /* NOTE: setMediaController (in createMediaSession) must be executed
-         * BEFORE inflating Fragment!
-         */
-        mPlaybackController = new PlaybackController(this);
 
         mSelectedMovie = getIntent().getParcelableExtra(DetailsActivity.MOVIE);
-        
-        mCurrentItem = 0;//(int) mSelectedMovie.getId() - 1;
-        mPlaybackController.setCurrentItem(mCurrentItem);
+        // TODO: temporal workaround, each category has separated by 100 for now.
+        int currentItemIndex = (int)mSelectedMovie.getId() / 100;
+        mCategoryName = mSelectedMovie.getCategory();
+
+        /* NOTE: setMediaController (in createMediaSession) must be executed
+         * BEFORE inflating Fragment!
+         * NOTE2: sMovieList in VideoProvider must be prepared before instantiating PlaybackController...
+         */
+        //mPlaybackController = new PlaybackController(this);
+        mPlaybackController = new PlaybackController(this, currentItemIndex, VideoProvider.getMovieItems(mCategoryName));
+
+        //mCurrentItem = 0;//(int) mSelectedMovie.getId() - 1;
+        //mPlaybackController.setCurrentItem(mCurrentItem);
 
         setContentView(R.layout.activity_playback_overlay);
         mVideoView = (VideoView) findViewById(R.id.videoView);
