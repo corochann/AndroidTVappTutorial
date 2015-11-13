@@ -55,6 +55,8 @@ public class MainFragment extends BrowseFragment {
     private static final String GRID_STRING_RECOMMENDATION = "Recommendation";
     private static final String GRID_STRING_SPINNER = "Spinner";
 
+    public static final String CATEGORY = "Category";
+
     private static PicassoBackgroundManager picassoBackgroundManager = null;
 
     ArrayList<Movie> mItems = null; //MovieProvider.getMovieItems();
@@ -104,7 +106,9 @@ public class MainFragment extends BrowseFragment {
                 Movie movie = (Movie) item;
 
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
+
                 intent.putExtra(DetailsActivity.MOVIE, movie);
+                intent.putExtra(MainFragment.CATEGORY, row.getHeaderItem().getName());
 
                 getActivity().startActivity(intent);
             } else if (item instanceof String){
