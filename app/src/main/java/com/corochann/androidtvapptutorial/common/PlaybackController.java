@@ -105,8 +105,6 @@ public class PlaybackController {
         mItems = items;
         if(mItems == null){
             Log.e(TAG, "mItems null!!");
-        } else {
-            Log.i(TAG, mItems.toString());
         }
     }
 
@@ -361,7 +359,7 @@ public class PlaybackController {
             if (++mCurrentItem >= mItems.size()) { // Current Item is set to next here
                 mCurrentItem = 0;
             }
-
+            Log.d(TAG, "onSkipToNext: " + mCurrentItem);
             Movie movie = mItems.get(mCurrentItem);
             //Movie movie = VideoProvider.getMovieById(mediaId);
             if (movie != null) {

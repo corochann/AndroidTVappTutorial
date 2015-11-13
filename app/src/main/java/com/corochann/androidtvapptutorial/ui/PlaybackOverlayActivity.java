@@ -39,16 +39,13 @@ public class PlaybackOverlayActivity extends Activity {
 
 
         mSelectedMovie = getIntent().getParcelableExtra(DetailsActivity.MOVIE);
-        // TODO: temporal workaround, each category has separated by 100 for now.
-        int currentItemIndex = (int)mSelectedMovie.getId() / 100;
-        mCategoryName = mSelectedMovie.getCategory();
 
         /* NOTE: setMediaController (in createMediaSession) must be executed
          * BEFORE inflating Fragment!
          * NOTE2: sMovieList in VideoProvider must be prepared before instantiating PlaybackController...
          */
-        //mPlaybackController = new PlaybackController(this);
-        mPlaybackController = new PlaybackController(this, currentItemIndex, VideoProvider.getMovieItems(mCategoryName));
+        mPlaybackController = new PlaybackController(this);
+        //mPlaybackController = new PlaybackController(this, currentItemIndex, VideoProvider.getMovieItems(mCategoryName));
 
         //mCurrentItem = 0;//(int) mSelectedMovie.getId() - 1;
         //mPlaybackController.setCurrentItem(mCurrentItem);

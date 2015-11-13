@@ -30,6 +30,7 @@ import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.util.Log;
 
+import com.corochann.androidtvapptutorial.data.VideoProvider;
 import com.corochann.androidtvapptutorial.model.Movie;
 import com.corochann.androidtvapptutorial.data.MovieProvider;
 import com.corochann.androidtvapptutorial.common.PlaybackController;
@@ -48,9 +49,9 @@ import java.util.ArrayList;
 public class PlaybackOverlayFragment extends android.support.v17.leanback.app.PlaybackOverlayFragment {
 
     private static final String TAG = PlaybackOverlayFragment.class.getSimpleName();
-    private static final int SIMULATED_BUFFERED_TIME = 10000;
     private static final int DEFAULT_UPDATE_PERIOD = 1000;
     private static final int UPDATE_PERIOD = 16;
+    private static final int VIDEO_PLAY_FINISHED_MARGIN = 100; // used to check video playback has finished or not.
     private static final int CARD_WIDTH = 200;
     private static final int CARD_HEIGHT = 240;
     private static final boolean SHOW_IMAGE = true;
@@ -66,6 +67,9 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
     private Runnable mRunnable;
     private ArrayList<Movie> mItems = new ArrayList<Movie>();
     private ArrayObjectAdapter mRowsAdapter;
+
+    private Movie mSelectedMovie;
+    String mCategoryName;
 
     private PlaybackControlsRow.PlayPauseAction mPlayPauseAction;
     private PlaybackControlsRow.RepeatAction mRepeatAction;
@@ -98,12 +102,18 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         activity = (PlaybackOverlayActivity) getActivity();
         mHandler = new Handler();
 
+        mSelectedMovie = getActivity().getIntent().getParcelableExtra(DetailsActivity.MOVIE);
+        // TODO: temporal workaround, each category has separated by 100 for now.
+        int currentItemIndex = (int)mSelectedMovie.getId() % 100;
+        mCategoryName = mSelectedMovie.getCategory();
+        mItems = VideoProvider.getMovieItems(mCategoryName);
+
         mPlaybackController = activity.getPlaybackController();
+        mPlaybackController.setPlaylist(currentItemIndex, mItems);
+        Log.i(TAG, "currentItemIndex: " + currentItemIndex);
 
         setBackgroundType(PlaybackOverlayFragment.BG_LIGHT);
         setFadingEnabled(true);
-
-        //mItems = MovieProvider.getMovieItems();
 
         setUpRows();
 
@@ -188,7 +198,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
          */
         addPlaybackControlsRow();
         /* add ListRow to second row of mRowsAdapter */
-        //addOtherRows();
+        addOtherRows();
 
         /* onClick */
         playbackControlsRowPresenter.setOnActionClickedListener(new OnActionClickedListener() {
@@ -280,11 +290,13 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
 
                     //mPlaybackControlsRow.setBufferedProgress(currentTime + SIMULATED_BUFFERED_TIME);
                     //Log.v(TAG, "currenttime " + currentTime);
+                    //Log.v(TAG, "totalTime " + totalTime);
+                    //Log.v(TAG, "updatePeriod " + updatePeriod);
                     //Log.v(TAG, "BufferPercentage " + mPlaybackController.getBufferPercentage());
                     //Log.v(TAG, "duration: " + mPlaybackController.getDuration());
                     //Log.v(TAG, "bufferedtime " + mPlaybackController.calcBufferedTime(currentTime));
 
-                    if (totalTime > 0 && totalTime <= currentTime + updatePeriod) {
+                    if (totalTime > 0 && totalTime <= currentTime + VIDEO_PLAY_FINISHED_MARGIN) {
                         // stopProgressAutomation();
                         mMediaController.getTransportControls().skipToNext();
                         //next(true);
@@ -348,7 +360,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         mSecondaryActionsAdapter.add(mClosedCaptioningAction);
         mSecondaryActionsAdapter.add(mMoreActions);
 
-        // updatePlaybackRow(mPlaybackController.getCurrentItem());
+        updatePlaybackRow(mPlaybackController.getCurrentItem());
         mPlaybackController.updateMetadata();
     }
 

@@ -68,9 +68,10 @@ public class VideoProvider {
     }
 
     /**
-     *
+     *  ArrayList of movies within specified "category".
+     *  If argument is null, then returns all movie list.
      * @param category
-     * @return ArrayList of movies within specified "category"
+     * @return
      */
     public static ArrayList<Movie> getMovieItems(String category) {
         if(sMovieList == null) {
@@ -80,7 +81,7 @@ public class VideoProvider {
             ArrayList<Movie> movieItems = new ArrayList<>();
             for (Map.Entry<String, List<Movie>> entry : sMovieList.entrySet()) {
                 String categoryName = entry.getKey();
-                if(!categoryName.equals(categoryName)) {
+                if(category !=null && !category.equals(categoryName)) {
                     continue;
                 }
                 List<Movie> list = entry.getValue();
