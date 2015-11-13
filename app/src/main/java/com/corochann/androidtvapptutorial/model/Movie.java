@@ -123,6 +123,7 @@ public class Movie implements Parcelable {
                 '}';
     }
 
+    /*** auto generated codes by Parcelable plugin start ***/
     @Override
     public int describeContents() {
         return 0;
@@ -160,4 +161,5 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+    /*** auto generated codes by Parcelable plugin end ***/
 }

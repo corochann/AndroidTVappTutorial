@@ -103,7 +103,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         setBackgroundType(PlaybackOverlayFragment.BG_LIGHT);
         setFadingEnabled(true);
 
-        mItems = MovieProvider.getMovieItems();
+        //mItems = MovieProvider.getMovieItems();
 
         setUpRows();
 
@@ -188,7 +188,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
          */
         addPlaybackControlsRow();
         /* add ListRow to second row of mRowsAdapter */
-        addOtherRows();
+        //addOtherRows();
 
         /* onClick */
         playbackControlsRowPresenter.setOnActionClickedListener(new OnActionClickedListener() {

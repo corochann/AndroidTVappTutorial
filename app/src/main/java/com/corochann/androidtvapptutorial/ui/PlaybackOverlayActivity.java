@@ -20,7 +20,6 @@ public class PlaybackOverlayActivity extends Activity {
     private static final String TAG = PlaybackOverlayActivity.class.getSimpleName();
 
     private VideoView mVideoView;
-    private ArrayList<Movie> mItems = new ArrayList<Movie>();
     private PlaybackController mPlaybackController;
 
     private Movie mSelectedMovie;
@@ -41,9 +40,8 @@ public class PlaybackOverlayActivity extends Activity {
          */
         mPlaybackController = new PlaybackController(this);
 
-        mItems = MovieProvider.getMovieItems();
-        mSelectedMovie = (Movie) getIntent().getSerializableExtra(DetailsActivity.MOVIE);
-        //mSelectedMovie = (Movie) getIntent().getExtras().getSerializable(DetailsActivity.MOVIE);
+        mSelectedMovie = getIntent().getParcelableExtra(DetailsActivity.MOVIE);
+        
         mCurrentItem = 0;//(int) mSelectedMovie.getId() - 1;
         mPlaybackController.setCurrentItem(mCurrentItem);
 

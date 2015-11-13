@@ -12,10 +12,16 @@ import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
 import android.support.v17.leanback.widget.DetailsOverviewRow;
 import android.support.v17.leanback.widget.HeaderItem;
+import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnActionClickedListener;
+import android.support.v17.leanback.widget.OnItemViewClickedListener;
+import android.support.v17.leanback.widget.Presenter;
+import android.support.v17.leanback.widget.Row;
+import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v17.leanback.widget.SparseArrayObjectAdapter;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.util.Log;
 
 import com.corochann.androidtvapptutorial.data.VideoItemLoader;
@@ -49,8 +55,6 @@ public class VideoDetailsFragment extends DetailsFragment {
 
     private static final int LOADER_ID = 0;
 
-    private static final String MOVIE = "Movie";
-
     private CustomFullWidthDetailsOverviewRowPresenter mFwdorPresenter;
     private PicassoBackgroundManager mPicassoBackgroundManager;
 
@@ -70,10 +74,11 @@ public class VideoDetailsFragment extends DetailsFragment {
         mFwdorPresenter = new CustomFullWidthDetailsOverviewRowPresenter(new DetailsDescriptionPresenter());
 
         mPicassoBackgroundManager = new PicassoBackgroundManager(getActivity());
-        mSelectedMovie = getActivity().getIntent().getParcelableExtra(MOVIE);
+        mSelectedMovie = getActivity().getIntent().getParcelableExtra(DetailsActivity.MOVIE);
 
         mDetailsRowBuilderTask = (DetailsRowBuilderTask) new DetailsRowBuilderTask().execute(mSelectedMovie);
 
+        setOnItemViewClickedListener(new ItemViewClickedListener());
 
         mPicassoBackgroundManager.updateBackgroundWithDelay(mSelectedMovie.getCardImageUrl());
     }
@@ -88,6 +93,26 @@ public class VideoDetailsFragment extends DetailsFragment {
     public void onStop() {
         mDetailsRowBuilderTask.cancel(true);
         super.onStop();
+    }
+
+    private final class ItemViewClickedListener implements OnItemViewClickedListener {
+        @Override
+        public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
+                                  RowPresenter.ViewHolder rowViewHolder, Row row) {
+
+            if (item instanceof Movie) {
+                Movie movie = (Movie) item;
+                Log.d(TAG, "Item: " + item.toString());
+                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                intent.putExtra(DetailsActivity.MOVIE, movie);
+
+                Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        getActivity(),
+                        ((ImageCardView) itemViewHolder.view).getMainImageView(),
+                        DetailsActivity.SHARED_ELEMENT_NAME).toBundle();
+                getActivity().startActivity(intent, bundle);
+            }
+        }
     }
 
     private class VideoDetailsFragmentLoaderCallbacks implements LoaderManager.LoaderCallbacks<LinkedHashMap<String, List<Movie>>> {

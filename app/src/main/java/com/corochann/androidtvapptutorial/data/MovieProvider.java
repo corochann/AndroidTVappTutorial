@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Created by corochann on 21/7/2015.
+ * This class is no longer used! VideoProvider will alternate the job instead.
  */
 public class MovieProvider {
 
