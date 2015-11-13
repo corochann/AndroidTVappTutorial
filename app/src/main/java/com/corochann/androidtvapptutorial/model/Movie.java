@@ -14,6 +14,9 @@
 
 package com.corochann.androidtvapptutorial.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,11 +25,10 @@ import java.net.URISyntaxException;
  *  Modified from AOSP sample source code, by corochann on 2/7/2015.
  *  Movie class represents video entity with title, description, image thumbs and video url.
  */
-public class Movie implements Serializable {
+public class Movie implements Parcelable {
 
     private static final String TAG = Movie.class.getSimpleName();
 
-    static final long serialVersionUID = 727566175075960653L;
     private long id;
     private String title;
     private String studio;
@@ -35,7 +37,6 @@ public class Movie implements Serializable {
     private String cardImageUrl;
     private String videoUrl;
     private String category;
-
 
     public long getId() {
         return id;
@@ -60,7 +61,6 @@ public class Movie implements Serializable {
     public void setStudio(String studio) {
         this.studio = studio;
     }
-
 
     public String getDescription() {
         return description;
@@ -122,4 +122,42 @@ public class Movie implements Serializable {
                 ", videoUrl='" + videoUrl + '\'' +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.id);
+        dest.writeString(this.title);
+        dest.writeString(this.studio);
+        dest.writeString(this.description);
+        dest.writeString(this.bgImageUrl);
+        dest.writeString(this.cardImageUrl);
+        dest.writeString(this.videoUrl);
+        dest.writeString(this.category);
+    }
+
+    protected Movie(Parcel in) {
+        this.id = in.readLong();
+        this.title = in.readString();
+        this.studio = in.readString();
+        this.description = in.readString();
+        this.bgImageUrl = in.readString();
+        this.cardImageUrl = in.readString();
+        this.videoUrl = in.readString();
+        this.category = in.readString();
+    }
+
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        public Movie createFromParcel(Parcel source) {
+            return new Movie(source);
+        }
+
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }

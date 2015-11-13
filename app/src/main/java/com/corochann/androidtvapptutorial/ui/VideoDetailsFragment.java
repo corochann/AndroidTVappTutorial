@@ -70,7 +70,7 @@ public class VideoDetailsFragment extends DetailsFragment {
         mFwdorPresenter = new CustomFullWidthDetailsOverviewRowPresenter(new DetailsDescriptionPresenter());
 
         mPicassoBackgroundManager = new PicassoBackgroundManager(getActivity());
-        mSelectedMovie = (Movie)getActivity().getIntent().getSerializableExtra(MOVIE);
+        mSelectedMovie = getActivity().getIntent().getParcelableExtra(MOVIE);
 
         mDetailsRowBuilderTask = (DetailsRowBuilderTask) new DetailsRowBuilderTask().execute(mSelectedMovie);
 
