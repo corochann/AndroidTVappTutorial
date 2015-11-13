@@ -59,7 +59,6 @@ public class VideoDetailsFragment extends DetailsFragment {
     private PicassoBackgroundManager mPicassoBackgroundManager;
 
     private Movie mSelectedMovie;
-    private String mCategoryName; // selected category name
     private DetailsRowBuilderTask mDetailsRowBuilderTask;
     private boolean isBuilderTaskDone = false;
     private boolean isLoadFinished = false;
@@ -76,7 +75,6 @@ public class VideoDetailsFragment extends DetailsFragment {
 
         mPicassoBackgroundManager = new PicassoBackgroundManager(getActivity());
         mSelectedMovie = getActivity().getIntent().getParcelableExtra(DetailsActivity.MOVIE);
-        mCategoryName = getActivity().getIntent().getStringExtra(MainFragment.CATEGORY);
 
         mDetailsRowBuilderTask = (DetailsRowBuilderTask) new DetailsRowBuilderTask().execute(mSelectedMovie);
 
@@ -149,7 +147,7 @@ public class VideoDetailsFragment extends DetailsFragment {
                         for (Map.Entry<String, List<Movie>> entry : data.entrySet()) {
                             // Find only same category
                             String categoryName = entry.getKey();
-                            if(!categoryName.equals(mCategoryName)) {
+                            if(!categoryName.equals(mSelectedMovie.getCategory())) {
                                 continue;
                             }
 
