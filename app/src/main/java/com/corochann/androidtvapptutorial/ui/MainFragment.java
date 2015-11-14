@@ -58,7 +58,6 @@ public class MainFragment extends BrowseFragment {
     private static PicassoBackgroundManager picassoBackgroundManager = null;
 
     ArrayList<Movie> mItems = null; //MovieProvider.getMovieItems();
-    LinkedHashMap<String, List<Movie>> mVideoLists = null;
     private static int recommendationCounter = 0;
 
     @Override
@@ -116,7 +115,7 @@ public class MainFragment extends BrowseFragment {
                 } else if (item == GRID_STRING_RECOMMENDATION) {
                     Log.v(TAG, "onClick recommendation. counter " + recommendationCounter);
                     RecommendationFactory recommendationFactory = new RecommendationFactory(getActivity().getApplicationContext());
-                    if(mVideoLists != null){
+                    if(mItems != null){
                         Movie movie = mItems.get(recommendationCounter % mItems.size());
                         recommendationFactory.recommend(recommendationCounter, movie, NotificationCompat.PRIORITY_HIGH);
                         Toast.makeText(getActivity(), "Recommendation sent (item " + recommendationCounter +")", Toast.LENGTH_SHORT).show();
