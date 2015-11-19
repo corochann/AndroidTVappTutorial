@@ -55,6 +55,8 @@ public class MainFragment extends BrowseFragment {
     private static final String GRID_STRING_RECOMMENDATION = "Recommendation";
     private static final String GRID_STRING_SPINNER = "Spinner";
 
+    private static final int VIDEO_ITEM_LOADER_ID = 1;
+
     private static PicassoBackgroundManager picassoBackgroundManager = null;
 
     ArrayList<Movie> mItems = null; //MovieProvider.getMovieItems();
@@ -69,7 +71,7 @@ public class MainFragment extends BrowseFragment {
 
         loadRows();
         LoaderManager.enableDebugLogging(true);
-        getLoaderManager().initLoader(VideoItemLoader.VIDEO_ITEM_LOADER_ID, null, new MainFragmentLoaderCallbacks());
+        getLoaderManager().initLoader(VIDEO_ITEM_LOADER_ID, null, new MainFragmentLoaderCallbacks());
 
 
         setupEventListeners();
@@ -195,7 +197,7 @@ public class MainFragment extends BrowseFragment {
         public Loader<LinkedHashMap<String, List<Movie>>> onCreateLoader(int id, Bundle args) {
             /* Create new Loader */
             Log.d(TAG, "onCreateLoader");
-            if(id == VideoItemLoader.VIDEO_ITEM_LOADER_ID) {
+            if(id == VIDEO_ITEM_LOADER_ID) {
                 Log.d(TAG, "create VideoItemLoader");
                 //return new VideoItemLoader(getActivity());
                 return new VideoItemLoader(getActivity().getApplicationContext());
@@ -208,7 +210,7 @@ public class MainFragment extends BrowseFragment {
             Log.d(TAG, "onLoadFinished");
             /* Loader data has prepared. Start updating UI here */
             switch (loader.getId()) {
-                case VideoItemLoader.VIDEO_ITEM_LOADER_ID:
+                case VIDEO_ITEM_LOADER_ID:
                     Log.d(TAG, "VideoLists UI update");
 
                     /* Hold data reference to use it for recommendation */
@@ -217,7 +219,7 @@ public class MainFragment extends BrowseFragment {
                     mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 
                     int index = 0;
-        /* GridItemPresenter */
+                    /* GridItemPresenter */
                     HeaderItem gridItemPresenterHeader = new HeaderItem(index, "GridItemPresenter");
                     index++;
 
@@ -229,7 +231,7 @@ public class MainFragment extends BrowseFragment {
                     gridRowAdapter.add(GRID_STRING_SPINNER);
                     mRowsAdapter.add(new ListRow(gridItemPresenterHeader, gridRowAdapter));
 
-        /* CardPresenter */
+                    /* CardPresenter */
                     CardPresenter cardPresenter = new CardPresenter();
 
                     if (null != data) {
@@ -249,7 +251,7 @@ public class MainFragment extends BrowseFragment {
                     } else {
                         Log.e(TAG, "An error occurred fetching videos");
                     }
-        /* Set */
+                    /* Set */
                     setAdapter(mRowsAdapter);
             }
         }
