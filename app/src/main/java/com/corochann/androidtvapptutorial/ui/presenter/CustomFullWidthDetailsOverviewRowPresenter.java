@@ -14,9 +14,10 @@ public class CustomFullWidthDetailsOverviewRowPresenter extends FullWidthDetails
     public CustomFullWidthDetailsOverviewRowPresenter(Presenter presenter) {
         super(presenter);
     }
+
     @Override
     protected void onBindRowViewHolder(RowPresenter.ViewHolder holder, Object item) {
         super.onBindRowViewHolder(holder, item);
-        this.setState((ViewHolder) holder, FullWidthDetailsOverviewRowPresenter.STATE_SMALL);
+        this.setState((ViewHolder) holder, FullWidthDetailsOverviewRowPresenter.STATE_HALF);
     }
 }

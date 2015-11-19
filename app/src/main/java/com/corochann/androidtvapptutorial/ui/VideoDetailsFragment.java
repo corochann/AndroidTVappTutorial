@@ -48,10 +48,8 @@ public class VideoDetailsFragment extends DetailsFragment {
 
     private static final int ACTION_PLAY_VIDEO = 1;
 
-    private static final int DETAIL_THUMB_WIDTH = 274;
-    private static final int DETAIL_THUMB_HEIGHT = 274;
-
-    private static final int LOADER_ID = 0;
+    private static final int DETAIL_THUMB_WIDTH = 220; //274
+    private static final int DETAIL_THUMB_HEIGHT = 120; //274
 
     /* Attribute */
     private ArrayObjectAdapter mAdapter;
@@ -65,8 +63,6 @@ public class VideoDetailsFragment extends DetailsFragment {
     private Movie mSelectedMovie;
     LinkedHashMap<String, List<Movie>> mVideoLists = null;
     private PicassoBackgroundManager mPicassoBackgroundManager;
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
