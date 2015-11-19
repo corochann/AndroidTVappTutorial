@@ -25,8 +25,8 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:recyclerview-v7:22.2.0'
-    compile 'com.android.support:leanback-v17:22.2.0'
+    compile 'com.android.support:recyclerview-v7:23.0.1'
+    compile 'com.android.support:leanback-v17:23.0.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     /*
                     compile 'com.github.bumptech.glide:glide:3.6.0'
