@@ -38,7 +38,7 @@ public class VideoItemLoader extends AsyncTaskLoader<LinkedHashMap<String, List<
         //LinkedHashMap<String, List<Movie>> videoLists = prepareData();
         LinkedHashMap<String, List<Movie>> videoLists = null;
         try {
-            videoLists = VideoProvider.buildMedia(getContext(), VideoProvider.VIDEO_LIST_URL);
+            videoLists = VideoProvider.buildMedia(getContext());
         } catch (JSONException e) {
             Log.e(TAG, "buildMedia failed", e);
             //cancelLoad();

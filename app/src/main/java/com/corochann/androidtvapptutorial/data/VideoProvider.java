@@ -96,6 +96,10 @@ public class VideoProvider {
         }
     }
 
+    public static LinkedHashMap<String, List<Movie>> buildMedia(Context ctx) throws JSONException{
+        return buildMedia(ctx, VIDEO_LIST_URL);
+    }
+
     public static LinkedHashMap<String, List<Movie>> buildMedia(Context ctx, String url)
             throws JSONException {
         if (null != sMovieList) {

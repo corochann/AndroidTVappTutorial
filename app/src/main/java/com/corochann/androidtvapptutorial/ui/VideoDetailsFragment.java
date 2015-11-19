@@ -1,8 +1,6 @@
 package com.corochann.androidtvapptutorial.ui;
 
-import android.app.LoaderManager;
 import android.content.Intent;
-import android.content.Loader;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,9 +22,8 @@ import android.support.v17.leanback.widget.SparseArrayObjectAdapter;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.util.Log;
 
-import com.corochann.androidtvapptutorial.data.VideoItemLoader;
+import com.corochann.androidtvapptutorial.data.VideoProvider;
 import com.corochann.androidtvapptutorial.model.Movie;
-import com.corochann.androidtvapptutorial.data.MovieProvider;
 import com.corochann.androidtvapptutorial.ui.background.PicassoBackgroundManager;
 import com.corochann.androidtvapptutorial.R;
 import com.corochann.androidtvapptutorial.common.Utils;
@@ -35,8 +32,9 @@ import com.corochann.androidtvapptutorial.ui.presenter.CustomFullWidthDetailsOve
 import com.corochann.androidtvapptutorial.ui.presenter.DetailsDescriptionPresenter;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,16 +53,20 @@ public class VideoDetailsFragment extends DetailsFragment {
 
     private static final int LOADER_ID = 0;
 
+    /* Attribute */
+    private ArrayObjectAdapter mAdapter;
     private CustomFullWidthDetailsOverviewRowPresenter mFwdorPresenter;
+    private ClassPresenterSelector mClassPresenterSelector;
+    private ListRow mRelatedVideoRow = null;
+
+    private DetailsRowBuilderTask mDetailsRowBuilderTask;
+
+    /* Relation */
+    private Movie mSelectedMovie;
+    LinkedHashMap<String, List<Movie>> mVideoLists = null;
     private PicassoBackgroundManager mPicassoBackgroundManager;
 
-    private Movie mSelectedMovie;
-    private DetailsRowBuilderTask mDetailsRowBuilderTask;
-    private boolean isBuilderTaskDone = false;
-    private boolean isLoadFinished = false;
 
-    private ArrayObjectAdapter mAdapter;
-    private ListRow mRelatedVideoRow = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,7 +88,14 @@ public class VideoDetailsFragment extends DetailsFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_ID, null, new VideoDetailsFragmentLoaderCallbacks());
+
+        mClassPresenterSelector = new ClassPresenterSelector();
+        Log.v(TAG, "mFwdorPresenter.getInitialState: " + mFwdorPresenter.getInitialState());
+        mClassPresenterSelector.addClassPresenter(DetailsOverviewRow.class, mFwdorPresenter);
+        mClassPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
+
+        mAdapter = new ArrayObjectAdapter(mClassPresenterSelector);
+        setAdapter(mAdapter);
     }
 
     @Override
@@ -115,75 +124,6 @@ public class VideoDetailsFragment extends DetailsFragment {
         }
     }
 
-    private class VideoDetailsFragmentLoaderCallbacks implements LoaderManager.LoaderCallbacks<LinkedHashMap<String, List<Movie>>> {
-        @Override
-        public Loader<LinkedHashMap<String, List<Movie>>> onCreateLoader(int id, Bundle args) {
-            /* Create new Loader */
-            Log.d(TAG, "onCreateLoader");
-            if(id == LOADER_ID) {
-                Log.d(TAG, "create VideoItemLoader");
-                //return new VideoItemLoader(getActivity());
-                return new VideoItemLoader(getActivity().getApplicationContext());
-            }
-            return null;
-        }
-
-        @Override
-        public void onLoadFinished(Loader<LinkedHashMap<String, List<Movie>>> loader, LinkedHashMap<String, List<Movie>> data) {
-            Log.d(TAG, "onLoadFinished");
-            /* Loader data has prepared. Start updating UI here */
-            switch (loader.getId()) {
-                case LOADER_ID:
-                    Log.d(TAG, "VideoLists UI update");
-
-                    //mAdapter = new ArrayObjectAdapter(new ListRowPresenter());
-
-                    int index = 0;
-
-                    /* CardPresenter */
-                    CardPresenter cardPresenter = new CardPresenter();
-
-                    if (null != data) {
-                        for (Map.Entry<String, List<Movie>> entry : data.entrySet()) {
-                            // Find only same category
-                            String categoryName = entry.getKey();
-                            if(!categoryName.equals(mSelectedMovie.getCategory())) {
-                                continue;
-                            }
-
-                            ArrayObjectAdapter cardRowAdapter = new ArrayObjectAdapter(cardPresenter);
-                            List<Movie> list = entry.getValue();
-
-                            for (int j = 0; j < list.size(); j++) {
-                                cardRowAdapter.add(list.get(j));
-                            }
-                            //HeaderItem header = new HeaderItem(index, entry.getKey());
-                            HeaderItem header = new HeaderItem(0, "Related Videos");
-                            index++;
-
-                            mRelatedVideoRow = new ListRow(header, cardRowAdapter);
-                            if(isBuilderTaskDone){
-                                /* Set */
-                                mAdapter.add(mRelatedVideoRow);
-                                setAdapter(mAdapter);
-                            }
-                        }
-                    } else {
-                        Log.e(TAG, "An error occurred fetching videos");
-                    }
-                    isLoadFinished = true;
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<LinkedHashMap<String, List<Movie>>> loader) {
-            Log.d(TAG, "onLoadReset");
-            /* When it is called, Loader data is now unavailable due to some reason. */
-
-        }
-    }
-
-
     private class DetailsRowBuilderTask extends AsyncTask<Movie, Integer, DetailsOverviewRow> {
         @Override
         protected DetailsOverviewRow doInBackground(Movie... params) {
@@ -198,11 +138,13 @@ public class VideoDetailsFragment extends DetailsFragment {
                         .centerCrop()
                         .get();
                 row.setImageBitmap(getActivity(), poster);
+
+                mVideoLists = VideoProvider.buildMedia(getActivity());
             } catch (IOException e) {
                 Log.w(TAG, e.toString());
+            } catch (JSONException e) {
+                Log.e(TAG, e.toString());
             }
-
-
             return row;
         }
 
@@ -231,6 +173,27 @@ public class VideoDetailsFragment extends DetailsFragment {
                 }
             });
 
+            /* 2nd row: ListRow CardPresenter */
+
+            CardPresenter cardPresenter = new CardPresenter();
+
+            for (Map.Entry<String, List<Movie>> entry : mVideoLists.entrySet()) {
+                // Find only same category
+                String categoryName = entry.getKey();
+                if(!categoryName.equals(mSelectedMovie.getCategory())) {
+                    continue;
+                }
+
+                ArrayObjectAdapter cardRowAdapter = new ArrayObjectAdapter(cardPresenter);
+                List<Movie> list = entry.getValue();
+
+                for (int j = 0; j < list.size(); j++) {
+                    cardRowAdapter.add(list.get(j));
+                }
+                //HeaderItem header = new HeaderItem(index, entry.getKey());
+                HeaderItem header = new HeaderItem(0, "Related Videos");
+                mRelatedVideoRow = new ListRow(header, cardRowAdapter);
+            }
 
             /* 2nd row: ListRow */
 /*            ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
@@ -239,29 +202,19 @@ public class VideoDetailsFragment extends DetailsFragment {
             for (Movie movie : mItems) {
                 listRowAdapter.add(movie);
             }
-            HeaderItem headerItem = new HeaderItem(0, "Related Videos");*/
+            HeaderItem headerItem = new HeaderItem(0, "Related Videos");
+*/
 
-            ClassPresenterSelector classPresenterSelector = new ClassPresenterSelector();
-            Log.v(TAG, "mFwdorPresenter.getInitialState: " + mFwdorPresenter.getInitialState());
-
-            classPresenterSelector.addClassPresenter(DetailsOverviewRow.class, mFwdorPresenter);
-            classPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
-
-
-            mAdapter = new ArrayObjectAdapter(classPresenterSelector);
+            mAdapter = new ArrayObjectAdapter(mClassPresenterSelector);
             /* 1st row */
             mAdapter.add(row);
             /* 2nd row */
+            mAdapter.add(mRelatedVideoRow);
             //mAdapter.add(new ListRow(headerItem, listRowAdapter));
-            if(isLoadFinished){
-                if(mRelatedVideoRow != null) {
-                    mAdapter.add(mRelatedVideoRow);
-                }
-            }
+
             /* 3rd row */
             //adapter.add(new ListRow(headerItem, listRowAdapter));
             setAdapter(mAdapter);
-            isBuilderTaskDone = true;
         }
     }
 }
