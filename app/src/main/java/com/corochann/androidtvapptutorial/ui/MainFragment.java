@@ -25,16 +25,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.corochann.androidtvapptutorial.R;
 import com.corochann.androidtvapptutorial.data.VideoItemLoader;
 import com.corochann.androidtvapptutorial.model.Movie;
-import com.corochann.androidtvapptutorial.data.MovieProvider;
-import com.corochann.androidtvapptutorial.ui.background.PicassoBackgroundManager;
-import com.corochann.androidtvapptutorial.R;
 import com.corochann.androidtvapptutorial.recommendation.RecommendationFactory;
+import com.corochann.androidtvapptutorial.ui.background.PicassoBackgroundManager;
 import com.corochann.androidtvapptutorial.ui.presenter.CardPresenter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +115,7 @@ public class MainFragment extends BrowseFragment {
                 } else if (item == GRID_STRING_RECOMMENDATION) {
                     Log.v(TAG, "onClick recommendation. counter " + recommendationCounter);
                     RecommendationFactory recommendationFactory = new RecommendationFactory(getActivity().getApplicationContext());
-                    if(mItems != null){
+                    if (mItems != null && mItems.size() > 0) {
                         Movie movie = mItems.get(recommendationCounter % mItems.size());
                         recommendationFactory.recommend(recommendationCounter, movie, NotificationCompat.PRIORITY_HIGH);
                         Toast.makeText(getActivity(), "Recommendation sent (item " + recommendationCounter +")", Toast.LENGTH_SHORT).show();
