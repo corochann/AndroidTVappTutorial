@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.util.Log;
 
-import com.corochann.androidtvapptutorial.R;
 import com.corochann.androidtvapptutorial.model.Movie;
 
 import org.json.JSONArray;
@@ -31,10 +30,7 @@ public class VideoProvider {
 
     private static final String TAG = VideoProvider.class.getSimpleName();
     public  static final String VIDEO_LIST_URL = "https://raw.githubusercontent.com/corochann/AndroidTVappTutorial/master/app/src/main/assets/video_lists.json";
-            //"https://raw.githubusercontent.com/corochann/AndroidTVappTutorial/master/app/src/main/assets/video_lists.json";
     public  static final String PREFIX_URL = "http://corochann.com/wp-content/uploads/2015/11/";
-                    //"http://commondatastorage.googleapis.com/android-tv/Sample%20videos/";
-
 
     private static String TAG_ID = "id";
     private static String TAG_MEDIA = "videos";
@@ -50,7 +46,6 @@ public class VideoProvider {
     private static LinkedHashMap<String, List<Movie>> sMovieList;
 
     private static Resources sResources;
-    private static Uri sPrefixUrl;
 
     public static void setContext(Context context) {
         if (null == sResources) {
@@ -146,18 +141,12 @@ public class VideoProvider {
                         id = video.getLong(TAG_ID);
                         title = video.getString(TAG_TITLE);
                         videoUrl = PREFIX_URL + getVideoSourceUrl(videoUrls);
-                                //getVideoPrefix(categoryName, getVideoSourceUrl(videoUrls));
                         bgImageUrl = PREFIX_URL + video.getString(TAG_BACKGROUND);
-                                //getThumbPrefix(categoryName, title,
-                                //video.getString(TAG_BACKGROUND));
                         cardImageUrl = PREFIX_URL + video.getString(TAG_CARD_THUMB);
-                                //getThumbPrefix(categoryName, title,
-                                //video.getString(TAG_CARD_THUMB));
                         studio = video.getString(TAG_STUDIO);
 
                         movie = buildMovieInfo(id, categoryName, title, description, studio,
                                 videoUrl, cardImageUrl, bgImageUrl);
-                        //sMovieListById.put(movie.getId(), movie);
                         categoryList.add(movie);
                     }
                     sMovieList.put(categoryName, categoryList);
@@ -201,31 +190,9 @@ public class VideoProvider {
         }
     }
 
-    // Ex. "http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Google+/Google+_%20Instant%20Upload.mp4"
-    private static String getVideoPrefix(String category, String videoUrl) {
-        return sPrefixUrl.buildUpon()
-                //.appendPath(category)
-                .appendPath(videoUrl)
-                .toString();
-    }
-
-    // Ex. "http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Google+/Google+_%20Instant%20Upload/card.jpg"
-    // Ex. "http://commondatastorage.googleapis.com/android-tv/Sample%20videos/Google+/Google+_%20Instant%20Upload/bg.jpg"
-    private static String getThumbPrefix(String category, String title, String imageUrl) {
-        return sPrefixUrl.buildUpon()
-                //.appendPath(category)
-                //.appendPath(title)
-                .appendPath(imageUrl)
-                .toString();
-    }
-
-
     protected JSONObject parseUrl(String urlString) {
         Log.d(TAG, "Parse URL: " + urlString);
         BufferedReader reader = null;
-
-        //sPrefixUrl = Uri.parse(sResources.getString(R.string.prefix_url));
-        sPrefixUrl = Uri.parse(PREFIX_URL);
 
         try {
             java.net.URL url = new java.net.URL(urlString);
