@@ -32,7 +32,7 @@ public class CustomDetailsOverviewRowPresenter extends DetailsOverviewRowPresent
     @Override
     protected void onBindRowViewHolder(RowPresenter.ViewHolder holder, Object item) {
         Log.v(TAG, "onBindRowViewHolder");
-        setBackgroundColor(mContext.getResources().getColor(R.color.fastlane_background));
+        setBackgroundColor(mContext.getResources().getColor(R.color.default_background));
         setStyleLarge(true);
         // It must be called "after" above function call
         super.onBindRowViewHolder(holder, item);
