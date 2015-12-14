@@ -103,7 +103,7 @@ public class VideoProvider {
         sMovieList = new LinkedHashMap<>();
         //sMovieListById = new HashMap<>();
 
-        JSONObject jsonObj = new VideoProvider().parseUrl(url);
+        JSONObject jsonObj = parseUrl(url);
 
         if (null == jsonObj) {
             Log.e(TAG, "An error occurred fetching videos.");
@@ -190,7 +190,7 @@ public class VideoProvider {
         }
     }
 
-    protected JSONObject parseUrl(String urlString) {
+    protected static JSONObject parseUrl(String urlString) {
         Log.d(TAG, "Parse URL: " + urlString);
         BufferedReader reader = null;
 
