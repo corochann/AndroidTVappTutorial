@@ -95,7 +95,8 @@ public class CardPresenter extends Presenter {
         cardView.setInfoVisibility(BaseCardView.CARD_REGION_VISIBLE_ALWAYS);
         cardView.setFocusable(true);
         cardView.setFocusableInTouchMode(true);
-        cardView.setBackgroundColor(mContext.getResources().getColor(R.color.fastlane_background));
+        cardView.setBackgroundColor(mContext.getResources().getColor(R.color.default_background));
+        cardView.setInfoAreaBackgroundColor(mContext.getResources().getColor(R.color.fastlane_background));
         return new ViewHolder(cardView);
     }
 

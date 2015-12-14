@@ -2,7 +2,8 @@
 <resources>
     <color name="background_gradient_start">#000000</color>
     <color name="background_gradient_end">#DDDDDD</color>
-    <color name="fastlane_background">#0096e6</color>
+<!--    <color name="fastlane_background">#0096e6</color>-->
+    <color name="fastlane_background">#1976D2</color>
     <color name="search_opaque">#ffaa3f</color>
     <color name="default_background">#3d3d3d</color>
     <color name="icon_background">#4A4F51</color>
