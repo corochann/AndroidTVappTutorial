@@ -28,6 +28,7 @@ import com.corochann.androidtvapptutorial.ui.background.PicassoBackgroundManager
 import com.corochann.androidtvapptutorial.R;
 import com.corochann.androidtvapptutorial.common.Utils;
 import com.corochann.androidtvapptutorial.ui.presenter.CardPresenter;
+import com.corochann.androidtvapptutorial.ui.presenter.CustomDetailsOverviewRowPresenter;
 import com.corochann.androidtvapptutorial.ui.presenter.CustomFullWidthDetailsOverviewRowPresenter;
 import com.corochann.androidtvapptutorial.ui.presenter.DetailsDescriptionPresenter;
 import com.squareup.picasso.Picasso;
@@ -48,12 +49,19 @@ public class VideoDetailsFragment extends DetailsFragment {
 
     private static final int ACTION_PLAY_VIDEO = 1;
 
-    private static final int DETAIL_THUMB_WIDTH = 220; //274
-    private static final int DETAIL_THUMB_HEIGHT = 120; //274
+    private static final int FULL_WIDTH_DETAIL_THUMB_WIDTH = 220;
+    private static final int FULL_WIDTH_DETAIL_THUMB_HEIGHT = 120;
+
+    private static final int DETAIL_THUMB_WIDTH = 274;
+    private static final int DETAIL_THUMB_HEIGHT = 274;
+
+    public static final String CATEGORY_FULL_WIDTH_DETAILS_OVERVIEW_ROW_PRESENTER = "FullWidthDetailsOverviewRowPresenter";
+    public static final String CATEGORY_DETAILS_OVERVIEW_ROW_PRESENTER = "DetailsOverviewRowPresenter";
 
     /* Attribute */
     private ArrayObjectAdapter mAdapter;
     private CustomFullWidthDetailsOverviewRowPresenter mFwdorPresenter;
+    private CustomDetailsOverviewRowPresenter mDorPresenter;
     private ClassPresenterSelector mClassPresenterSelector;
     private ListRow mRelatedVideoRow = null;
 
@@ -70,6 +78,7 @@ public class VideoDetailsFragment extends DetailsFragment {
         super.onCreate(savedInstanceState);
 
         mFwdorPresenter = new CustomFullWidthDetailsOverviewRowPresenter(new DetailsDescriptionPresenter());
+        mDorPresenter = new CustomDetailsOverviewRowPresenter(new DetailsDescriptionPresenter(), getActivity());
 
         mPicassoBackgroundManager = new PicassoBackgroundManager(getActivity());
         mSelectedMovie = getActivity().getIntent().getParcelableExtra(DetailsActivity.MOVIE);
@@ -87,7 +96,13 @@ public class VideoDetailsFragment extends DetailsFragment {
 
         mClassPresenterSelector = new ClassPresenterSelector();
         Log.v(TAG, "mFwdorPresenter.getInitialState: " + mFwdorPresenter.getInitialState());
-        mClassPresenterSelector.addClassPresenter(DetailsOverviewRow.class, mFwdorPresenter);
+        if(mSelectedMovie.getCategory().equals(CATEGORY_DETAILS_OVERVIEW_ROW_PRESENTER)) {
+            /* If category name is "DetailsOverviewRowPresenter", show DetailsOverviewRowPresenter for demo purpose (this class is deprecated from API level 22) */
+            mClassPresenterSelector.addClassPresenter(DetailsOverviewRow.class, mDorPresenter);
+        } else {
+            /* Default behavior, show FullWidthDetailsOverviewRowPresenter */
+            mClassPresenterSelector.addClassPresenter(DetailsOverviewRow.class, mFwdorPresenter);
+        }
         mClassPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
 
         mAdapter = new ArrayObjectAdapter(mClassPresenterSelector);
@@ -124,13 +139,24 @@ public class VideoDetailsFragment extends DetailsFragment {
         @Override
         protected DetailsOverviewRow doInBackground(Movie... params) {
             Log.v(TAG, "DetailsRowBuilderTask doInBackground");
+            int width, height;
+            if(mSelectedMovie.getCategory().equals(CATEGORY_DETAILS_OVERVIEW_ROW_PRESENTER)) {
+                /* If category name is "DetailsOverviewRowPresenter", show DetailsOverviewRowPresenter for demo purpose (this class is deprecated from API level 22) */
+                width = DETAIL_THUMB_WIDTH;
+                height = DETAIL_THUMB_HEIGHT;
+            } else {
+                /* Default behavior, show FullWidthDetailsOverviewRowPresenter */
+                width = FULL_WIDTH_DETAIL_THUMB_WIDTH;
+                height = FULL_WIDTH_DETAIL_THUMB_HEIGHT;
+            }
+
             DetailsOverviewRow row = new DetailsOverviewRow(mSelectedMovie);
             try {
                 // Bitmap loading must be done in background thread in Android.
                 Bitmap poster = Picasso.with(getActivity())
                         .load(mSelectedMovie.getCardImageUrl())
-                        .resize(Utils.convertDpToPixel(getActivity().getApplicationContext(), DETAIL_THUMB_WIDTH),
-                                Utils.convertDpToPixel(getActivity().getApplicationContext(), DETAIL_THUMB_HEIGHT))
+                        .resize(Utils.convertDpToPixel(getActivity().getApplicationContext(), width),
+                                Utils.convertDpToPixel(getActivity().getApplicationContext(), height))
                         .centerCrop()
                         .get();
                 row.setImageBitmap(getActivity(), poster);

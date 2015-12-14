@@ -5,7 +5,7 @@ import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.RowPresenter;
 
 /**
- * Created by 5004121605 on 6/7/2015.
+ * Presenter to demonstrate {@link FullWidthDetailsOverviewRowPresenter}
  */
 public class CustomFullWidthDetailsOverviewRowPresenter extends FullWidthDetailsOverviewRowPresenter {
 
@@ -16,8 +16,22 @@ public class CustomFullWidthDetailsOverviewRowPresenter extends FullWidthDetails
     }
 
     @Override
+    protected void onRowViewAttachedToWindow(RowPresenter.ViewHolder vh) {
+        super.onRowViewAttachedToWindow(vh);
+    }
+
+    @Override
     protected void onBindRowViewHolder(RowPresenter.ViewHolder holder, Object item) {
         super.onBindRowViewHolder(holder, item);
-        this.setState((ViewHolder) holder, FullWidthDetailsOverviewRowPresenter.STATE_HALF);
+    }
+
+    @Override
+    protected void onLayoutOverviewFrame(ViewHolder viewHolder, int oldState, boolean logoChanged) {
+        /* Please try selecting either one. */
+        //setState(viewHolder, FullWidthDetailsOverviewRowPresenter.STATE_SMALL);
+        //setState(viewHolder, FullWidthDetailsOverviewRowPresenter.STATE_FULL);
+        setState(viewHolder, FullWidthDetailsOverviewRowPresenter.STATE_HALF);  // Default behavior
+
+        super.onLayoutOverviewFrame(viewHolder, oldState, logoChanged);
     }
 }
