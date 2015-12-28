@@ -41,7 +41,7 @@ public class CardPresenter extends Presenter {
 
     private static final String TAG = CardPresenter.class.getSimpleName();
 
-    private static Context mContext;
+
     private static int CARD_WIDTH = 313;
     private static int CARD_HEIGHT = 176;
 
@@ -50,11 +50,13 @@ public class CardPresenter extends Presenter {
         private ImageCardView mCardView;
         private Drawable mDefaultCardImage;
         private PicassoImageCardViewTarget mImageCardViewTarget;
+        private Context mContext;
 
         public ViewHolder(View view) {
             super(view);
             mCardView = (ImageCardView) view;
-            mImageCardViewTarget = new PicassoImageCardViewTarget(mCardView);
+            mContext = view.getContext();
+            mImageCardViewTarget = new PicassoImageCardViewTarget(mCardView, mContext);
             mDefaultCardImage = mContext.getResources().getDrawable(R.drawable.movie);
         }
 
@@ -88,15 +90,15 @@ public class CardPresenter extends Presenter {
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         Log.d(TAG, "onCreateViewHolder");
-        mContext = parent.getContext();
+        Context context = parent.getContext();
 
-        ImageCardView cardView = new ImageCardView(mContext);
+        ImageCardView cardView = new ImageCardView(context);
         cardView.setCardType(BaseCardView.CARD_TYPE_INFO_UNDER);
         cardView.setInfoVisibility(BaseCardView.CARD_REGION_VISIBLE_ALWAYS);
         cardView.setFocusable(true);
         cardView.setFocusableInTouchMode(true);
-        cardView.setBackgroundColor(mContext.getResources().getColor(R.color.default_background));
-        cardView.setInfoAreaBackgroundColor(mContext.getResources().getColor(R.color.fastlane_background));
+        cardView.setBackgroundColor(context.getResources().getColor(R.color.default_background));
+        cardView.setInfoAreaBackgroundColor(context.getResources().getColor(R.color.fastlane_background));
         return new ViewHolder(cardView);
     }
 
@@ -127,9 +129,11 @@ public class CardPresenter extends Presenter {
 
     public static class PicassoImageCardViewTarget implements Target {
         private ImageCardView mImageCardView;
+        private Context mContext;
 
-        public PicassoImageCardViewTarget(ImageCardView imageCardView) {
+        public PicassoImageCardViewTarget(ImageCardView imageCardView, Context context) {
             mImageCardView = imageCardView;
+            mContext = context;
         }
 
         @Override
