@@ -9,12 +9,12 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
-import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnItemViewClickedListener;
 import android.support.v17.leanback.widget.OnItemViewSelectedListener;
 import android.support.v17.leanback.widget.Presenter;
+import android.support.v17.leanback.widget.PresenterSelector;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.support.v4.app.NotificationCompat;
@@ -27,10 +27,12 @@ import android.widget.Toast;
 
 import com.corochann.androidtvapptutorial.R;
 import com.corochann.androidtvapptutorial.data.VideoItemLoader;
+import com.corochann.androidtvapptutorial.model.IconHeaderItem;
 import com.corochann.androidtvapptutorial.model.Movie;
 import com.corochann.androidtvapptutorial.recommendation.RecommendationFactory;
 import com.corochann.androidtvapptutorial.ui.background.PicassoBackgroundManager;
 import com.corochann.androidtvapptutorial.ui.presenter.CardPresenter;
+import com.corochann.androidtvapptutorial.ui.presenter.IconHeaderItemPresenter;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -43,7 +45,10 @@ import java.util.Map;
 public class MainFragment extends BrowseFragment {
     private static final String TAG = MainFragment.class.getSimpleName();
 
+    /* Adapter and ListRows */
     private ArrayObjectAdapter mRowsAdapter;
+    private ListRow mGridItemListRow;
+    ArrayList<ListRow> mVideoListRowArray;
 
     /* Grid row item settings */
     private static final int GRID_ITEM_WIDTH = 300;
@@ -67,16 +72,18 @@ public class MainFragment extends BrowseFragment {
 
         setupUIElements();
 
+        /* Set up rows with light data. done in main thread. */
         loadRows();
+        setRows();
+
+        /* Set up rows with heavy data (data from web, content provider etc) is done in background thread using Loader */
         LoaderManager.enableDebugLogging(true);
         getLoaderManager().initLoader(VIDEO_ITEM_LOADER_ID, null, new MainFragmentLoaderCallbacks());
-
 
         setupEventListeners();
 
         picassoBackgroundManager = new PicassoBackgroundManager(getActivity());
         picassoBackgroundManager.updateBackgroundWithDelay();
-        //picassoBackgroundManager.updateBackgroundWithDelay("http://heimkehrend.raindrop.jp/kl-hacker/wp-content/uploads/2014/10/RIMG0656.jpg");
     }
 
     private void setupEventListeners() {
@@ -155,15 +162,22 @@ public class MainFragment extends BrowseFragment {
         setBrandColor(getResources().getColor(R.color.fastlane_background));
         // set search icon color
         setSearchAffordanceColor(getResources().getColor(R.color.search_opaque));
+
+        setHeaderPresenterSelector(new PresenterSelector() {
+            @Override
+            public Presenter getPresenter(Object o) {
+                return new IconHeaderItemPresenter();
+            }
+        });
     }
 
-
-
+    /**
+     * only load rows which can be prepared (executed in main thread) instantaneously.
+     * UI update is done in {@link #setRows}
+     */
     private void loadRows() {
-        mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
-
         /* GridItemPresenter */
-        HeaderItem gridItemPresenterHeader = new HeaderItem(0, "GridItemPresenter");
+        IconHeaderItem gridItemPresenterHeader = new IconHeaderItem(0, "GridItemPresenter", R.drawable.ic_add_white_48dp);
 
         GridItemPresenter mGridPresenter = new GridItemPresenter();
         ArrayObjectAdapter gridRowAdapter = new ArrayObjectAdapter(mGridPresenter);
@@ -171,23 +185,27 @@ public class MainFragment extends BrowseFragment {
         gridRowAdapter.add(GRID_STRING_GUIDED_STEP_FRAGMENT);
         gridRowAdapter.add(GRID_STRING_RECOMMENDATION);
         gridRowAdapter.add(GRID_STRING_SPINNER);
-        mRowsAdapter.add(new ListRow(gridItemPresenterHeader, gridRowAdapter));
+        mGridItemListRow = new ListRow(gridItemPresenterHeader, gridRowAdapter);
+    }
 
-        /* CardPresenter */
-/*
-        HeaderItem cardPresenterHeader = new HeaderItem(1, "CardPresenter");
-        CardPresenter cardPresenter = new CardPresenter();
-        ArrayObjectAdapter cardRowAdapter = new ArrayObjectAdapter(cardPresenter);
+    /**
+     * Updates UI after loading Row done.
+     */
+    private void setRows() {
+        mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter()); // Initialize
 
-        for (Movie movie : mItems) {
-            cardRowAdapter.add(movie);
+        if(mVideoListRowArray != null) {
+            for (ListRow videoListRow : mVideoListRowArray) {
+                mRowsAdapter.add(videoListRow);
+            }
         }
-
-        mRowsAdapter.add(new ListRow(cardPresenterHeader, cardRowAdapter));
-*/
+        if(mGridItemListRow != null) {
+            mRowsAdapter.add(mGridItemListRow);
+        }
 
         /* Set */
         setAdapter(mRowsAdapter);
+
     }
 
     private class MainFragmentLoaderCallbacks implements LoaderManager.LoaderCallbacks<LinkedHashMap<String, List<Movie>>> {
@@ -214,22 +232,9 @@ public class MainFragment extends BrowseFragment {
                     /* Hold data reference to use it for recommendation */
                     mItems = new ArrayList<Movie>();
 
-                    mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
-
-                    int index = 0;
-                    /* GridItemPresenter */
-                    HeaderItem gridItemPresenterHeader = new HeaderItem(index, "GridItemPresenter");
-                    index++;
-
-                    GridItemPresenter mGridPresenter = new GridItemPresenter();
-                    ArrayObjectAdapter gridRowAdapter = new ArrayObjectAdapter(mGridPresenter);
-                    gridRowAdapter.add(GRID_STRING_ERROR_FRAGMENT);
-                    gridRowAdapter.add(GRID_STRING_GUIDED_STEP_FRAGMENT);
-                    gridRowAdapter.add(GRID_STRING_RECOMMENDATION);
-                    gridRowAdapter.add(GRID_STRING_SPINNER);
-                    mRowsAdapter.add(new ListRow(gridItemPresenterHeader, gridRowAdapter));
-
-                    /* CardPresenter */
+                    /* loadRows: videoListRow - CardPresenter */
+                    int index = 1;
+                    mVideoListRowArray = new ArrayList<>();
                     CardPresenter cardPresenter = new CardPresenter();
 
                     if (null != data) {
@@ -242,15 +247,16 @@ public class MainFragment extends BrowseFragment {
                                 cardRowAdapter.add(movie);
                                 mItems.add(movie);           // Add movie reference for recommendation purpose.
                             }
-                            HeaderItem header = new HeaderItem(index, entry.getKey());
+                            IconHeaderItem header = new IconHeaderItem(index, entry.getKey(), R.drawable.ic_play_arrow_white_48dp);
                             index++;
-                            mRowsAdapter.add(new ListRow(header, cardRowAdapter));
+                            mVideoListRowArray.add(new ListRow(header, cardRowAdapter));
                         }
                     } else {
                         Log.e(TAG, "An error occurred fetching videos");
                     }
+
                     /* Set */
-                    setAdapter(mRowsAdapter);
+                    setRows();
             }
         }
 
