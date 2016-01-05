@@ -27,11 +27,13 @@ import android.widget.Toast;
 
 import com.corochann.androidtvapptutorial.R;
 import com.corochann.androidtvapptutorial.data.VideoItemLoader;
+import com.corochann.androidtvapptutorial.model.CustomListRow;
 import com.corochann.androidtvapptutorial.model.IconHeaderItem;
 import com.corochann.androidtvapptutorial.model.Movie;
 import com.corochann.androidtvapptutorial.recommendation.RecommendationFactory;
 import com.corochann.androidtvapptutorial.ui.background.PicassoBackgroundManager;
 import com.corochann.androidtvapptutorial.ui.presenter.CardPresenter;
+import com.corochann.androidtvapptutorial.ui.presenter.CustomListRowPresenter;
 import com.corochann.androidtvapptutorial.ui.presenter.IconHeaderItemPresenter;
 
 import java.util.ArrayList;
@@ -47,8 +49,8 @@ public class MainFragment extends BrowseFragment {
 
     /* Adapter and ListRows */
     private ArrayObjectAdapter mRowsAdapter;
-    private ListRow mGridItemListRow;
-    ArrayList<ListRow> mVideoListRowArray;
+    private CustomListRow mGridItemListRow;
+    private ArrayList<CustomListRow> mVideoListRowArray;
 
     /* Grid row item settings */
     private static final int GRID_ITEM_WIDTH = 300;
@@ -185,17 +187,17 @@ public class MainFragment extends BrowseFragment {
         gridRowAdapter.add(GRID_STRING_GUIDED_STEP_FRAGMENT);
         gridRowAdapter.add(GRID_STRING_RECOMMENDATION);
         gridRowAdapter.add(GRID_STRING_SPINNER);
-        mGridItemListRow = new ListRow(gridItemPresenterHeader, gridRowAdapter);
+        mGridItemListRow = new CustomListRow(gridItemPresenterHeader, gridRowAdapter);
     }
 
     /**
      * Updates UI after loading Row done.
      */
     private void setRows() {
-        mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter()); // Initialize
+        mRowsAdapter = new ArrayObjectAdapter(new CustomListRowPresenter()); // Initialize
 
         if(mVideoListRowArray != null) {
-            for (ListRow videoListRow : mVideoListRowArray) {
+            for (CustomListRow videoListRow : mVideoListRowArray) {
                 mRowsAdapter.add(videoListRow);
             }
         }
@@ -249,7 +251,9 @@ public class MainFragment extends BrowseFragment {
                             }
                             IconHeaderItem header = new IconHeaderItem(index, entry.getKey(), R.drawable.ic_play_arrow_white_48dp);
                             index++;
-                            mVideoListRowArray.add(new ListRow(header, cardRowAdapter));
+                            CustomListRow videoListRow = new CustomListRow(header, cardRowAdapter);
+                            videoListRow.setNumRows(2);
+                            mVideoListRowArray.add(videoListRow);
                         }
                     } else {
                         Log.e(TAG, "An error occurred fetching videos");
