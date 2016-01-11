@@ -11,6 +11,8 @@ import com.corochann.androidtvapptutorial.R;
  */
 public class VerticalGridActivity extends Activity {
 
+    private static final String TAG = VerticalGridActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

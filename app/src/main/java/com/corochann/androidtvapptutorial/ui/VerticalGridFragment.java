@@ -47,6 +47,9 @@ public class VerticalGridFragment extends android.support.v17.leanback.app.Verti
 
         setupFragment();
         setupEventListeners();
+
+        // it will move current focus to specified position. Comment out it to see the behavior.
+        // setSelectedPosition(5);
     }
 
     private void setupFragment() {
