@@ -57,6 +57,7 @@ public class MainFragment extends BrowseFragment {
     private static final int GRID_ITEM_HEIGHT = 200;
     private static final String GRID_STRING_ERROR_FRAGMENT = "ErrorFragment";
     private static final String GRID_STRING_GUIDED_STEP_FRAGMENT = "GuidedStepFragment";
+    private static final String GRID_STRING_VERTICAL_GRID_FRAGMENT = "VerticalGridFragment";
     private static final String GRID_STRING_RECOMMENDATION = "Recommendation";
     private static final String GRID_STRING_SPINNER = "Spinner";
 
@@ -120,6 +121,9 @@ public class MainFragment extends BrowseFragment {
                     startActivity(intent);
                 } else if (item == GRID_STRING_GUIDED_STEP_FRAGMENT) {
                     Intent intent = new Intent(getActivity(), GuidedStepActivity.class);
+                    startActivity(intent);
+                } else if (item == GRID_STRING_VERTICAL_GRID_FRAGMENT) {
+                    Intent intent = new Intent(getActivity(), VerticalGridActivity.class);
                     startActivity(intent);
                 } else if (item == GRID_STRING_RECOMMENDATION) {
                     Log.v(TAG, "onClick recommendation. counter " + recommendationCounter);
@@ -185,6 +189,7 @@ public class MainFragment extends BrowseFragment {
         ArrayObjectAdapter gridRowAdapter = new ArrayObjectAdapter(mGridPresenter);
         gridRowAdapter.add(GRID_STRING_ERROR_FRAGMENT);
         gridRowAdapter.add(GRID_STRING_GUIDED_STEP_FRAGMENT);
+        gridRowAdapter.add(GRID_STRING_VERTICAL_GRID_FRAGMENT);
         gridRowAdapter.add(GRID_STRING_RECOMMENDATION);
         gridRowAdapter.add(GRID_STRING_SPINNER);
         mGridItemListRow = new CustomListRow(gridItemPresenterHeader, gridRowAdapter);
@@ -252,7 +257,7 @@ public class MainFragment extends BrowseFragment {
                             IconHeaderItem header = new IconHeaderItem(index, entry.getKey(), R.drawable.ic_play_arrow_white_48dp);
                             index++;
                             CustomListRow videoListRow = new CustomListRow(header, cardRowAdapter);
-                            videoListRow.setNumRows(2);
+                            videoListRow.setNumRows(1);
                             mVideoListRowArray.add(videoListRow);
                         }
                     } else {

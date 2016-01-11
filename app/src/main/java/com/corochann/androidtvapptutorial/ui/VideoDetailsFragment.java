@@ -69,7 +69,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 
     /* Relation */
     private Movie mSelectedMovie;
-    LinkedHashMap<String, List<Movie>> mVideoLists = null;
+    private LinkedHashMap<String, List<Movie>> mVideoLists = null;
     private PicassoBackgroundManager mPicassoBackgroundManager;
 
     @Override

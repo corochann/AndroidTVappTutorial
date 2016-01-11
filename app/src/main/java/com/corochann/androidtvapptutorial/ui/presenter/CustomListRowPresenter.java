@@ -33,6 +33,6 @@ public class CustomListRowPresenter extends ListRowPresenter {
         super.initializeRowViewHolder(holder);
 
         /* Disable Shadow */
-        setShadowEnabled(false);
+        // setShadowEnabled(false);
     }
 }
