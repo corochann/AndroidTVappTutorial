@@ -63,15 +63,17 @@ public class VerticalGridFragment extends android.support.v17.leanback.app.Verti
         try {
             mVideoLists = VideoProvider.buildMedia(getActivity());
         } catch (JSONException e) {
-            Log.e(TAG, e.toString());
+            Log.e(TAG, e.toString(), e);
         }
-        for (int i = 0; i < 3; i++) { // This loop is to for increasing the number of contents. not necessary.
-            for (Map.Entry<String, List<Movie>> entry : mVideoLists.entrySet()) {
-                // String categoryName = entry.getKey();
-                List<Movie> list = entry.getValue();
-                for (int j = 0; j < list.size(); j++) {
-                    Movie movie = list.get(j);
-                    mAdapter.add(movie);
+        if(mVideoLists != null) {
+            for (int i = 0; i < 3; i++) { // This loop is to for increasing the number of contents. not necessary.
+                for (Map.Entry<String, List<Movie>> entry : mVideoLists.entrySet()) {
+                    // String categoryName = entry.getKey();
+                    List<Movie> list = entry.getValue();
+                    for (int j = 0; j < list.size(); j++) {
+                        Movie movie = list.get(j);
+                        mAdapter.add(movie);
+                    }
                 }
             }
         }
@@ -101,7 +103,12 @@ public class VerticalGridFragment extends android.support.v17.leanback.app.Verti
         @Override
         public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item,
                                    RowPresenter.ViewHolder rowViewHolder, Row row) {
-            picassoBackgroundManager.updateBackgroundWithDelay(((Movie) item).getBackgroundImageUrl());
+            if( item != null ){
+                picassoBackgroundManager.updateBackgroundWithDelay(((Movie) item).getBackgroundImageUrl());
+            } else {
+                Log.w(TAG, "item is null");
+            }
+
         }
     }
 }

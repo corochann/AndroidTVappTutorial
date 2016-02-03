@@ -197,24 +197,29 @@ public class VideoDetailsFragment extends DetailsFragment {
 
             /* 2nd row: ListRow CardPresenter */
 
-            CardPresenter cardPresenter = new CardPresenter();
+            if (mVideoLists == null) {
+                // Error occured while fetching videos
+                Log.i(TAG, "mVideoLists is null, skip creating mRelatedVideoRow");
+            } else {
+                CardPresenter cardPresenter = new CardPresenter();
 
-            for (Map.Entry<String, List<Movie>> entry : mVideoLists.entrySet()) {
-                // Find only same category
-                String categoryName = entry.getKey();
-                if(!categoryName.equals(mSelectedMovie.getCategory())) {
-                    continue;
+                for (Map.Entry<String, List<Movie>> entry : mVideoLists.entrySet()) {
+                    // Find only same category
+                    String categoryName = entry.getKey();
+                    if(!categoryName.equals(mSelectedMovie.getCategory())) {
+                        continue;
+                    }
+
+                    ArrayObjectAdapter cardRowAdapter = new ArrayObjectAdapter(cardPresenter);
+                    List<Movie> list = entry.getValue();
+
+                    for (int j = 0; j < list.size(); j++) {
+                        cardRowAdapter.add(list.get(j));
+                    }
+                    //HeaderItem header = new HeaderItem(index, entry.getKey());
+                    HeaderItem header = new HeaderItem(0, "Related Videos");
+                    mRelatedVideoRow = new ListRow(header, cardRowAdapter);
                 }
-
-                ArrayObjectAdapter cardRowAdapter = new ArrayObjectAdapter(cardPresenter);
-                List<Movie> list = entry.getValue();
-
-                for (int j = 0; j < list.size(); j++) {
-                    cardRowAdapter.add(list.get(j));
-                }
-                //HeaderItem header = new HeaderItem(index, entry.getKey());
-                HeaderItem header = new HeaderItem(0, "Related Videos");
-                mRelatedVideoRow = new ListRow(header, cardRowAdapter);
             }
 
             /* 2nd row: ListRow */
@@ -230,8 +235,11 @@ public class VideoDetailsFragment extends DetailsFragment {
             mAdapter = new ArrayObjectAdapter(mClassPresenterSelector);
             /* 1st row */
             mAdapter.add(row);
+
             /* 2nd row */
-            mAdapter.add(mRelatedVideoRow);
+            if(mRelatedVideoRow != null){
+                mAdapter.add(mRelatedVideoRow);
+            }
             //mAdapter.add(new ListRow(headerItem, listRowAdapter));
 
             /* 3rd row */

@@ -198,8 +198,8 @@ public class VideoProvider {
             java.net.URL url = new java.net.URL(urlString);
             URLConnection urlConnection = url.openConnection();
             reader = new BufferedReader(new InputStreamReader(
-                    urlConnection.getInputStream()));
-                    //urlConnection.getInputStream(), "iso-8859-1"));
+                    //urlConnection.getInputStream()));
+                    urlConnection.getInputStream(), "iso-8859-1"));
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -208,14 +208,14 @@ public class VideoProvider {
             String json = sb.toString();
             return new JSONObject(json);
         } catch (Exception e) {
-            Log.d(TAG, "Failed to parse the json for media list", e);
+            Log.e(TAG, "Failed to parse the json for media list, is JSON format correct?", e);
             return null;
         } finally {
             if (null != reader) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    Log.d(TAG, "JSON feed closed", e);
+                    Log.w(TAG, "JSON feed closed", e);
                 }
             }
         }
