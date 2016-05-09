@@ -94,8 +94,8 @@ public class CardPresenter extends Presenter {
         Context context = parent.getContext();
 
         HorizontalGridView horizontalGridView = (HorizontalGridView) parent.findViewById(R.id.row_content);
-        horizontalGridView.setItemMargin(0); // You can set item margin here.
-        ((ViewGroup.MarginLayoutParams) horizontalGridView.getLayoutParams()).setMargins(0, 0, 0, 0); // margin of horizaontal grid view itself
+        //horizontalGridView.setItemMargin(0); // You can set item margin here.
+        //((ViewGroup.MarginLayoutParams) horizontalGridView.getLayoutParams()).setMargins(0, 0, 0, 0); // margin of horizaontal grid view itself
 
         ImageCardView cardView = new ImageCardView(context);
         cardView.setCardType(BaseCardView.CARD_TYPE_INFO_UNDER);
