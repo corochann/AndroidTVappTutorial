@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v17.leanback.widget.BaseCardView;
+import android.support.v17.leanback.widget.HorizontalGridView;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
 import android.util.Log;
@@ -91,6 +92,10 @@ public class CardPresenter extends Presenter {
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         Log.d(TAG, "onCreateViewHolder");
         Context context = parent.getContext();
+
+        HorizontalGridView horizontalGridView = (HorizontalGridView) parent.findViewById(R.id.row_content);
+        horizontalGridView.setItemMargin(0); // You can set item margin here.
+        ((ViewGroup.MarginLayoutParams) horizontalGridView.getLayoutParams()).setMargins(0, 0, 0, 0); // margin of horizaontal grid view itself
 
         ImageCardView cardView = new ImageCardView(context);
         cardView.setCardType(BaseCardView.CARD_TYPE_INFO_UNDER);

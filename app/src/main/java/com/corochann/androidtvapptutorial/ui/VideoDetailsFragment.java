@@ -183,17 +183,8 @@ public class VideoDetailsFragment extends DetailsFragment {
 
             row.setActionsAdapter(sparseArrayObjectAdapter);
 
-            mFwdorPresenter.setOnActionClickedListener(new OnActionClickedListener() {
-                @Override
-                public void onActionClicked(Action action) {
-                    if (action.getId() == ACTION_PLAY_VIDEO) {
-                        Intent intent = new Intent(getActivity(), PlaybackOverlayActivity.class);
-                        intent.putExtra(DetailsActivity.MOVIE, mSelectedMovie);
-                        intent.putExtra(getResources().getString(R.string.should_start), true);
-                        startActivity(intent);
-                    }
-                }
-            });
+            mFwdorPresenter.setOnActionClickedListener(new DetailsOverviewRowActionClickedListener());
+            mDorPresenter.setOnActionClickedListener(new DetailsOverviewRowActionClickedListener());
 
             /* 2nd row: ListRow CardPresenter */
 
@@ -245,6 +236,18 @@ public class VideoDetailsFragment extends DetailsFragment {
             /* 3rd row */
             //adapter.add(new ListRow(headerItem, listRowAdapter));
             setAdapter(mAdapter);
+        }
+    }
+
+    public class DetailsOverviewRowActionClickedListener implements OnActionClickedListener {
+        @Override
+        public void onActionClicked(Action action) {
+            if (action.getId() == ACTION_PLAY_VIDEO) {
+                Intent intent = new Intent(getActivity(), PlaybackOverlayActivity.class);
+                intent.putExtra(DetailsActivity.MOVIE, mSelectedMovie);
+                intent.putExtra(getResources().getString(R.string.should_start), true);
+                startActivity(intent);
+            }
         }
     }
 }

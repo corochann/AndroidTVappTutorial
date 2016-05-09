@@ -85,7 +85,7 @@ public class VideoProvider {
                 }
             }
             if(movieItems == null) {
-                Log.w(TAG, "No data foud with category: " + category);
+                Log.w(TAG, "No data found with category: " + category);
             }
             return movieItems;
         }
@@ -198,8 +198,10 @@ public class VideoProvider {
             java.net.URL url = new java.net.URL(urlString);
             URLConnection urlConnection = url.openConnection();
             reader = new BufferedReader(new InputStreamReader(
-                    //urlConnection.getInputStream()));
-                    urlConnection.getInputStream(), "iso-8859-1"));
+                    urlConnection.getInputStream()));
+                    //urlConnection.getInputStream(), "iso-8859-1"));
+                    //urlConnection.getInputStream(), "utf-8"));
+
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
