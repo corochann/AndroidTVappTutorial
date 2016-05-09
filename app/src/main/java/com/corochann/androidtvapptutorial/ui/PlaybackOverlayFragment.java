@@ -236,8 +236,6 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                      * - HighQualityAction
                      * - ClosedCaptioningAction
                      */
-                    notifyChanged(action);
-
                     /* Change icon */
                     if (action instanceof PlaybackControlsRow.ThumbsUpAction ||
                             action instanceof PlaybackControlsRow.ThumbsDownAction ||
@@ -247,6 +245,8 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                             action instanceof PlaybackControlsRow.ClosedCaptioningAction) {
                         ((PlaybackControlsRow.MultiAction) action).nextIndex();
                     }
+                    /* Note: notifyChanged must be called after action.nextIndex has been called */
+                    notifyChanged(action);
                 }
             }
         });
