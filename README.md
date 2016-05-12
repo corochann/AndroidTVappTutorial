@@ -1,15 +1,19 @@
-AndroidTVappTutorial 
+# AndroidTVappTutorial
 
-Introduction
+![slide](https://raw.githubusercontent.com/corochann/AndroidTVappTutorial/master/assets/screenshot-20160512.png)
+
+## Introduction
 ------------
 A sample application for understanding Android TV specific features, especially Leanback support library.
-Many of the implementation is based on Android TV sample application provided by AOSP.
+Many of the implementation is based on Android TV sample application provided by AOSP,
+and [androidtv-Leanback](https://github.com/googlesamples/androidtv-Leanback) provided by Google.
 
-You can get more information from the series of blog below.
-[Android TV application hands on tutorial] (http://heimkehrend.raindrop.jp/corochannNote/android-tv-application-hands-on-tutorial-1-45.html)
+Please check the tutorial below
+
+**[Android TV application hands on tutorial] (http://corochann.com/android-tv-application-hands-on-tutorial)**
 
 
-License
+## License
 -------
     (c) Copyright 2015 corochann
 
