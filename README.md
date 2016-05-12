@@ -3,8 +3,8 @@
 ![slide](https://raw.githubusercontent.com/corochann/AndroidTVappTutorial/master/assets/screenshot-20160512.png)
 
 ## Introduction
-A sample application for understanding Android TV specific features, especially Leanback support library.
-  Many of the implementation is based on Android TV sample application provided by AOSP,
+A sample application for understanding Android TV specific features, especially Leanback support library.<br />
+Many of the implementation is based on Android TV sample application provided by AOSP,
 and [androidtv-Leanback](https://github.com/googlesamples/androidtv-Leanback) provided by Google.
 
 Please check the tutorial below
