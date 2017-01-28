@@ -31,6 +31,8 @@ public class IconHeaderItemPresenter  extends RowHeaderPresenter {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View view = inflater.inflate(R.layout.icon_header_item, null);
+        view.setFocusable(true);
+        view.setAlpha(unselectedAlpha); // Initialize icons to be at half-opacity.
 
         return new ViewHolder(view);
     }
